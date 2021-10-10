@@ -1,0 +1,2 @@
+This file should contain all the html files for the project
+that are either inherited and/or used by Flask

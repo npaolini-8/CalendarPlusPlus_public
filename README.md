@@ -3,8 +3,7 @@
 ## Basic Utilities to Set Up
 - [ ] Flask
 - [ ] Bootstrap
-- [ ] SQL Lite 
-
+- [ ] MongoDB
 ## ToDo's
 - [ ] Downloadable/Uploadable template for schedules
 - [ ] Compare Schedules
@@ -19,6 +18,4 @@
 ## Stretch Goals
 - [ ] Online interaction with other users
 - [ ] Get online accounts
-
-push test np
 

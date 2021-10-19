@@ -1,7 +1,7 @@
 # CalenderPlusPlus
 
 ## Basic Utilities to Set Up
-- [ ] Flask
+- [X] Flask
 - [ ] Bootstrap
 - [ ] MongoDB
 ## ToDo's

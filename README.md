@@ -2,7 +2,7 @@
 
 ## Basic Utilities to Set Up
 - [X] Flask
-- [ ] Bootstrap
+- [X] Bootstrap
 - [ ] MongoDB
 ## ToDo's
 - [ ] Downloadable/Uploadable template for schedules

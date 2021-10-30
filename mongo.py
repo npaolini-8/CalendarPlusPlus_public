@@ -60,8 +60,8 @@ def export_calendar( username, format):
         cal = build_ics( events )
         data = cal.to_ical()
 
-        with open( "export_test/test.ics", 'w') as ical_file:
-            ical_file,write(data)
+        with open( "export_test/test.ics", 'wb') as ical_file:
+            ical_file.write(data)
     
     else:
         build_csv( events )
@@ -81,12 +81,28 @@ def build_ics( events ) -> Calendar:
         event.add( 'uid', str(id))
         id += 1
 
-        event.add('dtstart', datetime(item["start_time"]))
-        event.add('dtend', datetime(item["end_time"]))
+        date = get_datetime(item["start_time"])
+        event.add('dtstart', date)
+
+        date = get_datetime(item["end_time"])
+        event.add('dtend', date)
+
         event.add('description', item["description"])
         cal.add_component(event)
 
     return cal
+
+def get_datetime( datestr ):
+
+    year = int(datestr[0:4])
+    month = int(datestr[4:6])
+    day = int(datestr[6:8])
+
+    hour = int(datestr[9:11])
+    minute = int(datestr[11:13])
+
+    return datetime(year,month,day,hour,minute)
+
 
 def build_csv( events):
     return None

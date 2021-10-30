@@ -1,17 +1,20 @@
-from flask import Flask, redirect, url_for, render_template
-
-app = Flask(__name__)
+from flask import Flask
 
 
-@app.route('/')
-def home():
-    return render_template('index.html')
+def create_app():
+    """
+    Application factory for Flask, see
+    https://flask.palletsprojects.com/en/2.0.x/patterns/appfactories/
+    """
+    flask = Flask(__name__)
 
+    # initialize core blueprints/routes second
+    import views
+    views.init_app(flask)
 
-@app.route('/calendar')
-def myCalendar():
-    return render_template('calendar.html')
+    return flask
 
 
 if __name__ == '__main__':
+    app = create_app()
     app.run(debug=True)

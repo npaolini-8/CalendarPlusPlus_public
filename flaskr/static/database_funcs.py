@@ -5,8 +5,8 @@ import ssl # Used to specify certificate connection for MongoDB
 class CalDB():
     def __init__(self):
         self.cluster = MongoClient("mongodb+srv://nickp:UEuYChybyfDeiRRq@cal0.uud0f.mongodb.net/test", ssl_cert_reqs=ssl.CERT_NONE)
-        self.cal_db = cluster["calendar"]
-        self.users_collection = cal_db["users"]
+        self.cal_db = self.cluster["calendar"]
+        self.users_collection = self.cal_db["users"]
 
     def create_user( self, username, password, first_name, last_name):
         self.users_collection.insert_one(
@@ -19,6 +19,10 @@ class CalDB():
                 "friends": []
             }
     )
+
+    def find_user( self, username ):
+        user = self.users_collection.find_one({"username": username})
+        return user
 
     def create_event(self,username, event_id, start_time, end_time, description, location, recurrence): # we should use the date-time format used by ical for easier maintenance and conversion
         self.users_collection.update_one(

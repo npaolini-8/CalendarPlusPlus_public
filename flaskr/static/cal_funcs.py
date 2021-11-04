@@ -2,16 +2,15 @@ from os import write
 from datetime import datetime, tzinfo # Used to get timestamps for database information
 from icalendar import Calendar, Event
 import pytz
-from typing import List
 import csv
-from database_funcs import users_collection
+from database_funcs import CalDB
 
 #builds calendar file based on given format: ics, csv
 def export_calendar( username, format):
 
     #db queries
     #TODO: Error handling
-    user = users_collection.find_one({"username" : username})
+    user = CalDB.find_user(username)
     events = user["events"]
     
     if format.lower() == "ics":

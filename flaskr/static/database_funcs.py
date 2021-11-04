@@ -24,6 +24,20 @@ class CalDB():
         user = self.users_collection.find_one({"username": username})
         return user
 
+    def edit_user(self, username, password=None, first_name=None, last_name=None):
+        edit_dict = {}
+        if password is not None:
+            edit_dict.update({"password": password})
+        if first_name is not None:
+            edit_dict.update({"first_name": first_name})
+        if last_name is not None:
+            edit_dict.update({"last_name": last_name})
+
+        self.items_collection.update_one(
+            {"username" : username},
+            {"$set": edit_dict}
+        )
+
     def create_event(self,username, event_id, start_time, end_time, description, location, recurrence): # we should use the date-time format used by ical for easier maintenance and conversion
         self.users_collection.update_one(
             {"username": username},

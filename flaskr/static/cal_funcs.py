@@ -1,66 +1,16 @@
 from os import write
-from pymongo import MongoClient # MongoDB Library to connect to database.
 from datetime import datetime, tzinfo # Used to get timestamps for database information
-import ssl # Used to specify certificate connection for MongoDB
 from icalendar import Calendar, Event
 import pytz
-from typing import List
 import csv
-
-
-cluster = MongoClient("mongodb+srv://nickp:UEuYChybyfDeiRRq@cal0.uud0f.mongodb.net/test", ssl_cert_reqs=ssl.CERT_NONE)
-cal_db = cluster["calendar"]
-users_collection = cal_db["users"]
-
-def create_user( username, password, first_name, last_name):
-    users_collection.insert_one(
-        {
-            "username": username,
-            "password": password,
-            "first_name": first_name,
-            "last_name": last_name,
-            "events": [],
-            "friends": []
-        }
-    )
-
-def create_event(username, event_id, start_time, end_time, description, location, recurrence): # we should use the date-time format used by ical for easier maintenance and conversion
-    users_collection.update_one(
-        {"username": username},
-        {"$push":
-            {"events":
-                {
-                    "event_id": event_id,
-                    #"event_date": event_date, wrapping into datetime
-                    "start_time": start_time,
-                    "end_time": end_time,
-                    "description": description,
-                    "location": location,
-                    "recurrence": recurrence
-                }
-            }
-        }
-
-    )
-
-def add_friend( username, f_username):
-    users_collection.update_one(
-        {"username": username},
-        {"$push":
-            {"friends":
-                {
-                    "username": f_username
-                }
-            }
-        }
-    )
+from database_funcs import CalDB
 
 #builds calendar file based on given format: ics, csv
 def export_calendar( username, format):
 
     #db queries
     #TODO: Error handling
-    user = users_collection.find_one({"username" : username})
+    user = CalDB.find_user(username)
     events = user["events"]
     
     if format.lower() == "ics":
@@ -146,11 +96,3 @@ def build_csv( events):
 
     #print(csv_data)
     return csv_data
-
-
-export_calendar( "testy", "csv" )
-
-#confirmed working
-#create_user("testery","plaintext smile", "Two", "Tester")
-#create_event("testy", "1A", "1400", "1500", "a second test event", "maybe a location", 0)
-#add_friend("testy","testery")

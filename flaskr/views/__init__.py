@@ -14,3 +14,6 @@ def init_app(app):
 
     from .calendar import cal_blueprint as calendar
     app.register_blueprint(calendar)
+
+    from .login import login_blueprint as login
+    app.register_blueprint(login)

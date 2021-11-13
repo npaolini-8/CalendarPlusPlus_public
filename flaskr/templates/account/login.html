@@ -1,15 +1,18 @@
 {% extends 'base.html' %}
-<html lang="en">
-<meta charset="UTF-8">
-<title>
-    {% block title %}
-        LOGIN
-    {% endblock %}
-</title>
 {% block head %}
     {{ super() }}
+    <title>
+        {% block title %}
+            LOGIN
+        {% endblock %}
+    </title>
 {% endblock head %}
 {% block content %}
-
+    <form method="post">
+        <label for="username">Username</label>
+        <input name="username" id="username" required>
+        <label for="password">Password</label>
+        <input type="password" name="password" id="password" required>
+        <input type="submit" value="Register">
+    </form>
 {% endblock %}
-</html>

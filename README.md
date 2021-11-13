@@ -3,7 +3,8 @@
 ## Basic Utilities to Set Up
 - [X] Flask
 - [X] Bootstrap
-- [ ] MongoDB
+- [X] MongoDB
+
 ## ToDo's
 - [ ] Downloadable/Uploadable template for schedules
 - [ ] Compare Schedules

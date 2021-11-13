@@ -12,8 +12,6 @@ def init_app(app):
     # index route
     app.register_blueprint(main_blueprint)
 
-    from .calendar import cal_blueprint as calendar
-    app.register_blueprint(calendar)
-
-    from .login import login_blueprint as login
-    app.register_blueprint(login)
+    from . import calendar, authenticate
+    app.register_blueprint(calendar.cal_blueprint)
+    app.register_blueprint(authenticate.login_blueprint)

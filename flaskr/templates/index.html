@@ -8,5 +8,10 @@
 </head>
 {% block content %}
     <h1>WELCOME TO CALENDARPLUSPUS!</h1>
+    <ul>
+        <li><a href="{{ url_for('authenticate.logout') }}">Log Out</a>
+        <li><a href="{{ url_for('authenticate.register') }}">Register</a>
+        <li><a href="{{ url_for('authenticate.login') }}">Log In</a>
+    </ul>
 {% endblock %}
 </html>

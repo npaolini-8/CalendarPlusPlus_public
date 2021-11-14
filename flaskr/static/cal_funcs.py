@@ -143,5 +143,37 @@ def build_csv( events):
     #print(csv_data)
     return csv_data
 
+def import_calendar( username, cal_str, format ):
+
+    #assuming string input from app this file read would simply stay as variable input
+    #file read done for testing
+
+    events = calendar_db.find_user(username)["events"]
+
+    cal_file = open("export_test/test.ics", 'r')
+
+    if format == "ics":
+
+        cal = Calendar()
+
+        cal_str = cal_file.read()
+        components = cal.from_ical(cal_str)
+
+        for component in components.walk():
+            if component.name == "VEVENT":
+                # print(component.get('summary'))
+                # print(component.get('dtstart').dt.astimezone(pytz.utc).strftime("%Y%m%dT%H%M%SZ"))
+                # print(component.decoded('dtstart'))
+                # print(component.get('dtend').dt.astimezone(pytz.utc).strftime("%Y%m%dT%H%M%SZ"))
+                
+                events.append({"event_id":component.get('summary'),"start_time":component.get('dtstart').dt.astimezone(pytz.utc).strftime("%Y%m%dT%H%M%SZ"),\
+                     "end_time":component.get('dtend').dt.astimezone(pytz.utc).strftime("%Y%m%dT%H%M%SZ"), "description":component.get('description'),  "location":component.get('location')})
+                
+
+        #print(components)
+
+    calendar_db.update_event_list(username,events)
+
 #print( datetime.now(pytz.utc))
-export_calendar( "testy", "ics" )
+#export_calendar( "testy", "ics" )
+import_calendar("testery","test","ics")

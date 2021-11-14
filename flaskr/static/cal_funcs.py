@@ -1,5 +1,6 @@
 from os import write
-from datetime import datetime, tzinfo # Used to get timestamps for database information
+from datetime import datetime, tzinfo
+from re import split # Used to get timestamps for database information
 from icalendar import Calendar, Event
 import pytz
 import csv
@@ -120,6 +121,7 @@ def build_csv( events):
     csv_data.append(row)
 
     for item in events:
+        #TODO: Timezone in google csv? Are we going to get this from front end?
         start_components = get_date_components(item["start_time"])
         end_components = get_date_components(item["end_time"])
 
@@ -143,6 +145,8 @@ def build_csv( events):
     #print(csv_data)
     return csv_data
 
+
+#TODO: add accounting for optional fields
 def import_calendar( username, cal_str, format ):
 
     #assuming string input from app this file read would simply stay as variable input
@@ -150,15 +154,16 @@ def import_calendar( username, cal_str, format ):
 
     events = calendar_db.find_user(username)["events"]
 
-    cal_file = open("export_test/test.ics", 'r')
-
     if format == "ics":
 
         cal = Calendar()
 
+        cal_file = open("export_test/test.ics", 'r')
         cal_str = cal_file.read()
         components = cal.from_ical(cal_str)
 
+        #strftime string is formatted string output from datetime object to match current convention
+        #source: https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
         for component in components.walk():
             if component.name == "VEVENT":
                 # print(component.get('summary'))
@@ -168,12 +173,76 @@ def import_calendar( username, cal_str, format ):
                 
                 events.append({"event_id":component.get('summary'),"start_time":component.get('dtstart').dt.astimezone(pytz.utc).strftime("%Y%m%dT%H%M%SZ"),\
                      "end_time":component.get('dtend').dt.astimezone(pytz.utc).strftime("%Y%m%dT%H%M%SZ"), "description":component.get('description'),  "location":component.get('location')})
-                
 
-        #print(components)
+    #TODO: timezone again for google csv format, not sure if it is ever listed. we may need to "assume" based on selected timezone of current user
+    #TODO: this works for expected format of subject, start date, start time, end date, end time, description, and location, need to test for other cases
+    elif format == "gcsv":
+        with open("export_test/test.csv", 'r') as csv_file:
+            csv_reader = csv.DictReader(csv_file)
+
+            for row in csv_reader:
+                subj = row['Subject']
+
+                csv_start_date = row['Start Date']
+
+                #finding /s to account for inconsistent format
+                s_start_date = csv_start_date.split('/')
+
+                #accounts for 2 digit year input
+                if len(s_start_date[2]) == 2:
+                    s_start_date[2] = "20" + s_start_date[2]
+
+                csv_start_time = row['Start Time']
+
+                #splitting to account for AM/PM addition
+                s_start_time = csv_start_time.split()
+                start_time_digits = s_start_time[0].split(":")
+
+                #check for am/pm listing and modify hour accordingly
+                if len(s_start_time) > 1:
+                    if s_start_time[1] == "AM":
+                        if start_time_digits[0] == "12":
+                            start_time_digits[0] = "00"
+                    elif s_start_time[1] == "PM":
+                        if start_time_digits[0] != "12":
+                            start_time_digits[0] = str( int(start_time_digits[0]) + 12)
+
+                start_dt = datetime(int(s_start_date[2]),int(s_start_date[0]), int(s_start_date[1]),int(start_time_digits[0]),int(start_time_digits[1]))
+                start_string = start_dt.strftime("%Y%m%dT%H%M%SZ")
+
+                csv_end_date = row['End Date']
+
+                s_end_date = csv_end_date.split('/')
+
+                #accounts for 2 digit year input
+                if len(s_end_date[2]) == 2:
+                    s_end_date[2] = "20" + s_end_date[2]
+
+                csv_end_time = row['End Time']
+
+                #splitting to account for AM/PM addition
+                s_end_time = csv_end_time.split()
+                end_time_digits = s_end_time[0].split(":")
+
+                #check for am/pm listing and modify hour accordingly
+                if len(s_end_time) > 1:
+                    if s_end_time[1] == "AM":
+                        if end_time_digits[0] == "12":
+                            end_time_digits[0] = "00"
+                    elif s_end_time[1] == "PM":
+                        if end_time_digits[0] != "12":
+                            end_time_digits[0] = str( int(end_time_digits[0]) + 12)
+
+                end_dt = datetime(int(s_end_date[2]),int(s_end_date[0]), int(s_end_date[1]),int(end_time_digits[0]),int(end_time_digits[1]))
+                end_string = end_dt.strftime("%Y%m%dT%H%M%SZ")
+
+                desc = row['Description']
+                loc = row['Location']
+
+                events.append({"event_id": subj,"start_time": start_string,"end_time": end_string,"description": desc, "location": loc })
 
     calendar_db.update_event_list(username,events)
 
 #print( datetime.now(pytz.utc))
 #export_calendar( "testy", "ics" )
-import_calendar("testery","test","ics")
+#import_calendar("testery","test","gcsv")

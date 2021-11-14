@@ -10,6 +10,14 @@
 {% block content %}
     <form method="post">
         <div class="form-floating mb-3">
+            <input name="first_name" class="form-control" id="first_name" placeholder="First" required>
+            <label for="first_name">First Name</label>
+        </div>
+        <div class="form-floating mb-3">
+            <input name="last_name" class="form-control" id="last_name" placeholder="Last" required>
+            <label for="last_name">Last Name</label>
+        </div>
+        <div class="form-floating mb-3">
             <input name="username" class="form-control" id="username" placeholder="name@example.com" required>
             <label for="username">Username</label>
         </div>

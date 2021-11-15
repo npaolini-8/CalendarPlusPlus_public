@@ -20,6 +20,7 @@ def register():
         elif not password:
             error = 'Password is required'
 
+
         mongo.CalDB().create_user(username, password, first_name, last_name)
         #if error is None:
         #flash(error)

@@ -1,3 +1,4 @@
+from functools import wraps
 from flask import Blueprint, flash, g, redirect, render_template, request, session, url_for
 from werkzeug.security import check_password_hash, generate_password_hash
 from flaskr.static import database_funcs as mongo
@@ -66,6 +67,7 @@ def logout():
 
 
 # registers a function that runs before the view, no matter what URL is requested
+# code snippet taken from https://flask.palletsprojects.com/en/2.0.x/tutorial/views/
 @login_blueprint.before_app_request
 def load_logged_in_user():
     user_id = session.get('user_id')
@@ -76,8 +78,12 @@ def load_logged_in_user():
         g.user = db.find_user(user_id)
 
 
+# This decorator returns a new view function that wraps the original view it’s applied to.
+# The new function checks if a user is loaded and redirects to the login page otherwise.
+# If a user is loaded the original view is called and continues normally.
+# code snippet taken from https://flask.palletsprojects.com/en/2.0.x/tutorial/views/
 def login_required(view):
-    @functools.wraps(view)
+    @wraps(view)
     def wrapped_view(**kwargs):
         if g.user is None:
             return redirect(url_for('auth.login'))

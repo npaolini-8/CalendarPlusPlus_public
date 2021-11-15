@@ -55,7 +55,13 @@ class CalDB():
                 }
             }
 
-    )
+        )
+
+    def update_event_list(self, username, events ):
+        self.users_collection.update_one(
+            {"username": username},
+            {"$set": {"events":events} }
+        )
 
     def add_friend( self, username, f_username):
         self.users_collection.update_one(

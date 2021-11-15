@@ -65,6 +65,7 @@ def logout():
     return redirect(url_for('auth.login'))
 
 
+# registers a function that runs before the view, no matter what URL is requested
 @login_blueprint.before_app_request
 def load_logged_in_user():
     user_id = session.get('user_id')
@@ -75,12 +76,12 @@ def load_logged_in_user():
         g.user = db.find_user(user_id)
 
 
-# def login_required(view):
-#     @functools.wraps(view)
-#     def wrapped_view(**kwargs):
-#         if g.user is None:
-#             return redirect(url_for('auth.login'))
-#
-#         return view(**kwargs)
-#
-#     return wrapped_view
+def login_required(view):
+    @functools.wraps(view)
+    def wrapped_view(**kwargs):
+        if g.user is None:
+            return redirect(url_for('auth.login'))
+
+        return view(**kwargs)
+
+    return wrapped_view

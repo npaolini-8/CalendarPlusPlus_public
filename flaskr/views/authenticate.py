@@ -46,12 +46,13 @@ def login():
             return redirect(url_for('auth.login'))
         elif not check_password_hash(user['password'], password):
             error = 'Incorrect password'
+            flash(error)
             return redirect(url_for('auth.login'))
 
         if error is None:
             session.clear()
             session['user_id'] = user['username']
-            return redirect(url_for('main.home'))
+            return redirect(url_for('calendar.calendar'))
 
         flash(error)
 
@@ -61,7 +62,7 @@ def login():
 @login_blueprint.route('/logout/')
 def logout():
     session.clear()
-    return redirect(url_for('main.home'))
+    return redirect(url_for('auth.login'))
 
 
 @login_blueprint.before_app_request

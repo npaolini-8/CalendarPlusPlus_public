@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+<html lang="en">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+<title>
+    {% block title %}
+        My Calendar
+    {% endblock %}
+</title>
+
+<style>
+
+</style>
+
+{% block head %}
+    {{ super() }}
+{% endblock head %}
+{% block content %}
+    {% block calendar %}
+
+
+<style>
+    div .align-right {
+        padding-left: 400px;
+    }
+</style>
+
+<!-- Body -->
+        <div class="container-md my-2">
+            <div class="calendar-header">
+                <nav>
+                    <button type="button" class="btn btn-info" id="prev">
+                        <i class="bi bi-arrow-left"></i>
+                    </button>
+                    <button type="button" class="btn btn-info" id="next">
+                        <i class="bi bi-arrow-right"></i>
+                    </button>
+                    <div class="btn-group align-right" role="group" aria-label="Basic radio toggle button group">
+                        <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" checked="">
+                        <label class="btn btn-outline-primary" for="btnradio1">Daily</label>
+                        <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off" checked="">
+                        <label class="btn btn-outline-primary" for="btnradio2">Weekly</label>
+                        <input type="radio" class="btn-check" name="btnradio" id="btnradio3" autocomplete="off" checked="">
+                        <label class="btn btn-outline-primary" for="btnradio3">Monthly</label>
+                    </div>
+                </nav>
+                <div class="row header-title">
+                    <div class="header-text my-3">
+                        <h3 id="date"></h3>
+                    </div>
+                </div>
+            </div>
+            <div class="calendar-content">
+                <div id="calendar-table">
+                    <div id="table-header">
+                        <div class="row">
+                            <div class="col">Mon</div>
+                            <div class="col">Tue</div>
+                            <div class="col">Wed</div>
+                            <div class="col">Thu</div>
+                            <div class="col">Fri</div>
+                            <div class="col">Sat</div>
+                            <div class="col">Sun</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endblock calendar %}
+{% endblock content %}
+{% block scripts %}
+    {{ super() }}
+    <script>
+        n =  new Date();
+        y = n.getFullYear();
+        m = n.getMonth() + 1;
+        d = n.getDate();
+        document.getElementById("date").innerHTML = m + "/" + d + "/" + y;
+    </script>
+{% endblock scripts %}

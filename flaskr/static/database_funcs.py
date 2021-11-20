@@ -1,14 +1,16 @@
-from pymongo import MongoClient # MongoDB Library to connect to database.
-from datetime import datetime, tzinfo # Used to get timestamps for database information
-import ssl # Used to specify certificate connection for MongoDB
+from pymongo import MongoClient  # MongoDB Library to connect to database.
+from datetime import datetime, tzinfo  # Used to get timestamps for database information
+import ssl  # Used to specify certificate connection for MongoDB
+
 
 class CalDB():
     def __init__(self):
-        self.cluster = MongoClient("mongodb+srv://nickp:UEuYChybyfDeiRRq@cal0.uud0f.mongodb.net/test", ssl_cert_reqs=ssl.CERT_NONE)
+        self.cluster = MongoClient("mongodb+srv://nickp:UEuYChybyfDeiRRq@cal0.uud0f.mongodb.net/test",
+                                   ssl_cert_reqs=ssl.CERT_NONE)
         self.cal_db = self.cluster["calendar"]
         self.users_collection = self.cal_db["users"]
 
-    def create_user( self, username, password, first_name, last_name):
+    def create_user(self, username, password, first_name, last_name):
         self.users_collection.insert_one(
             {
                 "username": username,
@@ -18,9 +20,9 @@ class CalDB():
                 "events": [],
                 "friends": []
             }
-    )
+        )
 
-    def find_user( self, username ):
+    def find_user(self, username):
         user = self.users_collection.find_one({"username": username})
         return user
 
@@ -34,18 +36,19 @@ class CalDB():
             edit_dict.update({"last_name": last_name})
 
         self.items_collection.update_one(
-            {"username" : username},
+            {"username": username},
             {"$set": edit_dict}
         )
 
-    def create_event(self,username, event_id, start_time, end_time, description, location, recurrence): # we should use the date-time format used by ical for easier maintenance and conversion
+    def create_event(self, username, event_id, start_time, end_time, description, location,
+                     recurrence):  # we should use the date-time format used by ical for easier maintenance and conversion
         self.users_collection.update_one(
             {"username": username},
             {"$push":
                 {"events":
                     {
                         "event_id": event_id,
-                        #"event_date": event_date, wrapping into datetime
+                        # "event_date": event_date, wrapping into datetime
                         "start_time": start_time,
                         "end_time": end_time,
                         "description": description,
@@ -57,13 +60,13 @@ class CalDB():
 
         )
 
-    def update_event_list(self, username, events ):
+    def update_event_list(self, username, events):
         self.users_collection.update_one(
             {"username": username},
-            {"$set": {"events":events} }
+            {"$set": {"events": events}}
         )
 
-    def add_friend( self, username, f_username):
+    def add_friend(self, username, f_username):
         self.users_collection.update_one(
             {"username": username},
             {"$push":
@@ -73,4 +76,4 @@ class CalDB():
                     }
                 }
             }
-    )
+        )

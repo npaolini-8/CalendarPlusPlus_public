@@ -3,15 +3,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-{% block title %}
-    Month
-{% endblock %}
-
 {% block head %}
     {{ super() }}
+    {% block title %}
+        Month
+    {% endblock %}
 {% endblock head %}
-
-
 {% block view %}
     <h3 class="justify-content-center">
         Month

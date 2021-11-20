@@ -13,7 +13,6 @@
 
 ## Big MVP Goals
 - [ ] Local instance for single users
-- [ ] PlugIn System
 
 ## Stretch Goals
 - [ ] Online interaction with other users

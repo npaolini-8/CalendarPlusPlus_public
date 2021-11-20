@@ -10,7 +10,7 @@
 {% block content %}
     {% block login %}
         <main class="container d-flex justify-content-center align-items-center"
-              style="min-height: 100vh">
+              style="min-height: 50vh">
             <form method="post" class="border shadow p-3 rounded"
                   style="width: 25vw;">
                 <h1 class="text-center p-3">LOGIN</h1>
@@ -19,11 +19,26 @@
                     <label for="username">Username</label>
                 </div>
                 <div class="form-floating mb-3">
-                    <input type="password" class="form-control" name="password" id="password" placeholder="********" required>
+                    <input name="password" type="password" class="form-control" id="password" placeholder="********" required>
                     <label for="password" class="form-label">Password</label>
                 </div>
                 <input type="submit" class="btn btn-primary " value="LOGIN"/>
+                <div class="d-flex justify-content-center align-items-center mt-2" style="font-size: small">
+                    <p>Don't have an account?
+                    <a class="link" href="{{ url_for('auth.register') }}"> Register </a>
+                    </p>
+                </div>
             </form>
         </main>
     {% endblock login %}
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                <div class="container alert alert-warning justify-content-center align-items-center d-flex"
+                style="width: 15vw">
+                    {{ message }} &#x1F613;
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
 {% endblock content %}

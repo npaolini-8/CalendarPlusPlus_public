@@ -54,7 +54,6 @@ def login():
             session.clear()
             session['user_id'] = user['username']
             return redirect(url_for('calendar.calendar'))
-
         flash(error)
 
     return render_template('account/login.html')

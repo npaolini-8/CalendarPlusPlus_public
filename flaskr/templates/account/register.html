@@ -30,6 +30,11 @@
                 <label for="password" class="form-label">Password</label>
             </div>
             <input type="submit" class="btn btn-primary " value="REGISTER"/>
+            <div class="d-flex justify-content-center align-items-center mt-2" style="font-size: small">
+                    <p>Already have an account?
+                    <a class="link" href="{{ url_for('auth.login') }}"> Login </a>
+                    </p>
+                </div>
         </form>
     </main>
 {% endblock %}

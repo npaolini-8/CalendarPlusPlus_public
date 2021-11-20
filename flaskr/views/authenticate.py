@@ -1,11 +1,17 @@
 from functools import wraps
 from flask import Blueprint, flash, g, redirect, render_template, request, session, url_for
 from werkzeug.security import check_password_hash, generate_password_hash
-from flaskr.static import database_funcs as mongo
 
+# this is the best workaround at the moment
+# do not replicate in your own project
+try:
+    from flaskr.dbfunc import database_funcs as mongo
+except ModuleNotFoundError:
+    from dbfunc import database_funcs as mongo
 
 login_blueprint = Blueprint("auth", __name__, url_prefix='/account')
 db = mongo.CalDB()
+
 
 @login_blueprint.route('/register/', methods=['GET', 'POST'])
 def register():
@@ -34,7 +40,7 @@ def register():
 
 @login_blueprint.route('/login/', methods=['GET', 'POST'])
 def login():
-    if request.method =='POST':
+    if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
         error = None

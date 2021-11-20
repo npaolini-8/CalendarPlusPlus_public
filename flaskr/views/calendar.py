@@ -8,3 +8,4 @@ cal_blueprint = Blueprint("calendar", __name__, url_prefix='/calendar')
 @authenticate.login_required
 def calendar():
     return render_template('calendar/calendar.html')
+

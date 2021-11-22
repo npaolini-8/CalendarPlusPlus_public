@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request
 from . import authenticate
-import calendar
+#import calendar
 
 cal_blueprint = Blueprint("calendar", __name__, url_prefix='/calendar')
 
@@ -17,3 +17,4 @@ def calendar():
 #        print(calendar.calendar(2021))
 #    else:
 #        return render_template('calendar/calendar.html')
+

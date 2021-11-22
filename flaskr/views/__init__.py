@@ -1,4 +1,4 @@
-from flask import Blueprint, redirect, url_for
+from flask import Blueprint, render_template, redirect, url_for
 
 main_blueprint = Blueprint("main", __name__, static_folder="../static")
 
@@ -6,6 +6,7 @@ main_blueprint = Blueprint("main", __name__, static_folder="../static")
 @main_blueprint.route('/')
 def home():
     return redirect(url_for('calendar.calendar'))
+    #return render_template('calendar/yearly_view.html')
 
 
 def init_app(app):

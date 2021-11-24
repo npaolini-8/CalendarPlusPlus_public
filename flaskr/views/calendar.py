@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request
 from . import authenticate
-import calendar
+
 
 cal_blueprint = Blueprint("calendar", __name__, url_prefix='/calendar')
 
@@ -11,9 +11,7 @@ def calendar():
     return render_template('calendar/calendar.html')
 
 
-#@cal_blueprint.route('/year', methods=['GET', 'POST'])
-#def yearly_view():
-#    if request.method == 'POST':
-#        print(calendar.calendar(2021))
-#    else:
-#        return render_template('calendar/calendar.html')
+@cal_blueprint.route('/yearView')
+def yearly_view():
+    return render_template('calendar/yearly_vie.html')
+

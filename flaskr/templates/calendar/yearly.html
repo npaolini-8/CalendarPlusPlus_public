@@ -1,18 +1,10 @@
-{% extends 'base.html' %}
+
 <!doctype html>
 <html lang="en">
-    <meta charset="UTF-8">
-    <title>{% block title %} Yearly View {% endblock %}</title>
-
-    {% block head %}
-    {{ super() }}
-    {% endblock head %}
-
-    {% block content %}
-    {% block calendar %}
-
-    <style>
-html {
+    <head>
+        <title>Yearly View</title>
+        <style>
+            html {
   font-size: 80%;
 }
 
@@ -172,22 +164,22 @@ script {
     transform: translateY(1000px);
     opacity: 0;
   }
-
-    </style>
-
-    <!--Body-->
+        </style>
+    </head>
+    <body>
+        <header>
+            {% block head %}
+            {{ super() }}
+            {% endblock head %}
+        </header>
         <section>
+            </br>
             <h1 id="year"></h1>
             <div class="calendar"></div>
         </section>
-    {% endblock calendar %}
-    {% endblock content %}
-
-
-    {% block scripts %}
-    {{ super() }}
+    </body>
     <script>
-    var monthNamesRy = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+        var monthNamesRy = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
     var daysOfTheWeekRy = ["S", "M", "T", "W", "T", "F", "S"]
 
     var d = new Date();
@@ -338,5 +330,4 @@ script {
 
     },false);
     </script>
-
-    {% endblock scripts %}
+</html>

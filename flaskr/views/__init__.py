@@ -9,6 +9,7 @@ def home():
     #return render_template('calendar/yearly_view.html')
 
 
+
 def init_app(app):
     # index route
     app.register_blueprint(main_blueprint)
@@ -16,3 +17,5 @@ def init_app(app):
     from . import calendar, authenticate
     app.register_blueprint(calendar.cal_blueprint)
     app.register_blueprint(authenticate.login_blueprint)
+
+

@@ -1,6 +1,5 @@
 from flask import Flask
 
-
 def create_app():
     """
     Application factory for Flask, see
@@ -14,6 +13,7 @@ def create_app():
     views.init_app(flask)
 
     return flask
+
 
 
 if __name__ == '__main__':

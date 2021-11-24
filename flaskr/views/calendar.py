@@ -12,6 +12,6 @@ def calendar():
 
 
 @cal_blueprint.route('/yearView')
+@authenticate.login_required
 def yearly_view():
-    return render_template('calendar/yearly_vie.html')
-
+    return render_template('calendar/yearly_view.html')

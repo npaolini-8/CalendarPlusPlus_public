@@ -12,8 +12,7 @@ html {
   font-family: "Times New Roman", Times, serif;
 }
 
-.calendar,
-section {
+.calendar, section {
   max-width: 50rem;
 }
 

@@ -34,6 +34,7 @@ def week():
     week = week[0]
     return render_template('calendar/week.html', cal=pycal, month=month, year=year, hours=hours, week=week)
 
+
 @cal_blueprint.route('/day/')
 @authenticate.login_required
 def day():

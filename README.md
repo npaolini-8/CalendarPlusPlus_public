@@ -6,10 +6,12 @@
 - [X] MongoDB
 
 ## ToDo's
+- [X] User Accounts
 - [ ] Downloadable/Uploadable template for schedules
 - [ ] Compare Schedules
 - [ ] Timed Schedules
 - [ ] Ability to block out if there is an activity 
+- [ ] Deploy App
 
 ## Big MVP Goals
 - [ ] Local instance for single users

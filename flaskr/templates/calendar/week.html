@@ -1,0 +1,52 @@
+{% extends 'base_cal.html' %}
+
+{% block head %}
+    {{ super() }}
+    {% block title %}
+    {% endblock %}
+{% endblock head%}
+{% block view %}
+    <h3 class="text-center">
+        Week
+    </h3>
+{% endblock view %}
+{% block side_content %}
+
+{% endblock side_content %}
+{% block calendar %}
+    <div class="container-fluid mt-4">
+        <div class="container-md my-2">
+            <div class="calendar-header">
+                <div class="row header-title">
+                    <div class="header-text my-3">
+                        <h1 id="date" class="text-center"> {{ cal.month_name[month] }},  {{ year }}</h1>
+                    </div>
+                </div>
+            </div>
+            <table class="table table-sm table-responsive table-hover table-bordered" id="calendar-table">
+                <thead class="table-dark text-center" id="table-header">
+                    <th />
+                    {% for date, day in week %}
+                        <th>{{ cal.day_name[day] }}
+                            <div class="text-muted">{{ date }}</div>
+                        </th>
+                    {% endfor %}
+                </thead>
+                <tbody class="text-center" id="table-body">
+                    {% for hour in hours %}
+                        <tr>
+                            <td style="padding: 0.5em">{{ hour }}</td>
+                            {% for num in range(7) %}
+                                <td id="days"></td>
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock calendar %}
+{% block scripts %}
+    {{ super() }}
+    <script src="{{ url_for('static', filename = 'javascript/calendar/week.js')}}"></script>
+{% endblock scripts %}

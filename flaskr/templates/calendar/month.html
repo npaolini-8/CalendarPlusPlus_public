@@ -81,4 +81,9 @@
 {% endblock calendar %}
 {% block scripts %}
     {{ super() }}
+    <script>
+        month = document.getElementById("month")
+        month.classList.add('active')
+        month.setAttribute("aria-current","page")
+    </script>
 {% endblock scripts %}

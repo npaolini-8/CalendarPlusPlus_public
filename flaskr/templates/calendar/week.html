@@ -49,4 +49,9 @@
 {% block scripts %}
     {{ super() }}
     <script src="{{ url_for('static', filename = 'javascript/calendar/week.js')}}"></script>
+    <script>
+        week = document.getElementById("week")
+        week.classList.add('active')
+        week.setAttribute("aria-current","page")
+    </script>
 {% endblock scripts %}

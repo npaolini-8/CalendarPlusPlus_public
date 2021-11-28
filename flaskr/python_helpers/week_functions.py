@@ -8,10 +8,11 @@ def get_hours():
     hours = []
     hour = start.hour
 
-    while start < stop and hour < 24:
-        hour = 24 if start.hour == 0 else start.hour
+    while start < stop and hour < 23:
+        hour = start.hour
         hour = "0"+str(hour) if hour < 10 else hour
         hours.append(f"{hour}:00")
         start += timedelta(hours=1)
+
 
     return hours

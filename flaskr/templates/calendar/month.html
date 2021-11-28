@@ -6,12 +6,39 @@
 {% block head %}
     {{ super() }}
     {% block title %}
-        Month
     {% endblock %}
 {% endblock head %}
 {% block view %}
-    <h3 class="justify-content-center">
-        Month
+    <p class="text-center text-light">
+        {{ month }} {{ year }}
+    </p>
+    <div class="container">
+        <table id="calendar-table" class="table">
+            <thead class="text-light">
+            <tr>
+                {% for day in header %}
+                    <td class="text-center"> {{ day }}</td>
+                {% endfor %}
+            </tr>
+            </thead>
+            <tbody>
+            {% for row in day %}
+                <tr>
+                    {% for cell in row %}
+                        {% if cell != 0 %}
+                            <td class="text-center text-light">{{ cell }}</td>
+                        {% else %}
+                            <td class="text-center" ></td>
+                        {% endif %}
+
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <h3 class="text-center text-light">
+        Options
     </h3>
 {% endblock %}
 {% block side_content %}
@@ -20,42 +47,38 @@
 {% block calendar %}
     <div class="container-md my-2">
         <div class="calendar-header">
-            <button type="button" class="btn btn-info" id="prev">
-                <i class="bi bi-arrow-left"></i>
-            </button>
-            <button type="button" class="btn btn-info" id="next">
-                <i class="bi bi-arrow-right"></i>
-            </button>
             <div class="row header-title">
                 <div class="header-text my-3">
-                    <h3 id="date"></h3>
+                    <h1 id="date" class="text-center"> {{ month }} - {{ year }}</h1>
                 </div>
             </div>
         </div>
-        <div class="calendar-content">
-            <div id="calendar-table">
-                <div id="table-header">
-                    <div class="row">
-                        <div class="col">Mon</div>
-                        <div class="col">Tue</div>
-                        <div class="col">Wed</div>
-                        <div class="col">Thu</div>
-                        <div class="col">Fri</div>
-                        <div class="col">Sat</div>
-                        <div class="col">Sun</div>
-                    </div>
-                </div>
-            </div>
+        <div class="container">
+            <table id="calendar-table" class="table table-bordered table-hover">
+                <thead class="table-primary">
+                    <tr>
+                        {% for day in header %}
+                            <td class="text-center" style="padding: 1em"> {{ day }}</td>
+                        {% endfor %}
+                    </tr>
+                </thead>
+            <tbody>
+            {% for row in day %}
+                <tr>
+                    {% for cell in row %}
+                        {% if cell != 0 %}
+                            <td class="text-center" style="padding: 3em">{{ cell }}</td>
+                        {% else %}
+                            <td class="text-center" style="padding: 3em"></td>
+                        {% endif %}
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+            </tbody>
+            </table>
         </div>
     </div>
 {% endblock calendar %}
 {% block scripts %}
     {{ super() }}
-    <script>
-        n =  new Date();
-        y = n.getFullYear();
-        m = n.getMonth() + 1;
-        d = n.getDate();
-        document.getElementById("date").innerHTML = m + "/" + d + "/" + y;
-    </script>
 {% endblock scripts %}

@@ -1,181 +1,203 @@
 {% extends 'base.html' %}
 <html lang="en">
-    <meta charset="UTF-8">
-    <title>{% block title %} Yearly View {% endblock %}</title>
+<meta charset="UTF-8">
+<title>
+    {% block title %}
+    Yearly View
+    {% endblock %}
+</title>
+<link rel="stylesheet" type="text/css" href="style.css">
 
-    {% block head %}
-        {{ super() }}
-    {% endblock head %}
-    {% block content %}
-        {% block calendar %}
+{% block head %}
+    {{ super() }}
+{% endblock head %}
+{% block content %}
+    {% block calendar %}
+<style>
+    html {
+        font-size: 100%;
+    }
 
-    <style>
-        html {
-          font-size: 80%;
-        }
+    * {
+      margin: 0;
+      padding: 0;
+      font-family: "Times New Roman", Times, serif;
+    }
 
-        * {
-          margin: 0;
-          padding: 0;
-          font-family: "Times New Roman", Times, serif;
-        }
+    .calendar, section {
+      max-width: 900px;    // 50 rem
+    }
 
-        .calendar, section {
-          max-width: 50rem;
-        }
+    .day {
+      width: 6.0em;         // 1.5em;
+      height: 1.5em;
+    }
 
-        .day {
-          width: 1.5em;
-          height: 1.5em;
-        }
+    .day:nth-of-type(7n+1) {
+      color: #f09;
+    }
 
-        .day:nth-of-type(7n+1) {
-          color: #f09;
-        }
+    .to.day {
+      color: white;
+      background: #f09;
+      border-radius: 50%;
+    }
 
-        .to.day {
-          color: white;
-          background: #f09;
-          border-radius: 50%;
-        }
+    .month {
+      width: calc(6.0em * 7);       // 1.5em * 7
+      padding: 0.5em;               //1.0em
+      cursor: pointer;
+    }
 
-        .month {
-          width: calc(1.5em * 7);
-          padding: 1em;
-          cursor: pointer;
-        }
+    h4 {
+      font-size: 1em;
+      text-transform: uppercase;
+      color: #f09;
+    }
 
-        h4 {
-          font-size: 1em;
-          text-transform: uppercase;
-          color: #f09;
-        }
+    h1#year {
+      font-size: 2em;
+      height: 29px;
+      font-weight: normal;
+      padding: 1em 1em .5em 1em;
+      margin-bottom: .5em;
+      border-bottom: 5px double #d9d9d9;
+    }
 
-        h1#year {
-          font-size: 2em;
-          height: 29px;
-          font-weight: normal;
-          padding: 1em 1em .5em 1em;
-          margin-bottom: .5em;
-          border-bottom: 5px double #d9d9d9;
-        }
+    .no-flexbox .day {
+      text-align: center;
+      float: left;
+      line-height: 1.5em;
+    }
 
-        .no-flexbox .day {
-          text-align: center;
-          float: left;
-          line-height: 1.5em;
-        }
+    .no-flexbox h4 {
+      text-align: center;
+    }
 
-        .no-flexbox h4 {
-          text-align: center;
-        }
+    .no-flexbox h1 {
+      width: 4em;
+    }
 
-        .no-flexbox h1 {
-          width: 4em;
-        }
+    /* FLEXBOX styles */
+    yearly-body * {
+      display: flex;
+      justify-content: center;
+    }
 
+    h4 {
+      justify-content: center;
+      flex: 1 0 100%;
+      display: flex;
+      justify-content: center;
+    }
 
-        /* FLEXBOX styles*/
+    h1 {
+      justify-content: center;
+      align-self: stretch;
+      display: flex;
+      justify-content: center;
+    }
 
-        body, body * {
-          display: flex;
-          justify-content: center;
-        }
+    .calendar, .month {
+      flex-wrap: wrap;
+      display: flex;
+      justify-content: center;
+    }
 
-        h4 {
-          justify-content: center;
-          flex: 1 0 100%;
-        }
+    section {
+      flex-direction: column;
+      align-self: center;
+      display: flex;
+      justify-content: center;
+    }
 
-        h1 {
-          justify-content: center;
-          align-self: stretch;
-        }
+    .month {
+      align-items: flex-start;
+      display: flex;
+      justify-content: center;
+    }
 
-        .calendar, .month {
-          flex-wrap: wrap;
-        }
+    .day {
+      align-items: center;
+      justify-content: center;
+      display: flex;
+      justify-content: center;
+    }
 
-        section {
-          flex-direction: column;
-          align-self: center;
-        }
+    script {
+      display: none;
+    }
 
-        .month {
-          align-items: flex-start;
-        }
+    .cloneCont {
+      display: block;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      margin-left: -5em;
+      margin-top: -10.89em;
+      box-shadow: 0px 0px 5px 1px #ccc;
+      transform: scale(2, 2);
+      background: rgba(255, 255, 255, .9);
+      animation: redimensionar .5s cubic-bezier(.86, 0, .07, 1);
+      display: flex;
+      justify-content: center;
+    }
 
-        .day {
-          align-items: center;
-          justify-content: center;
-        }
+    .month.cloneMonth {
+      display: flex
+      display: flex;
+      justify-content: center;
+    }
 
-        script {
-          display: none;
-        }
+    .month.cloneMonth:after {
+      content: "\02718";
+      color: #f09;
+      position: absolute;
+      top: 1em;
+      right: 1em;
+      display: flex;
+      justify-content: center;
+    }
 
-        .cloneCont {
-          display: block;
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          margin-left: -5em;
-          margin-top: -10.89em;
-          box-shadow: 0px 0px 5px 1px #ccc;
-          transform: scale(2, 2);
-          background: rgba(255, 255, 255, .9);
-          animation: redimensionar .5s cubic-bezier(.86, 0, .07, 1);
-        }
+    .cloneCont.trans {
+      transform: translateY(1000px);
+      background: rgba(255, 255, 255, .9);
+      opacity: 0;
+      animation: trasladar .5s cubic-bezier(.86, 0, .07, 1);
+      display: flex;
+      justify-content: center;
+    }
 
-        .month.cloneMonth {
-          display: flex
-        }
+    @keyframes redimensionar {
+      0% {
+        transform: scale(1, 1);
+        background: rgba(255, 255, 255, .9);
+        opacity: 0;
+      }
+      100% {
+        transform: scale(2, 2);
+        background: rgba(255, 255, 255, .9);
+        opacity: 1;
+      }
+    }
 
-        .month.cloneMonth:after {
-          content: "\02718";
-          color: #f09;
-          position: absolute;
-          top: 1em;
-          right: 1em;
-        }
+    @keyframes trasladar {
+      0% {
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(1000px);
+        opacity: 0;
+    }
+</style>
 
-        .cloneCont.trans {
-          transform: translateY(1000px);
-          background: rgba(255, 255, 255, .9);
-          opacity: 0;
-          animation: trasladar .5s cubic-bezier(.86, 0, .07, 1);
-        }
-
-        @keyframes redimensionar {
-          0% {
-            transform: scale(1, 1);
-            background: rgba(255, 255, 255, .9);
-            opacity: 0;
-          }
-          100% {
-            transform: scale(2, 2);
-            background: rgba(255, 255, 255, .9);
-            opacity: 1;
-          }
-        }
-
-        @keyframes trasladar {
-          0% {
-            opacity: 1;
-          }
-          100% {
-            transform: translateY(1000px);
-            opacity: 0;
-          }
-        }
-
-    </style>
-
+    <body class="yearly-body">
     <!--Body-->
         <section>
             <h1 id="year"></h1>
             <div class="calendar"></div>
         </section>
+    </body>
     {% endblock calendar %}
 {% endblock content %}
 
@@ -184,10 +206,10 @@
     {{ super() }}
     <script>
     var monthNamesRy = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-    var daysOfTheWeekRy = ["S", "M", "T", "W", "T", "F", "S"]
+    var daysOfTheWeekRy = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fr", "Sat"]
 
     var d = new Date();
-    var year = d.getFullYear();// 2016
+    var year = d.getFullYear(); // displays current year
     document.querySelector("#year").innerHTML = year;
     var thisMonth = d.getMonth();// 0 - 11
     var today = d.getDate();// 1 -31

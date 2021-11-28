@@ -81,9 +81,6 @@
 {% endblock calendar %}
 {% block scripts %}
     {{ super() }}
-    <script>
-        month = document.getElementById("month")
-        month.classList.add('active')
-        month.setAttribute("aria-current","page")
-    </script>
+    <script src="{{ url_for('static', filename = 'javascript/navbar/highlight.js')}}"></script>
+    <script>makeActive("month")</script>
 {% endblock scripts %}

@@ -64,9 +64,6 @@
     d = n.getDate();
     document.getElementById("date").innerHTML = m + "/" + d + "/" + y;
 </script>
-<script>
-    day = document.getElementById("day")
-    day.classList.add('active')
-    day.setAttribute("aria-current","page")
-</script>
+<script src="{{ url_for('static', filename = 'javascript/navbar/highlight.js')}}"></script>
+<script>makeActive("day")</script>
 {% endblock scripts %}

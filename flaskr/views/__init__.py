@@ -5,7 +5,7 @@ main_blueprint = Blueprint("main", __name__, static_folder="../static")
 
 @main_blueprint.route('/')
 def home():
-    return redirect(url_for('calendar.calendar'))
+    return redirect(url_for('calendar.month'))
 
 
 def init_app(app):

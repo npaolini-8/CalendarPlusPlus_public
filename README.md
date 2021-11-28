@@ -1,4 +1,4 @@
-# CalenderPlusPlus
+# CalendarPlusPlus
 
 ## Basic Utilities to Set Up
 - [X] Flask

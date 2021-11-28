@@ -10,12 +10,7 @@ def create_app():
     flask.config['SECRET_KEY'] = "1a19f9414df3b48c05b67702b5cf7fffdff6964e"
 
     # initialize core blueprints/routes second
-    import views
+    from . import views
     views.init_app(flask)
 
     return flask
-
-
-if __name__ == '__main__':
-    app = create_app()
-    app.run(debug=True)

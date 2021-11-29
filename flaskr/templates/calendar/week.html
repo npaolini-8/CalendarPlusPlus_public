@@ -49,4 +49,6 @@
 {% block scripts %}
     {{ super() }}
     <script src="{{ url_for('static', filename = 'javascript/calendar/week.js')}}"></script>
+    <script src="{{ url_for('static', filename = 'javascript/navbar/highlight.js')}}"></script>
+    <script>makeActive("week")</script>
 {% endblock scripts %}

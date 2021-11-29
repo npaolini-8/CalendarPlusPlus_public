@@ -4,10 +4,10 @@
         {% if g.user %}
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                 <div class="navbar-nav">
-                    <a class="nav-link active" aria-current="page" href="{{ url_for('calendar.day') }}">Day</a>
-                    <a class="nav-link " href="{{ url_for('calendar.week') }}">Week</a>
-                    <a class="nav-link" href="{{ url_for('calendar.month') }}">Month</a>
-                    <a class="nav-link" href="{{ url_for('calendar.year') }}">Year</a>
+                    <a id = "day" class="nav-link"  href="{{ url_for('calendar.day') }}">Day</a>
+                    <a id = "week" class="nav-link" href="{{ url_for('calendar.week') }}">Week</a>
+                    <a id = "month" class="nav-link" href="{{ url_for('calendar.month') }}">Month</a>
+                    <a id = "year" class="nav-link" href="{{ url_for('calendar.year') }}">Year</a>
                 </div>
                 <span class="navbar-text">
                     <a class="nav-link" href="{{ url_for('auth.logout') }}">Log Out</a>

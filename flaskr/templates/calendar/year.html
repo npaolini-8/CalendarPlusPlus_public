@@ -9,306 +9,6 @@
 {% endblock head %}
 {% block view %}
     <!--sidebar-->
-    <p class="text-center text-light">{{ month1 }} {{ year }}</p>
-    <div class="container">
-        <table id="calendar-table" class="table">
-            <thead class="text-light">
-            <tr>
-                {% for day in header %}
-                    <td class="text-center"> {{ day }}</td>
-                {% endfor %}
-            </tr>
-            </thead>
-            <tbody>
-            {% for row in day %}
-                <tr>
-                    {% for cell in row %}
-                        {% if cell != 0 %}
-                            <td class="text-center text-light">{{ cell }}</td>
-                        {% else %}
-                            <td class="text-center" ></td>
-                        {% endif %}
-                    {% endfor %}
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    <p class="text-center text-light">{{ month2 }} {{ year }}</p>
-    <div class="container">
-        <table id="calendar-table" class="table">
-            <thead class="text-light">
-            <tr>
-                {% for day in header %}
-                    <td class="text-center"> {{ day }}</td>
-                {% endfor %}
-            </tr>
-            </thead>
-            <tbody>
-            {% for row in day %}
-                <tr>
-                    {% for cell in row %}
-                        {% if cell != 0 %}
-                            <td class="text-center text-light">{{ cell }}</td>
-                        {% else %}
-                            <td class="text-center" ></td>
-                        {% endif %}
-                    {% endfor %}
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    <p class="text-center text-light">{{ month3 }} {{ year }}</p>
-    <div class="container">
-        <table id="calendar-table" class="table">
-            <thead class="text-light">
-            <tr>
-                {% for day in header %}
-                    <td class="text-center"> {{ day }}</td>
-                {% endfor %}
-            </tr>
-            </thead>
-            <tbody>
-            {% for row in day %}
-                <tr>
-                    {% for cell in row %}
-                        {% if cell != 0 %}
-                            <td class="text-center text-light">{{ cell }}</td>
-                        {% else %}
-                            <td class="text-center" ></td>
-                        {% endif %}
-                    {% endfor %}
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    <p class="text-center text-light">{{ month4 }} {{ year }}</p>
-    <div class="container">
-        <table id="calendar-table" class="table">
-            <thead class="text-light">
-            <tr>
-                {% for day in header %}
-                    <td class="text-center"> {{ day }}</td>
-                {% endfor %}
-            </tr>
-            </thead>
-            <tbody>
-            {% for row in day %}
-                <tr>
-                    {% for cell in row %}
-                        {% if cell != 0 %}
-                            <td class="text-center text-light">{{ cell }}</td>
-                        {% else %}
-                            <td class="text-center" ></td>
-                        {% endif %}
-                    {% endfor %}
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    <p class="text-center text-light">{{ month5 }} {{ year }}</p>
-    <div class="container">
-        <table id="calendar-table" class="table">
-            <thead class="text-light">
-            <tr>
-                {% for day in header %}
-                    <td class="text-center"> {{ day }}</td>
-                {% endfor %}
-            </tr>
-            </thead>
-            <tbody>
-            {% for row in day %}
-                <tr>
-                    {% for cell in row %}
-                        {% if cell != 0 %}
-                            <td class="text-center text-light">{{ cell }}</td>
-                        {% else %}
-                            <td class="text-center" ></td>
-                        {% endif %}
-                    {% endfor %}
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    <p class="text-center text-light">{{ month6 }} {{ year }}</p>
-    <div class="container">
-        <table id="calendar-table" class="table">
-            <thead class="text-light">
-            <tr>
-                {% for day in header %}
-                    <td class="text-center"> {{ day }}</td>
-                {% endfor %}
-            </tr>
-            </thead>
-            <tbody>
-            {% for row in day %}
-                <tr>
-                    {% for cell in row %}
-                        {% if cell != 0 %}
-                            <td class="text-center text-light">{{ cell }}</td>
-                        {% else %}
-                            <td class="text-center" ></td>
-                        {% endif %}
-                    {% endfor %}
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    <p class="text-center text-light">{{ month7 }} {{ year }}</p>
-    <div class="container">
-        <table id="calendar-table" class="table">
-            <thead class="text-light">
-            <tr>
-                {% for day in header %}
-                    <td class="text-center"> {{ day }}</td>
-                {% endfor %}
-            </tr>
-            </thead>
-            <tbody>
-            {% for row in day %}
-                <tr>
-                    {% for cell in row %}
-                        {% if cell != 0 %}
-                            <td class="text-center text-light">{{ cell }}</td>
-                        {% else %}
-                            <td class="text-center" ></td>
-                        {% endif %}
-                    {% endfor %}
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    <p class="text-center text-light">{{ month8 }} {{ year }}</p>
-    <div class="container">
-        <table id="calendar-table" class="table">
-            <thead class="text-light">
-            <tr>
-                {% for day in header %}
-                    <td class="text-center"> {{ day }}</td>
-                {% endfor %}
-            </tr>
-            </thead>
-            <tbody>
-            {% for row in day %}
-                <tr>
-                    {% for cell in row %}
-                        {% if cell != 0 %}
-                            <td class="text-center text-light">{{ cell }}</td>
-                        {% else %}
-                            <td class="text-center" ></td>
-                        {% endif %}
-                    {% endfor %}
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    <p class="text-center text-light">{{ month9 }} {{ year }}</p>
-    <div class="container">
-        <table id="calendar-table" class="table">
-            <thead class="text-light">
-            <tr>
-                {% for day in header %}
-                    <td class="text-center"> {{ day }}</td>
-                {% endfor %}
-            </tr>
-            </thead>
-            <tbody>
-            {% for row in day %}
-                <tr>
-                    {% for cell in row %}
-                        {% if cell != 0 %}
-                            <td class="text-center text-light">{{ cell }}</td>
-                        {% else %}
-                            <td class="text-center" ></td>
-                        {% endif %}
-                    {% endfor %}
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    <p class="text-center text-light">{{ month10 }} {{ year }}</p>
-    <div class="container">
-        <table id="calendar-table" class="table">
-            <thead class="text-light">
-            <tr>
-                {% for day in header %}
-                    <td class="text-center"> {{ day }}</td>
-                {% endfor %}
-            </tr>
-            </thead>
-            <tbody>
-            {% for row in day %}
-                <tr>
-                    {% for cell in row %}
-                        {% if cell != 0 %}
-                            <td class="text-center text-light">{{ cell }}</td>
-                        {% else %}
-                            <td class="text-center" ></td>
-                        {% endif %}
-                    {% endfor %}
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    <p class="text-center text-light">{{ month11 }} {{ year }}</p>
-    <div class="container">
-        <table id="calendar-table" class="table">
-            <thead class="text-light">
-            <tr>
-                {% for day in header %}
-                    <td class="text-center"> {{ day }}</td>
-                {% endfor %}
-            </tr>
-            </thead>
-            <tbody>
-            {% for row in day %}
-                <tr>
-                    {% for cell in row %}
-                        {% if cell != 0 %}
-                            <td class="text-center text-light">{{ cell }}</td>
-                        {% else %}
-                            <td class="text-center" ></td>
-                        {% endif %}
-                    {% endfor %}
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    <p class="text-center text-light">{{ month12 }} {{ year }}</p>
-    <div class="container">
-        <table id="calendar-table" class="table">
-            <thead class="text-light">
-            <tr>
-                {% for day in header %}
-                    <td class="text-center"> {{ day }}</td>
-                {% endfor %}
-            </tr>
-            </thead>
-            <tbody>
-            {% for row in day %}
-                <tr>
-                    {% for cell in row %}
-                        {% if cell != 0 %}
-                            <td class="text-center text-light">{{ cell }}</td>
-                        {% else %}
-                            <td class="text-center" ></td>
-                        {% endif %}
-                    {% endfor %}
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    </div>
     <h3 class="text-center text-light">Options</h3>
 {% endblock %}
 {% block side_content %}
@@ -349,7 +49,7 @@
             </table>
         </div>
     </div>
-    <!--Feburary-->
+    <!--
     <div class="container-md my-2">
         <div class="calendar-header">
             <div class="row header-title">
@@ -383,7 +83,6 @@
             </table>
         </div>
     </div>
-    <!--March-->
     <div class="container-md my-2">
         <div class="calendar-header">
             <div class="row header-title">
@@ -417,7 +116,6 @@
             </table>
         </div>
     </div>
-    <!--April-->
     <div class="container-md my-2">
         <div class="calendar-header">
             <div class="row header-title">
@@ -715,9 +413,10 @@
             </table>
         </div>
     </div>
+    -->
 {% endblock calendar %}
 {% block scripts %}
     {{ super() }}
     <script src="{{ url_for('static', filename = 'javascript/navbar/highlight.js')}}"></script>
-    <script>makeActive("month")</script>
+    <script>makeActive("month1")</script>
 {% endblock scripts %}

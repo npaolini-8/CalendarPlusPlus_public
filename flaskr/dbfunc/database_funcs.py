@@ -40,8 +40,8 @@ class CalDB():
             {"$set": edit_dict}
         )
 
-    def create_event(self, username, event_id, start_time, end_time, description, location,
-                     recurrence):  # we should use the date-time format used by ical for easier maintenance and conversion
+    def create_event(self, username, event_id, start_time, end_time, description=None, location=None,
+                     recurrence=0):  # we should use the date-time format used by ical for easier maintenance and conversion
         self.users_collection.update_one(
             {"username": username},
             {"$push":
@@ -60,6 +60,70 @@ class CalDB():
 
         )
 
+    #built delete functionality into edit as you need to do the same iterative operation
+    #matching events on id, start, and end time. this combination should be unique, unless user is scheduling
+    #duplicate events for some reason
+    def edit_event(self, username, event_id, start_time, end_time, new_id=None,new_start=None,new_end=None,new_desc=None,new_loc=None,delete=False):
+        
+        if delete is not True: #dont bother looking at edit dict if youre
+            edit_dict ={}
+            if new_id is not None:
+                edit_dict.update({"events.$[eventitem].event_id": new_id})
+            if new_start is not None:
+                edit_dict.update({"events.$[eventitem].start_time": new_start})
+            if new_end is not None:
+                edit_dict.update({"events.$[eventitem].end_time": new_end})
+            if new_desc is not None:
+                edit_dict.update({"events.$[eventitem].description": new_desc})
+            if new_loc is not None:
+                edit_dict.update({"events.$[eventitem].location": new_loc})
+
+        if delete:
+            self.users_collection.update_one(
+                {
+                    "username" : username
+                },
+                {
+                    '$pull': {"events": {"event_id": event_id,"start_time": start_time,"end_time":end_time}}
+                }
+            )
+        else:
+            self.users_collection.update_one(
+                {
+                    "username" : username
+                },
+                {
+                  '$set' :edit_dict
+                },
+                upsert=False,
+                array_filters=[
+                    {
+                        "eventitem.event_id": event_id,
+                        "eventitem.start_time": start_time,
+                        "eventitem.end_time": end_time
+
+                    }
+                ]
+            )
+
+    #start and end params to get events in a given date range, after a start date, or before an end date
+    def get_event_list(self, username, start=None,end=None):
+
+        events = self.find_user(username)["events"]
+        return_list = []
+
+        if start is not None and end is not None:
+            pass
+        elif start is not None:
+            pass
+        elif end is not None:
+            pass
+        else:
+            return_list = events
+
+        return return_list
+
+
     def update_event_list(self, username, events):
         self.users_collection.update_one(
             {"username": username},
@@ -77,3 +141,21 @@ class CalDB():
                 }
             }
         )
+    
+    def remove_friend(self, username, f_username):
+        self.users_collection.update_one(
+            {
+                "username": username
+            },
+            {
+                '$pull': {"friends": {"username":f_username}}
+            }
+        )
+
+#cal = CalDB()
+
+#cal.create_event("testery","2A","20211021T140000","20211021T150000") #passed
+#cal.edit_event("testery","2A","20211021T140000","20211021T150000",new_desc="update event test") #passed
+#cal.edit_event("testery","2A","20211021T140000","20211021T150000",delete=True) #passed
+#cal.remove_friend("testery","testy") #passed
+#cal.add_friend("testery","testy") #passed

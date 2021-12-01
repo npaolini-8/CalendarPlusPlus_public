@@ -3,10 +3,84 @@ from datetime import datetime, tzinfo
 from re import split # Used to get timestamps for database information
 from icalendar import Calendar, Event
 import pytz
+from pytz import timezone
 import csv
 from database_funcs import CalDB
 
 calendar_db = CalDB()
+
+#to be used for converting normal input into our datestring format, tz = pytz object of user timezone
+#can take int or string input, but assumes they are all the same
+def convert_date_input( year, month, day, hour, minute, tz) -> str:
+    
+    if type(year) is str:
+        year = int(year)
+        month = int(month)
+        day = int(day)
+        hour = int(hour)
+        minute = int(minute)
+
+    dt = tz.localize(datetime(year,month,day,hour,minute))
+
+    dt = dt.astimezone(pytz.utc)
+    
+    return dt.strftime("%Y%m%dT%H%M%SZ")
+
+#start and end params to get events in a given date range, after a start date, or before an end date
+#they are assumed to be string input in out db form, can use above convert_date_input for conversion
+#tz is the users chosen timezone, function converts to this timezone before returning
+#tz of the form timezone('US/Eastern'), you can print(pytz.common_timezones_set) to see the tzs
+#TODO: implement ranges
+def get_event_list( username, tz, start=None, end=None,) -> list:
+    #return list of dicts, converting to 2D list
+    #0  1     2      3     4     5      6      7       8      9      10      11   12  13
+    #id st_yr st_mon st_dy st_hr st_min end_yr end_mon end_dy end_hr end_min desc loc recur
+
+    #desc and loc might be None, recur is set to 0 for non-recurring events, non-zero for recurring
+    #all recurring events will have the same recur value as the other events in their series
+    events = calendar_db.get_event_list(username,start=start,end=end)
+
+    req_events = []
+
+    #pending comparison, gonna use datetime, just tired rn
+    if start is not None and end is not None:
+        pass
+    elif start is not None:
+        pass
+    elif end is not None:
+        pass
+    else:
+        req_events = events
+
+    return_list = []
+
+    for event in req_events:
+        row = []
+        row.append(event["event_id"])
+
+        date = get_datetime(event["start_time"])
+        date = date.astimezone(tz)
+
+        #duplicated code come get me
+        date_comps = get_date_components(date.strftime("%Y%m%dT%H%M%SZ"))
+        for comp in date_comps:
+            row.append(comp)
+        #row.append(event["start_time"])
+
+        date = get_datetime(event["end_time"])
+        date = date.astimezone(tz)
+
+        date_comps = get_date_components(date.strftime("%Y%m%dT%H%M%SZ"))
+        for comp in date_comps:
+            row.append(comp)
+
+        #row.append(event["end_time"])
+        row.append(event["description"])
+        row.append(event["location"])
+        row.append(event["recurrence"])
+        return_list.append(row)
+
+    return return_list
 
 #builds calendar file based on given format: ics, csv
 def export_calendar( username, format):
@@ -107,9 +181,6 @@ def get_date_components( datestr ):
     minute = datestr[11:13]
 
     return [year,month,day,hour,minute]
-
-
-
 
 def build_csv( events):
 
@@ -246,3 +317,12 @@ def import_calendar( username, cal_str, format ):
 #print( datetime.now(pytz.utc))
 #export_calendar( "testy", "ics" )
 #import_calendar("testery","test","gcsv")
+
+#print(pytz.common_timezones_set)
+#eastern = timezone('US/Eastern')
+#western = timezone('US/Pacific')
+#strftime("%Y%m%dT%H%M%SZ")
+#print(datetime.now(pytz.utc).astimezone(eastern).strftime("%Y"))
+
+#print(get_event_list("testery",eastern))
+#print(convert_date_input("2021","10","21","8","00",eastern))

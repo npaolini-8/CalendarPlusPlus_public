@@ -11,14 +11,21 @@ calendar_db = CalDB()
 
 #to be used for converting normal input into our datestring format, tz = pytz object of user timezone
 #can take int or string input, but assumes they are all the same
-def convert_date_input( year, month, day, hour, minute, tz) -> str:
+#time switched to optional for more convenient input
+def convert_date_input( year, month, day, hour=None, minute=None, tz=pytz.utc) -> str:
     
     if type(year) is str:
         year = int(year)
         month = int(month)
         day = int(day)
-        hour = int(hour)
-        minute = int(minute)
+        if hour is not None:
+            hour = int(hour)
+        else:
+            hour = 0
+        if minute is not None:
+            minute = int(minute)
+        else:
+            minute = 0
 
     dt = tz.localize(datetime(year,month,day,hour,minute))
 
@@ -26,11 +33,24 @@ def convert_date_input( year, month, day, hour, minute, tz) -> str:
     
     return dt.strftime("%Y%m%dT%H%M%SZ")
 
+#returns in str: <x> days, hr:min:sec
+def get_time_delta( start, end):
+    #parse strings into datetime
+    start = get_datetime(start)
+    end = get_datetime(end)
+
+    #extract date from datetime
+    #NOTE:IF we want PURELY date output can do this
+    #start = start.date()
+    #end = end.date()
+
+    return end - start
+
 #start and end params to get events in a given date range, after a start date, or before an end date
 #they are assumed to be string input in out db form, can use above convert_date_input for conversion
 #tz is the users chosen timezone, function converts to this timezone before returning
 #tz of the form timezone('US/Eastern'), you can print(pytz.common_timezones_set) to see the tzs
-#TODO: implement ranges
+#NOTE: START AND END ARE EXPECTED TO BE IN UTC, use convert_date_input if need be
 def get_event_list( username, tz, start=None, end=None,) -> list:
     #return list of dicts, converting to 2D list
     #0  1     2      3     4     5      6      7       8      9      10      11   12  13
@@ -38,17 +58,37 @@ def get_event_list( username, tz, start=None, end=None,) -> list:
 
     #desc and loc might be None, recur is set to 0 for non-recurring events, non-zero for recurring
     #all recurring events will have the same recur value as the other events in their series
-    events = calendar_db.get_event_list(username,start=start,end=end)
+    events = calendar_db.get_event_list(username,start=None,end=None)
 
     req_events = []
 
-    #pending comparison, gonna use datetime, just tired rn
+    #two dates input, include all events BETWEEN them
     if start is not None and end is not None:
-        pass
-    elif start is not None:
-        pass
-    elif end is not None:
-        pass
+        start = get_datetime(start)
+        end = get_datetime(end)
+
+        for event in events:
+            s_date = get_datetime(event["start_time"])
+
+            if start <= s_date <= end:
+                req_events.append(event)
+    elif start is not None: #only start given, include all events AFTER
+        start = get_datetime(start)
+
+        for event in events:
+            s_date = get_datetime(event["start_time"])
+
+            if start <= s_date:
+                req_events.append(event)
+
+    elif end is not None: #only end given, include all events BEFORE
+        end = get_datetime(end)
+
+        for event in events:
+            s_date = get_datetime(event["start_time"])
+
+            if s_date <= end:
+                req_events.append(event)
     else:
         req_events = events
 
@@ -324,5 +364,13 @@ def import_calendar( username, cal_str, format ):
 #strftime("%Y%m%dT%H%M%SZ")
 #print(datetime.now(pytz.utc).astimezone(eastern).strftime("%Y"))
 
-#print(get_event_list("testery",eastern))
+#print(get_event_list("testery",eastern,start= "20211020T140000",end="20211023T140000"))
 #print(convert_date_input("2021","10","21","8","00",eastern))
+
+#print(get_time_delta("20211021T140000","20211123T150000"))
+
+#dt1 = get_datetime("20211021T140000")
+#dt2 = get_datetime("20211123T150000")
+#dt3 = get_datetime("20211021T150000")
+#print( dt1 < dt3 <   dt2)
+

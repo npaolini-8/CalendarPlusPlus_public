@@ -1,8 +1,7 @@
 import calendar as pycal
-import datetime as dt
 
 from flask import Blueprint, render_template
-from flaskr.python_helpers.week_functions import get_hours
+from flaskr.python_helpers.week_functions import get_hours, get_week, get_date
 from flaskr.python_helpers.month_functions import create_date, format_month, format_iters
 
 from . import authenticate
@@ -24,14 +23,9 @@ def month():
 @authenticate.login_required
 def week():
     cal = pycal.Calendar()
-    today = dt.date.today()
-    day = today.day
-    month = today.month
-    year = today.year
+    month, year = get_date()
     hours = get_hours()
-    weeks = cal.monthdays2calendar(year, month)
-    week = [week for week in weeks for date in week if day in date]
-    week = week[0]
+    week = get_week()
     return render_template('calendar/week.html', cal=pycal, month=month, year=year, hours=hours, week=week)
 
 

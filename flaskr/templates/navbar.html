@@ -9,9 +9,9 @@
                     <a id = "month" class="nav-link" href="{{ url_for('calendar.month') }}">Month</a>
                     <a id = "year" class="nav-link" href="{{ url_for('calendar.year') }}">Year</a>
                 </div>
-                <span class="navbar-text">
-                    <a class="nav-link" href="{{ url_for('auth.logout') }}">Log Out</a>
-                </span>
+            </div>
+            <div class="navbar-nav d-flex">
+                <a class="nav-link me-2" href="{{ url_for('auth.logout') }}">Log Out</a>
             </div>
         {% endif %}
     </div>

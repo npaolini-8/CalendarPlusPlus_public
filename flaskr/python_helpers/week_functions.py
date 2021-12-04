@@ -5,7 +5,7 @@ from ..dbfunc import cal_funcs as cf
 from flask import g, session
 from pytz import timezone
 
-cal = pycal.Calendar()
+cal = pycal.Calendar(6)
 today = datetime.today()
 day = today.day
 month = today.month
@@ -43,12 +43,22 @@ def get_week():
 
 
 def format_week(week):
-    i = 1
+    i = 0
+    zeros = 0
     weekdays = []
 
     for day, weekday in week:
         if day == 0:
-            weekdays.append(tuple([day+i, weekday]))
+            zeros += 1
+
+    if not zeros == 0:
+        prev_month = cal.monthdayscalendar(year, month - 1)
+        prev_week = prev_month[len(prev_month) - 1]
+        prev_days = prev_week[0:zeros]
+
+    for day, weekday in week:
+        if day == 0:
+            weekdays.append(tuple([prev_days[i], weekday]))
             i += 1
         else:
             weekdays.append(tuple([day, weekday]))

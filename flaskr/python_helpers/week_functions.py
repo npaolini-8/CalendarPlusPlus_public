@@ -15,24 +15,20 @@ year = today.year
 
 
 def get_date() -> tuple:
+    """Returns current month and year"""
     return month, year
 
 
 def get_hours() -> list:
     """Generates a list of hours (24-hr format)"""
 
-    start = today
-    stop = start + timedelta(hours=24)
     hours = []
-    hour = start.hour
 
-    while start < stop and hour < 23:
-        hour = start.hour
+    for hour in range(24):
         if hour < 10:
             hours.append(f"0{hour}:00")
         else:
             hours.append(f"{hour}:00")
-        start += timedelta(hours=1)
 
     return hours
 

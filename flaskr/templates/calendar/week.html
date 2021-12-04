@@ -33,7 +33,7 @@
                     {% endfor %}
                 </thead>
                 <tbody class="text-center" id="table-body">
-                    {% for hour in range(24) %}
+                    {% for hour in hours %}
                         <tr>
                             <td style="padding: 0.5em">{{ hour }}</td>
                             {% for date, day in week %}

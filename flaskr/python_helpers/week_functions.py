@@ -57,4 +57,5 @@ def format_week(week):
 
 
 def user_events():
-    return cf.get_event_list(session['user_id'], timezone('US/Eastern'))
+    events = cf.get_event_list(session['user_id'], timezone('US/Eastern'))
+    return events

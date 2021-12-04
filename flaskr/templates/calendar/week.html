@@ -28,16 +28,24 @@
                     <th />
                     {% for date, day in week %}
                         <th>{{ cal.day_name[day] }}
-                            <div class="text-muted">{{ date }}</div>
+                            <div class="text-muted" id="day-{{ date }}">{{ date }}</div>
                         </th>
                     {% endfor %}
                 </thead>
                 <tbody class="text-center" id="table-body">
-                    {% for hour in hours %}
+                    {% for hour in range(24) %}
                         <tr>
                             <td style="padding: 0.5em">{{ hour }}</td>
                             {% for num in range(7) %}
-                                <td id="days">{{ events }}</td>
+                                <td id="days">
+                                    {% for event in events %}
+                                        {% if event[2] == month or event[7] == month %}
+                                            {% if event[4] == hour %}
+                                                {{ event[0] }}
+                                            {% endif %}
+                                        {% endif %}
+                                    {% endfor %}
+                                </td>
                             {% endfor %}
                         </tr>
                     {% endfor %}

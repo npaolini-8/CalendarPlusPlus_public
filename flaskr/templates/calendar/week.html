@@ -15,21 +15,12 @@
 {% endblock side_content %}
 {% block calendar %}
     <div class="container-fluid my-2">
-        <div class="justify-content-between mt-3">
-            <button type="button" class="btn btn-light float-start" data-bs-toggle="tooltip" data-bs-placement="right" title="Previous Week" id="prev">
-                <i class="bi bi-chevron-left" style="font-weight: bolder; font-size: 1.5rem"></i>
-            </button>
-            <button type="button" class="btn btn-light float-end" data-bs-toggle="tooltip" data-bs-placement="left" title="Next Week" id="next">
-                <i class="bi bi-chevron-right" style="font-weight: bolder; font-size: 1.5rem"></i>
-            </button>
-        </div>
-        <div class="calendar-header">
-            <div class="row header-title">
-                <div class="header-text my-3">
-                    <h1 id="date" class="text-center"> {{ cal.month_name[month] }},  {{ year }}</h1>
-                </div>
-            </div>
-        </div>
+        {% block arrowhead %}
+            {{ super() }}
+        {% endblock arrowhead %}
+        {% block date %}
+            <h1 id="date" class="text-center"> {{ cal.month_name[month] }},  {{ year }}</h1>
+        {% endblock date %}
         <div class="table-responsive">
             <table class="table table-bordered" id="calendar-table">
                 <thead class="table-primary text-center" id="table-header">

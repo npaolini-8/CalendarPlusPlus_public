@@ -46,13 +46,12 @@
 {%  endblock side_content %}
 {% block calendar %}
     <div class="container-md my-2">
-        <div class="calendar-header">
-            <div class="row header-title">
-                <div class="header-text my-3">
-                    <h1 id="date" class="text-center"> {{ month }} - {{ year }}</h1>
-                </div>
-            </div>
-        </div>
+        {% block arrowhead %}
+            {{ super() }}
+        {% endblock arrowhead %}
+        {% block date %}
+            <h1 id="date" class="text-center"> {{ month }} - {{ year }}</h1>
+        {% endblock date %}
         <div class="container">
             <table id="calendar-table" class="table table-bordered table-hover">
                 <thead class="table-primary">

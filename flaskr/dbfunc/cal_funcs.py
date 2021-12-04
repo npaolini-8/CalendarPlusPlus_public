@@ -5,7 +5,7 @@ from icalendar import Calendar, Event
 import pytz
 from pytz import timezone
 import csv
-from database_funcs import CalDB
+from .database_funcs import CalDB
 
 calendar_db = CalDB()
 
@@ -206,6 +206,7 @@ def get_datetime( datestr ) -> datetime:
     # hour = int(datestr[9:11])
     # minute = int(datestr[11:13])
 
+    datestr = datestr.replace('\xad', '')
     date_components = get_date_components(datestr)
 
     #return datetime(year,month,day,hour,minute, tzinfo=pytz.utc)

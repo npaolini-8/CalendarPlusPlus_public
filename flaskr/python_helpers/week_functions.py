@@ -1,6 +1,9 @@
 import  calendar as pycal
-from datetime import datetime, timedelta
 
+from datetime import datetime, timedelta
+from ..dbfunc import cal_funcs as cf
+from flask import g, session
+from pytz import timezone
 
 cal = pycal.Calendar()
 today = datetime.today()
@@ -51,3 +54,7 @@ def format_week(week):
             weekdays.append(tuple([day, weekday]))
 
     return weekdays
+
+
+def user_events():
+    return cf.get_event_list(session['user_id'], timezone('US/Eastern'))

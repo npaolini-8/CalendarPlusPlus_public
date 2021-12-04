@@ -28,14 +28,12 @@ def month():
 def week():
     cal = pycal.Calendar()
     month, year = get_date()
-    hours = get_hours()
     week = get_week()
     events = user_events()
     return render_template('calendar/week.html',
                            cal=pycal,
                            month=month,
                            year=year,
-                           hours=hours,
                            week=week,
                            events=events)
 

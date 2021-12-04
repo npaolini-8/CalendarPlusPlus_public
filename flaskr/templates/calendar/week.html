@@ -33,9 +33,14 @@
                     {% endfor %}
                 </thead>
                 <tbody class="text-center" id="table-body">
-                    {% for hour in hours %}
+                    {% for hour in range(24) %}
                         <tr>
-                            <td style="padding: 0.5em">{{ hour }}</td>
+                            {% if hour < 10 %}
+                                <td style="padding: 0.5em"> 0{{ hour }}:00</td>
+                            {% else %}
+                                <td style="padding: 0.5em"> {{ hour }}:00</td>
+                            {% endif %}
+
                             {% for date, day in week %}
                                 <td id="days">
                                     {% for event in events %}

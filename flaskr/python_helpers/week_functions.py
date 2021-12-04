@@ -19,20 +19,6 @@ def get_date() -> tuple:
     return month, year
 
 
-def get_hours() -> list:
-    """Generates a list of hours (24-hr format)"""
-
-    hours = []
-
-    for hour in range(24):
-        if hour < 10:
-            hours.append(f"0{hour}:00")
-        else:
-            hours.append(f"{hour}:00")
-
-    return hours
-
-
 def get_week() -> list:
     """Returns the current week of the month as a list of tuples with the format (day_of_month, weekday)"""
 

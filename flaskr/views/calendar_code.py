@@ -3,7 +3,7 @@ import datetime as dt
 
 from flask import Blueprint, render_template
 from flaskr.python_helpers.week_functions import get_hours
-from flaskr.python_helpers.month_functions import create_date, format_month, format_iters
+from flaskr.python_helpers.month_functions import create_month
 
 from . import authenticate
 
@@ -13,9 +13,7 @@ cal_blueprint = Blueprint("calendar", __name__, url_prefix='/calendar')
 @cal_blueprint.route('/month/')
 @authenticate.login_required
 def month():
-    cal, year, month = create_date()
-    cal = format_month(cal)
-    cal, header = format_iters(cal)
+    cal, header, year, month = create_month()
     mth = pycal.month_name[month]
     return render_template('calendar/month.html', year=year, month=mth, day=cal, header=header)
 

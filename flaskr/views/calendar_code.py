@@ -16,7 +16,11 @@ def month():
     cal = format_month(cal)
     cal, header = format_iters(cal)
     mth = pycal.month_name[month]
-    return render_template('calendar/month.html', year=year, month=mth, day=cal, header=header)
+    return render_template('calendar/month.html',
+                           year=year,
+                           month=mth,
+                           day=cal,
+                           header=header)
 
 
 @cal_blueprint.route('/week/')
@@ -27,7 +31,13 @@ def week():
     hours = get_hours()
     week = get_week()
     events = user_events()
-    return render_template('calendar/week.html', cal=pycal, month=month, year=year, hours=hours, week=week, events=events)
+    return render_template('calendar/week.html',
+                           cal=pycal,
+                           month=month,
+                           year=year,
+                           hours=hours,
+                           week=week,
+                           events=events)
 
 
 @cal_blueprint.route('/day/')

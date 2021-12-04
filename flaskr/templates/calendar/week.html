@@ -15,6 +15,10 @@
 {% endblock side_content %}
 {% block calendar %}
     <div class="container-fluid my-2">
+        <div class="justify-content-between">
+            <button type="button" class="btn btn-light float-start" id="prev"> <i class="bi bi-chevron-left"></i></button>
+            <button type="button" class="btn btn-light float-end" id="next"> <i class="bi bi-chevron-right"></i></button>
+        </div>
         <div class="calendar-header">
             <div class="row header-title">
                 <div class="header-text my-3">
@@ -28,7 +32,7 @@
                     <th />
                     {% for date, day in week %}
                         <th>{{ cal.day_name[day] }}
-                            <div class="text-muted" id="{{ day }}-{{ date }}">{{ date }}</div>
+                            <div class="text-muted small" id="{{ day }}-{{ date }}">{{ date }}</div>
                         </th>
                     {% endfor %}
                 </thead>
@@ -46,7 +50,7 @@
                                     {% for event in events %}
                                         {% if event[2] == month or event[7] == month %}
                                             {% if event[3] == date and event[4] == hour %}
-                                                <div class="bg-secondary bg-gradient"> {{ event[0] }} </div>
+                                                <div class="small text-wrap bg-info bg-opacity-50 rounded-pill"> {{ event[0] }} </div>
                                             {% endif %}
                                         {% endif %}
                                     {% endfor %}

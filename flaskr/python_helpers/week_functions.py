@@ -67,6 +67,11 @@ def format_week(week, index) -> list:
     return weekdays
 
 
-def user_events():
+def user_events() -> list:
+    """Returns 2D array list of events with values and index representation as shown here
+        values: 0  1     2      3     4     5      6      7       8      9      10      11   12  13
+        index_val: id st_yr st_mon st_dy st_hr st_min end_yr end_mon end_dy end_hr end_min desc loc recur
+       Note: index is still numeric, i.e 0,1,2,3..."""
+
     events = cf.get_event_list(session['user_id'], timezone('US/Eastern'))
     return events

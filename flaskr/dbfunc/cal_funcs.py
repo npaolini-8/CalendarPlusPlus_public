@@ -104,7 +104,7 @@ def get_event_list( username, tz, start=None, end=None,) -> list:
         #duplicated code come get me
         date_comps = get_date_components(date.strftime("%Y%m%dT%H%M%SZ"))
         for comp in date_comps:
-            row.append(comp)
+            row.append(int(comp))
         #row.append(event["start_time"])
 
         date = get_datetime(event["end_time"])
@@ -112,7 +112,7 @@ def get_event_list( username, tz, start=None, end=None,) -> list:
 
         date_comps = get_date_components(date.strftime("%Y%m%dT%H%M%SZ"))
         for comp in date_comps:
-            row.append(comp)
+            row.append(int(comp))
 
         #row.append(event["end_time"])
         row.append(event["description"])
@@ -206,8 +206,9 @@ def get_datetime( datestr ) -> datetime:
     # hour = int(datestr[9:11])
     # minute = int(datestr[11:13])
 
-    datestr = datestr.replace('\xad', '')
+    datestr = datestr.replace('\xad','')
     date_components = get_date_components(datestr)
+    #print(date_components)
 
     #return datetime(year,month,day,hour,minute, tzinfo=pytz.utc)
     return datetime(int(date_components[0]), int(date_components[1]), int(date_components[2]), int(date_components[3]), int(date_components[4]), tzinfo=pytz.utc)
@@ -365,6 +366,10 @@ def import_calendar( username, cal_str, format ):
 #strftime("%Y%m%dT%H%M%SZ")
 #print(datetime.now(pytz.utc).astimezone(eastern).strftime("%Y"))
 
+#print(get_event_list("Billy",eastern))
+#20210906T110000
+#20211021T140000
+#2021110­­3T183000
 #print(get_event_list("testery",eastern,start= "20211020T140000",end="20211023T140000"))
 #print(convert_date_input("2021","10","21","8","00",eastern))
 

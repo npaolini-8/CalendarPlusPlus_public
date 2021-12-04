@@ -40,8 +40,8 @@
                                 <td id="days">
                                     {% for event in events %}
                                         {% if event[2] == month or event[7] == month %}
-                                            {% if event[4] == hour %}
-                                                {{ event[0] }}
+                                            {% if event[3] == date and event[4] == hour %}
+                                                <div class="bg-secondary bg-gradient"> {{ event[0] }} </div>
                                             {% endif %}
                                         {% endif %}
                                     {% endfor %}

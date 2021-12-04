@@ -15,9 +15,13 @@
 {% endblock side_content %}
 {% block calendar %}
     <div class="container-fluid my-2">
-        <div class="justify-content-between">
-            <button type="button" class="btn btn-light float-start" id="prev"> <i class="bi bi-chevron-left"></i></button>
-            <button type="button" class="btn btn-light float-end" id="next"> <i class="bi bi-chevron-right"></i></button>
+        <div class="justify-content-between mt-3">
+            <button type="button" class="btn btn-light float-start" data-bs-toggle="tooltip" data-bs-placement="right" title="Previous Week" id="prev">
+                <i class="bi bi-chevron-left" style="font-weight: bolder; font-size: 1.5rem"></i>
+            </button>
+            <button type="button" class="btn btn-light float-end" data-bs-toggle="tooltip" data-bs-placement="left" title="Next Week" id="next">
+                <i class="bi bi-chevron-right" style="font-weight: bolder; font-size: 1.5rem"></i>
+            </button>
         </div>
         <div class="calendar-header">
             <div class="row header-title">
@@ -27,12 +31,12 @@
             </div>
         </div>
         <div class="table-responsive">
-            <table class="table table-hover table-bordered" id="calendar-table">
+            <table class="table table-bordered" id="calendar-table">
                 <thead class="table-primary text-center" id="table-header">
                     <th />
                     {% for date, day in week %}
                         <th>{{ cal.day_name[day] }}
-                            <div class="text-muted small" id="{{ day }}-{{ date }}">{{ date }}</div>
+                            <div class="text-muted small" id="weekday:{{ day }}-{{ date }}">{{ date }}</div>
                         </th>
                     {% endfor %}
                 </thead>
@@ -46,11 +50,13 @@
                             {% endif %}
 
                             {% for date, day in week %}
-                                <td id="days">
+                                <td class="cells" id="day:{{ day }}-{{ date }}">
                                     {% for event in events %}
                                         {% if event[2] == month or event[7] == month %}
                                             {% if event[3] == date and event[4] == hour %}
-                                                <div class="small text-wrap bg-info bg-opacity-50 rounded-pill"> {{ event[0] }} </div>
+                                                <div class="small text-wrap bg-info bg-opacity-50 rounded-pill table table-hover" id="cell:{{ day }}-{{ date }}-{{ hour }}">
+                                                    {{ event[0] }}
+                                                </div>
                                             {% endif %}
                                         {% endif %}
                                     {% endfor %}
@@ -65,7 +71,6 @@
 {% endblock calendar %}
 {% block scripts %}
     {{ super() }}
-    <script src="{{ url_for('static', filename = 'javascript/calendar/week.js')}}"></script>
     <script src="{{ url_for('static', filename = 'javascript/navbar/highlight.js')}}"></script>
     <script>makeActive("week")</script>
 {% endblock scripts %}

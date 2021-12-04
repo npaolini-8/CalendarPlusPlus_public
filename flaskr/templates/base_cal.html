@@ -33,5 +33,6 @@
 {% endblock content %}
 
 {% block scripts %}
-{{ super() }}
+    {{ super() }}
+    <script src="{{ url_for('static', filename = 'javascript/calendar/cells.js')}}"></script>
 {% endblock scripts %}

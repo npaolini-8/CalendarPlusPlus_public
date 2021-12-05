@@ -6,42 +6,45 @@ from ..dbfunc import cal_funcs as cf
 from flask import g, session
 from pytz import timezone
 
+
 pycal.setfirstweekday(6)
-cal = pycal
+cal = pycal.Calendar(6)
 today = datetime.today()
 day = today.day
 month = today.month
 year = today.year
 
 
-def get_date():
-    """Returns current month and year"""
+def get_todays_date() -> (int, int, int):
+    """Returns current day, month and year"""
     return day, month, year
 
 
-def get_month_days():
-    return [dates for dates in cal.itermonthdays(year, month)]
+def get_month_days() -> list:
+    """Returns a list of all the days in the month"""
+    days = cal.itermonthdays(year, month)
+    return [d for d in days]
 
 
-def get_month():
-    """Returns current month as a list of dictionaries with key:value pairs representing weekday:day"""
+def get_month_dates() -> list:
+    """Returns a list of all the dates in the month in the format [(year, month, day, weekday),
+    (year, month, day++, weekday++),(year, month, day++, weekday++)...]"""
+    dates = cal.itermonthdays4(year,month)
+    return [dt for dt in dates]
 
-    mth_cal = cal.monthcalendar(year, month)
-    mth = []
 
-    # convert month to a list of dictionaries with weekday as keys and day as value
-    # i.e {6:12, 0:13, 1:14 ...} represents {Sunday:12th, Monday:13th, Tuesday:14th}
-    for wk in mth_cal:
-        dict = {}
-        for index, wkday in enumerate(wk):
-            # if the weekday is the first day of the week make key = 6 (represents Sunday)
-            if index == 0:
-                dict[6] = wkday
-            else:
-                dict[index-1] = wkday
-        mth.append(dict)
+def get_month() -> list:
+    """Returns current month as a list of a list of tuples with pairs representing [[(day, weekday),
+    (day++, weekday++),(day++, weekday++)...],[(),(),()]...]"""
+    return cal.monthdays2calendar(year, month)
 
-    return mth
+
+def get_week() -> (list, int):
+    """Returns current week as a list of tuples representing (day, weekday) and week #"""
+    # gets current week by checking if today's date is in the list
+    curr_week = [week for week in get_month() for date, weekday in week if day is date][0]
+    week_index = get_month().index(curr_week)
+    return curr_week, week_index
 
 
 def user_events() -> list:

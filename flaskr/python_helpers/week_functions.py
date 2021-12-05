@@ -2,6 +2,7 @@ import  calendar as pycal
 
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
+from flaskr.python_helpers import cal_helpers as chs
 
 
 cal = pycal.Calendar(6)
@@ -9,23 +10,11 @@ today = datetime.today()
 day = today.day
 month = today.month
 year = today.year
+week, index = chs.get_week()
 
 
-def get_week() -> list:
+def get_formatted_week() -> list:
     """Returns the current week of the month as a list of tuples with the format (day_of_month, weekday)"""
-
-    weeks = cal.monthdays2calendar(year, month)
-    # gets current week by checking if today's date is in the list
-    week = [week for week in weeks for date, weekday in week if day is date][0]
-    week_index = weeks.index(week)
-    week = format_week(week, week_index)
-
-    return week
-
-
-def format_week(week, index) -> list:
-    """Replaces zeros with previous or upcoming days"""
-
     i = 0
     zeros = 0
     weekdays = []
@@ -34,6 +23,7 @@ def format_week(week, index) -> list:
         if day == 0:
             zeros += 1
 
+    # Replaces zeros with previous or upcoming days
     # if zeros exist get the correct days for replacement
     if not zeros == 0:
         if index == len(cal.monthdayscalendar(year, month))-1:

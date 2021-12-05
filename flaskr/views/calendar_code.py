@@ -1,8 +1,8 @@
 import calendar as pycal
 
 from flask import Blueprint, render_template
-from flaskr.python_helpers.cal_helpers import get_date, get_month, user_events
-from flaskr.python_helpers.week_functions import get_week
+from flaskr.python_helpers.cal_helpers import get_todays_date, get_month, user_events
+from flaskr.python_helpers.week_functions import get_formatted_week
 from flaskr.python_helpers.month_functions import create_date, format_month, format_iters
 
 from . import authenticate
@@ -28,9 +28,9 @@ def month():
 @cal_blueprint.route('/week/')
 @authenticate.login_required
 def week():
-    week = get_week()
+    week = get_formatted_week()
     events = user_events()
-    day, month, year = get_date()
+    day, month, year = get_todays_date()
     return render_template('calendar/week.html',
                            cal=pycal,
                            month=month,
@@ -43,7 +43,7 @@ def week():
 @authenticate.login_required
 def day():
     events = user_events()
-    day, month, year = get_date()
+    day, month, year = get_todays_date()
     return render_template('calendar/day.html',
                            cal=pycal,
                            day=day,

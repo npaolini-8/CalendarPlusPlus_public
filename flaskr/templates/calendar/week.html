@@ -2,8 +2,11 @@
 
 {% block head %}
     {{ super() }}
-    {% block title %}
-    {% endblock %}
+    <title>
+        {%block title%}
+             Week
+        {%endblock title%}
+    </title>
 {% endblock head%}
 {% block view %}
     <h3 class="text-center">
@@ -19,10 +22,10 @@
             {{ super() }}
         {% endblock arrowhead %}
         {% block date %}
-            <h1 id="date" class="text-center"> {{ cal.month_name[month] }},  {{ year }}</h1>
+            <h1 id="date" class="text-center"> {{ cal.month_name[month] }}  {{ year }}</h1>
         {% endblock date %}
         <div class="table-responsive">
-            <table class="table table-bordered" id="calendar-table">
+            <table class="table table-bordered table-hover" id="calendar-table">
                 <thead class="table-primary text-center" id="table-header">
                     <th />
                     {% for date, day in week %}
@@ -43,9 +46,10 @@
                             {% for date, day in week %}
                                 <td class="cells" id="day:{{ day }}-{{ date }}">
                                     {% for event in events %}
-                                        {% if event[2] == month or event[7] == month %}
+                                        {% if (event[2] == month or event[7] == month) and (event[1] == year or event[6] == year) %}
                                             {% if event[3] == date and event[4] == hour %}
-                                                <div class="small text-wrap bg-info bg-opacity-50 rounded-pill table table-hover" id="cell:{{ day }}-{{ date }}-{{ hour }}">
+                                                <div class="small text-wrap bg-info bg-opacity-50 rounded-pill"
+                                                     id="cell:{{ day }}-{{ date }}-{{ hour }}">
                                                     {{ event[0] }}
                                                 </div>
                                             {% endif %}

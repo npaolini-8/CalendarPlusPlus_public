@@ -1,16 +1,16 @@
 {% extends 'base_cal.html' %}
-<html lang="en">
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 {% block head %}
-{{ super() }}  
-    {%block title%}
-    {%endblock title%}   
+    {{ super() }}
+    <title>
+        {%block title%}
+             Day
+        {%endblock title%}
+    </title>
 {%endblock head %}
 {% block view %}
-<h3 class="justify-content-center">
-    Day
-</h3>
+    <h3 class="justify-content-center">
+        Day
+    </h3>
 {% endblock %}
 {% block side_content %}
 
@@ -21,7 +21,7 @@
         {{ super() }}
     {% endblock arrowhead %}
     {% block date %}
-        <h1 id="date" class = text-center></h1>
+        <h1 id="date" class = text-center>{{ cal.month_name[month] }} {{ day }} {{ year }}</h1>
     {% endblock date %}
     <div class="calendar-content mt-3">
         Show Full Calendar
@@ -50,13 +50,6 @@
 {% endblock calendar %}
 {% block scripts %}
 {{ super() }}
-<script>
-    n =  new Date();
-    y = n.getFullYear();
-    m = n.getMonth() + 1;
-    d = n.getDate();
-    document.getElementById("date").innerHTML = m + "/" + d + "/" + y;
-</script>
 <script src="{{ url_for('static', filename = 'javascript/navbar/highlight.js')}}"></script>
 <script>makeActive("day")</script>
 {% endblock scripts %}

@@ -2,9 +2,6 @@ import  calendar as pycal
 
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
-from ..dbfunc import cal_funcs as cf
-from flask import g, session
-from pytz import timezone
 
 
 cal = pycal.Calendar(6)
@@ -12,11 +9,6 @@ today = datetime.today()
 day = today.day
 month = today.month
 year = today.year
-
-
-def get_date() -> tuple:
-    """Returns current month and year"""
-    return month, year
 
 
 def get_week() -> list:
@@ -65,13 +57,3 @@ def format_week(week, index) -> list:
             weekdays.append(tuple([day, weekday]))
 
     return weekdays
-
-
-def user_events() -> list:
-    """Returns 2D array list of events with values and index representation as shown here
-        values: 0  1     2      3     4     5      6      7       8      9      10      11   12  13
-        index_val: id st_yr st_mon st_dy st_hr st_min end_yr end_mon end_dy end_hr end_min desc loc recur
-       Note: index is still numeric, i.e 0,1,2,3..."""
-
-    events = cf.get_event_list(session['user_id'], timezone('US/Eastern'))
-    return events

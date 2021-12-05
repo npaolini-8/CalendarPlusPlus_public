@@ -33,10 +33,10 @@ def get_month_dates() -> list:
     return [dt for dt in dates]
 
 
-def get_month() -> list:
-    """Returns current month as a list of a list of tuples with pairs representing [[(day, weekday),
+def get_month(yr=year, mth=month) -> list:
+    """Returns specified or current month as a list of week tuples with pairs representing [[(day, weekday),
     (day++, weekday++),(day++, weekday++)...],[(),(),()]...]"""
-    return cal.monthdays2calendar(year, month)
+    return cal.monthdays2calendar(yr, mth)
 
 
 def get_week() -> (list, int):

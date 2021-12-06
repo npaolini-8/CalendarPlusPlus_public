@@ -15,6 +15,8 @@ week, index = chs.get_week()
 
 def set_current_date(d=day, m=month, y=year) -> (int, int, int):
     """Returns current day, month, year shown on the selected week of the calendar"""
+    # reset date if user logs out
+    day, month, year = d,m,y
     return day, month, year
 
 

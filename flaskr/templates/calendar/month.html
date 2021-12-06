@@ -1,13 +1,13 @@
 {% extends 'base_cal.html' %}
-<html lang="en">
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
 
 {% block head %}
     {{ super() }}
-    {% block title %}
-    {% endblock %}
+    <title>
+        {%block title%}
+             Month
+        {%endblock title%}
+    </title>
 {% endblock head %}
 {% block view %}
     <h3 class="text-center mb-4">
@@ -50,7 +50,7 @@
 {%  endblock side_content %}
 {% block calendar %}
     <div class="container-md my-2">
-        <div class="calendar-header">
+      <div class="calendar-header">
             <div class="row header-title">
                 <div class="header-text my-3">
                     <h1 id="date" class="text-center"> {{ month }}, {{ year }}</h1>
@@ -71,9 +71,9 @@
                 <tr>
                     {% for cell in row %}
                         {% if cell != 0 %}
-                            <td class="text-center" style="padding: 3em">{{ cell }}</td>
+                            <td class="cells text-center" style="padding: 3em">{{ cell }}</td>
                         {% else %}
-                            <td class="text-center" style="padding: 3em"></td>
+                            <td class="cells text-center" style="padding: 3em"></td>
                         {% endif %}
                     {% endfor %}
                 </tr>

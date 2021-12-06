@@ -16,7 +16,7 @@
 
 {%  endblock side_content %}
 {% block calendar %}
-<div class="container-md my-2">
+<div class="container-fluid my-2">
     {% block arrowhead %}
         {{ super() }}
     {% endblock arrowhead %}
@@ -24,7 +24,6 @@
         <h1 id="date" class = text-center>{{ cal.month_name[month] }} {{ day }} {{ year }}</h1>
     {% endblock date %}
     <div class="calendar-content mt-3">
-        Show Full Calendar
         <table id="calendar-table" class="table table-bordered table-hover">
             <thead class="table-primary text-center">
                 <tr>
@@ -32,7 +31,7 @@
                     <th><h3>Events</h3></th>
                 </tr>
             </thead>
-            <tbody>   
+            <tbody class = "text-center" id = "table-body">   
                     {% for hour in range(24) %} 
                         <tr class = cells-row id = {{hour}}>
                             {% if hour < 10%}
@@ -40,10 +39,10 @@
                             {% else %}
                                 <td style = "padding: 0.5em;" id = {{hour}}TimeCol> {{hour}}:00</td>
                             {% endif %}
-                            <td class = "cells text-center" style = "padding: 1em;" id = {{hour}}EventsCol>
+                            <td class = "cells"  id = {{hour}}EventsCol>
                                 {% for event in events %}
                                     {% if (event[3] == day or event[8] == day) and event[4] == hour%}
-                                        <div class="small text-wrap bg-info bg-opacity-50 rounded-pill">{{event[0]}} {{day}}</div>
+                                        <div class="small text-wrap bg-info bg-opacity-50 rounded-pill">{{event[0]}}</div>
                                     {%endif%}
                                 {% endfor %}
                             </td>

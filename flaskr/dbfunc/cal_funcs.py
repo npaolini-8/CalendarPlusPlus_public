@@ -5,7 +5,7 @@ from icalendar import Calendar, Event
 import pytz
 from pytz import timezone
 import csv
-from .database_funcs import CalDB
+from database_funcs import CalDB #TODO make sure . is here before push
 
 calendar_db = CalDB()
 
@@ -260,7 +260,7 @@ def build_csv( events):
 
 
 #TODO: add accounting for optional fields
-def import_calendar( username, cal_str, format ):
+def import_calendar( username, cal_str, format, tz ):
 
     #assuming string input from app this file read would simply stay as variable input
     #file read done for testing
@@ -283,6 +283,12 @@ def import_calendar( username, cal_str, format ):
                 # print(component.get('dtstart').dt.astimezone(pytz.utc).strftime("%Y%m%dT%H%M%SZ"))
                 # print(component.decoded('dtstart'))
                 # print(component.get('dtend').dt.astimezone(pytz.utc).strftime("%Y%m%dT%H%M%SZ"))
+
+                start = tz.localize(component.get('dtstart'))
+                start = start.astimezone(pytz.utc).strftime("%Y%m%dT%H%M%SZ")
+
+                end = tz.localize(component.get('dtend'))
+                end = end.astimezone(pytz.utc).strftime("%Y%m%dT%H%M%SZ")
                 
                 events.append({"event_id":component.get('summary'),"start_time":component.get('dtstart').dt.astimezone(pytz.utc).strftime("%Y%m%dT%H%M%SZ"),\
                      "end_time":component.get('dtend').dt.astimezone(pytz.utc).strftime("%Y%m%dT%H%M%SZ"), "description":component.get('description'),  "location":component.get('location')})
@@ -357,7 +363,7 @@ def import_calendar( username, cal_str, format ):
     calendar_db.update_event_list(username,events)
 
 #print( datetime.now(pytz.utc))
-#export_calendar( "testy", "ics" )
+export_calendar( "testy", "csv" )
 #import_calendar("testery","test","gcsv")
 
 #print(pytz.common_timezones_set)

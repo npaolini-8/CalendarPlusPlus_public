@@ -1,13 +1,14 @@
 import calendar as pycal
-import datetime as dt
 
-from flask import Blueprint, render_template
-from flaskr.python_helpers.week_functions import get_hours
+from flask import Blueprint, render_template, request
+from flaskr.python_helpers.cal_helpers import get_todays_date, get_month, user_events
+from flaskr.python_helpers.week_functions import get_current_date, get_formatted_week, on_previous
 from flaskr.python_helpers.month_functions import create_date, format_month, format_iters
 
 from . import authenticate
 
 cal_blueprint = Blueprint("calendar", __name__, url_prefix='/calendar')
+pycal.setfirstweekday(6)
 
 
 @cal_blueprint.route('/month/')
@@ -17,28 +18,41 @@ def month():
     cal = format_month(cal)
     cal, header = format_iters(cal)
     mth = pycal.month_name[month]
-    return render_template('calendar/month.html', year=year, month=mth, day=cal, header=header)
+    return render_template('calendar/month.html',
+                           year=year,
+                           month=mth,
+                           day=cal,
+                           header=header)
 
 
-@cal_blueprint.route('/week/')
+@cal_blueprint.route('/week/', methods=['GET', 'POST'])
 @authenticate.login_required
 def week():
-    cal = pycal.Calendar()
-    today = dt.date.today()
-    day = today.day
-    month = today.month
-    year = today.year
-    hours = get_hours()
-    weeks = cal.monthdays2calendar(year, month)
-    week = [week for week in weeks for date in week if day in date]
-    week = week[0]
-    return render_template('calendar/week.html', cal=pycal, month=month, year=year, hours=hours, week=week)
+    if request.method == 'POST':
+        on_previous()
+
+    week = get_formatted_week()
+    day, month, year = get_current_date()
+    events = user_events()
+    return render_template('calendar/week.html',
+                           cal=pycal,
+                           month=month,
+                           year=year,
+                           week=week,
+                           events=events)
 
 
 @cal_blueprint.route('/day/')
 @authenticate.login_required
 def day():
-    return render_template('calendar/day.html')
+    events = user_events()
+    day, month, year = get_todays_date()
+    return render_template('calendar/day.html',
+                           cal=pycal,
+                           day=day,
+                           month=month,
+                           year=year,
+                           events=events)
 
 
 @cal_blueprint.route('/year/')

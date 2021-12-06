@@ -1,13 +1,7 @@
 {% extends 'base.html' %}
-<html lang="en">
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
 {% block head %}
     {{ super() }}
-    {% block title %}
-        My Calendar
-    {% endblock %}
 {% endblock head %}
 
 {% block content %}
@@ -27,11 +21,25 @@
         {% endblock sidebar %}
         <div class="col col-lg min-vh-100">
             {% block calendar %}
+                {% block arrowhead %}
+                    {% include 'calendar/arrows.html' %}
+                {% endblock arrowhead %}
+                {% block datehead %}
+                    <div class="calendar-header">
+                        <div class="row header-title">
+                            <div class="header-text my-3">
+                                {% block date %}
+                                {% endblock date %}
+                            </div>
+                        </div>
+                    </div>
+                {% endblock datehead %}
             {% endblock calendar %}
         </div>
     </div>
 {% endblock content %}
 
 {% block scripts %}
-{{ super() }}
+    {{ super() }}
+    <script src="{{ url_for('static', filename = 'javascript/calendar/cells.js')}}"></script>
 {% endblock scripts %}

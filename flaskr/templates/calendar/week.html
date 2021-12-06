@@ -2,8 +2,11 @@
 
 {% block head %}
     {{ super() }}
-    {% block title %}
-    {% endblock %}
+    <title>
+        {%block title%}
+             Week
+        {%endblock title%}
+    </title>
 {% endblock head%}
 {% block view %}
     <h3 class="text-center">
@@ -14,30 +17,45 @@
 
 {% endblock side_content %}
 {% block calendar %}
-    <div class="container-fluid mt-4">
-        <div class="container-md my-2">
-            <div class="calendar-header">
-                <div class="row header-title">
-                    <div class="header-text my-3">
-                        <h1 id="date" class="text-center"> {{ cal.month_name[month] }},  {{ year }}</h1>
-                    </div>
-                </div>
-            </div>
-            <table class="table table-sm table-responsive table-hover table-bordered" id="calendar-table">
-                <thead class="table-dark text-center" id="table-header">
+    <div class="container-fluid my-2">
+        {% block arrowhead %}
+            {{ super() }}
+        {% endblock arrowhead %}
+        {% block date %}
+            <h1 id="date" class="text-center"> {{ cal.month_name[month] }}  {{ year }}</h1>
+        {% endblock date %}
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover" id="calendar-table">
+                <thead class="table-primary text-center" id="table-header">
                     <th />
                     {% for date, day in week %}
                         <th>{{ cal.day_name[day] }}
-                            <div class="text-muted">{{ date }}</div>
+                            <div class="text-muted small" id="weekday:{{ day }}-{{ date }}">{{ date }}</div>
                         </th>
                     {% endfor %}
                 </thead>
                 <tbody class="text-center" id="table-body">
-                    {% for hour in hours %}
+                    {% for hour in range(24) %}
                         <tr>
-                            <td style="padding: 0.5em">{{ hour }}</td>
-                            {% for num in range(7) %}
-                                <td id="days"></td>
+                            {% if hour < 10 %}
+                                <td style="padding: 0.5em"> 0{{ hour }}:00</td>
+                            {% else %}
+                                <td style="padding: 0.5em"> {{ hour }}:00</td>
+                            {% endif %}
+
+                            {% for date, day in week %}
+                                <td class="cells" id="day:{{ day }}-{{ date }}">
+                                    {% for event in events %}
+                                        {% if (event[2] == month or event[7] == month) and (event[1] == year or event[6] == year) %}
+                                            {% if event[3] == date and event[4] == hour %}
+                                                <div class="small text-wrap bg-info bg-opacity-50 rounded-pill"
+                                                     id="cell:{{ day }}-{{ date }}-{{ hour }}">
+                                                    {{ event[0] }}
+                                                </div>
+                                            {% endif %}
+                                        {% endif %}
+                                    {% endfor %}
+                                </td>
                             {% endfor %}
                         </tr>
                     {% endfor %}
@@ -48,7 +66,6 @@
 {% endblock calendar %}
 {% block scripts %}
     {{ super() }}
-    <script src="{{ url_for('static', filename = 'javascript/calendar/week.js')}}"></script>
     <script src="{{ url_for('static', filename = 'javascript/navbar/highlight.js')}}"></script>
     <script>makeActive("week")</script>
 {% endblock scripts %}

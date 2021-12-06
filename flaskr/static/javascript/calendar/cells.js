@@ -1,4 +1,4 @@
-document.querySelectorAll("#days").forEach(
+document.querySelectorAll(".cells").forEach(
     day => {
         day.addEventListener("click", event => {
             console.log(event.currentTarget)

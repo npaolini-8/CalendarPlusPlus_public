@@ -13,7 +13,7 @@ year = current_date.year
 week, index = chs.get_week()
 
 
-def get_current_date():
+def set_current_date(d=day, m=month, y=year) -> (int, int, int):
     """Returns current day, month, year shown on the selected week of the calendar"""
     return day, month, year
 

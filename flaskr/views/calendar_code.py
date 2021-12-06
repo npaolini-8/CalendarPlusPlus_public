@@ -2,7 +2,7 @@ import calendar as pycal
 
 from flask import Blueprint, render_template, request
 from flaskr.python_helpers.cal_helpers import get_todays_date, get_month, user_events
-from flaskr.python_helpers.week_functions import get_current_date, get_formatted_week, on_previous
+from flaskr.python_helpers.week_functions import set_current_date, get_formatted_week, on_previous
 from flaskr.python_helpers.month_functions import create_date, format_month, format_iters
 
 from . import authenticate
@@ -32,7 +32,7 @@ def week():
         on_previous()
 
     week = get_formatted_week()
-    day, month, year = get_current_date()
+    day, month, year = set_current_date()
     events = user_events()
     return render_template('calendar/week.html',
                            cal=pycal,

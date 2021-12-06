@@ -55,8 +55,39 @@ def get_formatted_week() -> list:
     return weekdays
 
 
+def on_next():
+    """Updates month, day, year, week if the next arrow is clicked on the weekly view"""
+    global index
+    global week
+    global month
+    global year
+    global day
+    global current_date
+
+    index = index - 1
+
+    current_month = month
+    current_date = datetime(year, month, day)
+    current_date = current_date + relativedelta(weeks=-1)
+    day = current_date.day
+    year = current_date.year
+
+    # if previous week is the end of the previous month
+    if index < 0:
+        month = current_date.month
+        prev_cal_month = chs.get_month(year, month)
+        index = len(prev_cal_month) - 1
+        week = prev_cal_month[index]
+    else:
+        if (index == 0 and current_date.month != current_month):
+            month = current_date.month
+            index = len(chs.get_month(year, month)) - 1
+
+        week = chs.get_month(year, month)[index]
+
+
 def on_previous():
-    """Updates month, day, year, week"""
+    """Updates month, day, year, week if the previous arrow is clicked on the weekly view"""
     global index
     global week
     global month

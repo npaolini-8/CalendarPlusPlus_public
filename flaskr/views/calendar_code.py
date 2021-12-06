@@ -2,7 +2,7 @@ import calendar as pycal
 
 from flask import Blueprint, render_template, request
 from flaskr.python_helpers.cal_helpers import get_todays_date, get_month, user_events
-from flaskr.python_helpers.week_functions import set_current_date, get_formatted_week, on_previous
+from flaskr.python_helpers.week_functions import set_current_date, get_formatted_week, on_next, on_previous
 from flaskr.python_helpers.month_functions import create_date, format_month, format_iters
 
 from . import authenticate
@@ -29,7 +29,10 @@ def month():
 @authenticate.login_required
 def week():
     if request.method == 'POST':
-        on_previous()
+        if request.form.get('move') == 'prev':
+            on_previous()
+        elif request.form.get('move') == 'next':
+            on_next()
 
     week = get_formatted_week()
     day, month, year = set_current_date()

@@ -1,12 +1,13 @@
 import calendar as pycal
 import datetime as dt
 
-from flask import Blueprint, render_template, request
-from flaskr.python_helpers.week_functions import get_hours
-from flaskr.python_helpers.month_functions import create_month
-from flaskr.dbfunc.cal_funcs import import_calendar
+from flask import Blueprint, render_template, request, flash, url_for, redirect
+from ..python_helpers.week_functions import get_hours
+from ..python_helpers.month_functions import create_month
+from ..dbfunc.cal_funcs import import_calendar
 
 from . import authenticate
+from ..python_helpers.file_handling import validate_csv, allowed_files
 
 cal_blueprint = Blueprint("calendar", __name__, url_prefix='/calendar')
 
@@ -18,8 +19,13 @@ def month():
     mth = pycal.month_name[month]
     if request.method == 'POST':
         if 'upload_schedule' in request.files:
-            import_calendar(None, None, None)
+            sched = request.files['upload_schedule']
 
+            if allowed_files(sched) and validate_csv(sched):
+                import_calendar(None, None, None)
+            else:
+                flash("Bro, this ain\'t a calendar")
+                return redirect(url_for('calendar.month'))
     return render_template('calendar/month.html', year=year, month=mth, day=cal, header=header)
 
 

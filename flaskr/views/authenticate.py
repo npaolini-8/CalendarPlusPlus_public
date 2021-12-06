@@ -1,7 +1,7 @@
 from functools import wraps
 from flask import Blueprint, flash, g, redirect, render_template, request, session, url_for
 from flaskr.python_helpers.cal_helpers import get_todays_date
-from flaskr.python_helpers.week_functions import set_current_date
+from flaskr.python_helpers.week_functions import reset_date
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from flaskr.dbfunc import database_funcs as mongo
@@ -65,7 +65,7 @@ def login():
 @login_blueprint.route('/logout/')
 def logout():
     day, month, year = get_todays_date()
-    set_current_date(day,month,year)
+    reset_date(day,month,year)
     session.clear()
     return redirect(url_for('auth.login'))
 

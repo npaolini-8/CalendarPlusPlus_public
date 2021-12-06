@@ -13,10 +13,8 @@ year = current_date.year
 week, index = chs.get_week()
 
 
-def set_current_date(d=day, m=month, y=year) -> (int, int, int):
+def set_current_date() -> (int, int, int):
     """Returns current day, month, year shown on the selected week of the calendar"""
-    # reset date if user logs out
-    day, month, year = d,m,y
     return day, month, year
 
 
@@ -87,3 +85,10 @@ def on_previous():
             index = len(chs.get_month(year, month))-1
 
         week = chs.get_month(year, month)[index]
+
+
+def reset_date(d, m, y) -> (int, int, int):
+    """Returns current day, month, year shown on the selected week of the calendar"""
+    # reset date if user logs out
+    day, month, year = d,m,y
+    return day, month, year

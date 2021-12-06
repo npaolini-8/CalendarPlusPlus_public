@@ -13,7 +13,7 @@ year = current_date.year
 def get_current_day():
     return day, month, year
 
-def resetDay():
+def resetDate():
     global current_date
     global day
     global month

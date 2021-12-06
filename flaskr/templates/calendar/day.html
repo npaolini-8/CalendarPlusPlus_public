@@ -33,14 +33,20 @@
                 </tr>
             </thead>
             <tbody>   
-                    {% for i in range(24) %} 
-                        <tr>
-                            {% if i < 10%}
-                                <td class="text-center" style = "width: 5em;"> 0{{i}}:00</td>
+                    {% for hour in range(24) %} 
+                        <tr class = cells-row id = {{hour}}>
+                            {% if hour < 10%}
+                                <td style = "padding: 0.5em;" id = {{hour}}TimeCol> 0{{hour}}:00</td>
                             {% else %}
-                                <td class="text-center" style = "width: 5em;"> {{i}}:00</td>
+                                <td style = "padding: 0.5em;" id = {{hour}}TimeCol> {{hour}}:00</td>
                             {% endif %}
-                            <td class="cells">events go here</td>
+                            <td class = "cells text-center" style = "padding: 1em;" id = {{hour}}EventsCol>
+                                {% for event in events %}
+                                    {% if (event[3] == day or event[8] == day) and event[4] == hour%}
+                                        <div class="small text-wrap bg-info bg-opacity-50 rounded-pill">{{event[0]}} {{day}}</div>
+                                    {%endif%}
+                                {% endfor %}
+                            </td>
                         </tr>  
                     {% endfor %}
              </tbody>

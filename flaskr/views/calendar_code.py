@@ -1,7 +1,7 @@
 import calendar as pycal
 import datetime as dt
 
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, request
 from flaskr.python_helpers.week_functions import get_hours
 from flaskr.python_helpers.month_functions import create_month
 
@@ -10,11 +10,16 @@ from . import authenticate
 cal_blueprint = Blueprint("calendar", __name__, url_prefix='/calendar')
 
 
-@cal_blueprint.route('/month/')
+@cal_blueprint.route('/month/', methods=['GET', 'POST'])
 @authenticate.login_required
 def month():
     cal, header, year, month = create_month()
     mth = pycal.month_name[month]
+    if request.files == 'POST':
+        pass
+        if 'file' in request.files:
+            pass
+
     return render_template('calendar/month.html', year=year, month=mth, day=cal, header=header)
 
 

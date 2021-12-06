@@ -42,12 +42,7 @@
     </h3>
 {% endblock %}
 {% block side_content %}
-    <form class="sm-form" method="post">
-        <div class="file-field">
-            <input type="file" class="form-control btn btn-info">
-            <input type="submit" class="form-control btn btn-info">
-        </div>
-    </form>
+    {{ super() }}
 {%  endblock side_content %}
 {% block calendar %}
     <div class="container-md my-2">

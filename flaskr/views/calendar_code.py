@@ -4,6 +4,7 @@ import datetime as dt
 from flask import Blueprint, render_template, request
 from flaskr.python_helpers.week_functions import get_hours
 from flaskr.python_helpers.month_functions import create_month
+from flaskr.dbfunc.cal_funcs import import_calendar
 
 from . import authenticate
 
@@ -15,10 +16,9 @@ cal_blueprint = Blueprint("calendar", __name__, url_prefix='/calendar')
 def month():
     cal, header, year, month = create_month()
     mth = pycal.month_name[month]
-    if request.files == 'POST':
-        pass
-        if 'file' in request.files:
-            pass
+    if request.method == 'POST':
+        if 'upload_schedule' in request.files:
+            import_calendar(None, None, None)
 
     return render_template('calendar/month.html', year=year, month=mth, day=cal, header=header)
 

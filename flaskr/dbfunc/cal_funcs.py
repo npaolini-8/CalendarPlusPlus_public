@@ -5,7 +5,7 @@ from icalendar import Calendar, Event
 import pytz
 from pytz import timezone
 import csv
-from database_funcs import CalDB
+from .database_funcs import CalDB
 
 calendar_db = CalDB()
 

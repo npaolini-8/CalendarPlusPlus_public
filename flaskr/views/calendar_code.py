@@ -4,6 +4,7 @@ from flask import Blueprint, render_template, request
 from flaskr.python_helpers.cal_helpers import get_todays_date, get_month, user_events
 from flaskr.python_helpers.week_functions import get_current_date, get_formatted_week, on_previous
 from flaskr.python_helpers.month_functions import create_date, format_month, format_iters
+from flaskr.python_helpers.day_functions import move, get_current_day
 
 from . import authenticate
 
@@ -42,11 +43,19 @@ def week():
                            events=events)
 
 
-@cal_blueprint.route('/day/')
+@cal_blueprint.route('/day/', methods = ['GET','POST'])
 @authenticate.login_required
 def day():
+    if request.method == 'POST':
+        if request.form.get('move') == 'prev':
+            move('prev')
+        else:
+            move('next')
+
+        day, month, year = get_current_day()
+    else:
+        day, month, year = get_todays_date()
     events = user_events()
-    day, month, year = get_todays_date()
     return render_template('calendar/day.html',
                            cal=pycal,
                            day=day,

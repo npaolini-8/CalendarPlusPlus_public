@@ -1,28 +1,32 @@
 import calendar as pycal
 
-from flask import Blueprint, render_template, request
-from flaskr.python_helpers.cal_helpers import get_todays_date, get_month, user_events
-from flaskr.python_helpers.week_functions import get_current_date, get_formatted_week, on_previous
-from flaskr.python_helpers.month_functions import create_date, format_month, format_iters
+from flask import Blueprint, render_template, request, flash, url_for, redirect
+from ..python_helpers.week_functions import get_hours
+from ..python_helpers.month_functions import create_month
+from ..dbfunc.cal_funcs import import_calendar
 
 from . import authenticate
+from ..python_helpers.file_handling import validate_csv, allowed_files
 
 cal_blueprint = Blueprint("calendar", __name__, url_prefix='/calendar')
 pycal.setfirstweekday(6)
 
 
-@cal_blueprint.route('/month/')
+@cal_blueprint.route('/month/', methods=['GET', 'POST'])
 @authenticate.login_required
 def month():
-    cal, year, month = create_date()
-    cal = format_month(cal)
-    cal, header = format_iters(cal)
+    cal, header, year, month = create_month()
     mth = pycal.month_name[month]
-    return render_template('calendar/month.html',
-                           year=year,
-                           month=mth,
-                           day=cal,
-                           header=header)
+    if request.method == 'POST':
+        if 'upload_schedule' in request.files:
+            sched = request.files['upload_schedule']
+
+            if allowed_files(sched) and validate_csv(sched):
+                import_calendar(None, None, None)
+            else:
+                flash("Bro, this ain\'t a calendar")
+                return redirect(url_for('calendar.month'))
+    return render_template('calendar/month.html', year=year, month=mth, day=cal, header=header)
 
 
 @cal_blueprint.route('/week/', methods=['GET', 'POST'])

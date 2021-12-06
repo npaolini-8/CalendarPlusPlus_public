@@ -13,6 +13,16 @@ year = current_date.year
 def get_current_day():
     return day, month, year
 
+def resetDay():
+    global current_date
+    global day
+    global month
+    global year
+    current_date = datetime.today()
+    day = current_date.day
+    month = current_date.month
+    year = current_date.year
+
 def move(direction):
     global current_date
     global day

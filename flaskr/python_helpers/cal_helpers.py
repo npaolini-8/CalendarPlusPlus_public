@@ -1,7 +1,6 @@
 import  calendar as pycal
 
-from datetime import datetime, timedelta
-from dateutil.relativedelta import relativedelta
+from datetime import datetime
 from ..dbfunc import cal_funcs as cf
 from flask import g, session
 from pytz import timezone
@@ -9,40 +8,41 @@ from pytz import timezone
 
 pycal.setfirstweekday(6)
 cal = pycal.Calendar(6)
-today = datetime.today()
-day = today.day
-month = today.month
-year = today.year
+current_date = datetime.today()
+curr_day = current_date.day
+curr_month = current_date.month
+curr_year = current_date.year
 
 
 def get_todays_date() -> (int, int, int):
-    """Returns current day, month and year"""
-    return day, month, year
+    """Returns the today's day, month and year"""
+    return curr_day, curr_month, curr_year
 
 
-def get_month_days() -> list:
+def get_month_days(year=curr_year, month=curr_month) -> list:
     """Returns a list of all the days in the month"""
     days = cal.itermonthdays(year, month)
     return [d for d in days]
 
 
-def get_month_dates() -> list:
+def get_month_dates(year=curr_year, month=curr_month) -> list:
     """Returns a list of all the dates in the month in the format [(year, month, day, weekday),
     (year, month, day++, weekday++),(year, month, day++, weekday++)...]"""
-    dates = cal.itermonthdays4(year,month)
+    dates = cal.itermonthdays4(year, month)
     return [dt for dt in dates]
 
 
-def get_month(yr=year, mth=month) -> list:
+def get_month(year=curr_year, month=curr_month) -> list:
     """Returns specified or current month as a list of week tuples with pairs representing [[(day, weekday),
     (day++, weekday++),(day++, weekday++)...],[(),(),()]...]"""
-    return cal.monthdays2calendar(yr, mth)
+    return cal.monthdays2calendar(year, month)
 
 
-def get_week() -> (list, int):
-    """Returns current week as a list of tuples representing (day, weekday) and week #"""
-    # gets current week by checking if today's date is in the list
-    curr_week = [week for week in get_month() for date, weekday in week if day is date][0]
+def get_week(day=curr_day, year=curr_year, month=curr_month) -> (list, int):
+    """Returns current week as a list of tuples representing (day, weekday) and week number"""
+    # gets current week by checking if today's day is in the list
+    weeks = get_month(year, month)
+    curr_week = [week for week in weeks for date, weekday in week if day is date][0]
     week_index = get_month().index(curr_week)
     return curr_week, week_index
 

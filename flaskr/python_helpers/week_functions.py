@@ -6,40 +6,46 @@ from flaskr.python_helpers import cal_helpers as chs
 
 
 cal = pycal.Calendar(6)
-today = datetime.today()
-day = today.day
-month = today.month
-year = today.year
+current_date = datetime.today()
+day = current_date.day
+month = current_date.month
+year = current_date.year
 week, index = chs.get_week()
 
 
-def get_formatted_week(ind=index,wk=week, yr=year, mth=month) -> list:
-    """Returns the current week of the month as a list of tuples with the format (day_of_month, weekday)"""
-    i = 0
-    zeros = 0
-    weekdays = []
+def get_current_date():
+    """Returns current day, month, year shown on the selected week of the calendar"""
+    return day, month, year
 
-    for day, weekday in wk:
+
+def get_formatted_week() -> list:
+    """Returns the current week of the month as a list of tuples with the format (day_of_month, weekday)"""
+    zeros = 0
+
+    for day, weekday in week:
         if day == 0:
             zeros += 1
 
     # Replaces zeros with previous or upcoming days
     # if zeros exist get the correct days for replacement
-    if not zeros == 0:
-        if ind == len(cal.monthdayscalendar(yr, mth))-1:
-            upcoming_month = (today + relativedelta(months=1)).month
-            next_month = cal.monthdayscalendar(yr, upcoming_month)
-            next_week = next_month[0]
-            start_index = len(next_week)-1-zeros
-            other_days = next_week[start_index:len(next_week)]
-        else:
-            ending_month = (today - relativedelta(months=1)).month
-            prev_month = cal.monthdayscalendar(yr, ending_month)
+    if zeros != 0:
+        # if week is the last week in the month
+        if index == 0:
+            ending_month = (current_date - relativedelta(weeks=1)).month
+            prev_month = cal.monthdayscalendar(month, ending_month)
             prev_week = prev_month[len(prev_month) - 1]
             other_days = prev_week[0:zeros]
+        else:
+            upcoming_month = (current_date + relativedelta(weeks=1)).month
+            next_month = cal.monthdayscalendar(year, upcoming_month)
+            next_week = next_month[0]
+            start_index = len(next_week) - zeros
+            other_days = next_week[start_index:len(next_week)]
 
     # replace 0 with correct day
-    for day, weekday in wk:
+    i = 0
+    weekdays = []
+    for day, weekday in week:
         if day == 0:
             weekdays.append(tuple([other_days[i], weekday]))
             i += 1
@@ -49,21 +55,33 @@ def get_formatted_week(ind=index,wk=week, yr=year, mth=month) -> list:
     return weekdays
 
 
-def on_previous() -> list:
-    """Returns previous week"""
-    prev_index = index - 1
-    prev_year = year
-    prev_month = month
+def on_previous():
+    """Updates month, day, year, week"""
+    global index
+    global week
+    global month
+    global year
+    global day
+    global current_date
+
+    index = index - 1
+
+    current_month = month
+    current_date = datetime(year, month, day)
+    current_date = current_date + relativedelta(weeks=-1)
+    day = current_date.day
+    year = current_date.year
+
 
     # if previous week is the end of the previous month
-    if prev_index < 0:
-        prev_date = today - relativedelta(months=1)
-        prev_month = prev_date.month
-        prev_year = prev_date.year
-        prev_cal_month = chs.get_month(prev_year, prev_month)
-        prev_index = len(prev_cal_month) - 1
-        new_week = prev_cal_month[prev_index]
+    if index < 0:
+        month = current_date.month
+        prev_cal_month = chs.get_month(year, month)
+        index = len(prev_cal_month)-1
+        week = prev_cal_month[index]
     else:
-        new_week = chs.get_month()[prev_index]
+        if (index == 0 and current_date.month != current_month):
+            month = current_date.month
+            index = len(chs.get_month(year, month))-1
 
-    return get_formatted_week(prev_index, new_week, prev_year, prev_month)
+        week = chs.get_month(year, month)[index]

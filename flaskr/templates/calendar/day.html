@@ -41,8 +41,12 @@
                             {% endif %}
                             <td class = "cells"  id = {{hour}}EventsCol>
                                 {% for event in events %}
-                                    {% if (event[3] == day or event[8] == day) and event[4] == hour%}
-                                        <div class="small text-wrap bg-info bg-opacity-50 rounded-pill">{{event[0]}}</div>
+                                    {% if event[4] == hour and event[3] == day and 
+                                        event[2] == month and event[1] == year%}
+                                        <div class="small text-wrap bg-info bg-opacity-50 rounded-pill">START: {{event[0]}}</div>
+                                    {% elif event[9] == hour and event[8] == day and 
+                                        event[7] == month and event[6] == year %}
+                                        <div class="small text-wrap bg-info bg-opacity-50 rounded-pill">END: {{event[0]}}</div>
                                     {%endif%}
                                 {% endfor %}
                             </td>

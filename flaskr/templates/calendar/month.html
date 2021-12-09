@@ -37,12 +37,9 @@
             </tbody>
         </table>
     </div>
-    <h3 class="text-center text-light">
-        Options
-    </h3>
 {% endblock %}
 {% block side_content %}
-
+    {{super()}}
 {%  endblock side_content %}
 {% block calendar %}
     <div class="container-md my-2">
@@ -80,6 +77,5 @@
 {% endblock calendar %}
 {% block scripts %}
     {{ super() }}
-    <script src="{{ url_for('static', filename = 'javascript/navbar/highlight.js')}}"></script>
     <script>makeActive("month")</script>
 {% endblock scripts %}

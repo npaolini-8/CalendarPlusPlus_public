@@ -8,12 +8,12 @@
     </title>
 {%endblock head %}
 {% block view %}
-    <h3 class="justify-content-center">
+    <h3 class="text-center">
         Day
     </h3>
 {% endblock %}
 {% block side_content %}
-
+    {{super()}}
 {%  endblock side_content %}
 {% block calendar %}
 <div class="container-fluid my-2">
@@ -35,9 +35,9 @@
                     {% for hour in range(24) %} 
                         <tr class = cells-row id = {{hour}}>
                             {% if hour < 10%}
-                                <td style = "padding: 0.5em;" id = {{hour}}TimeCol> 0{{hour}}:00</td>
+                                <td style = "width: 0.25em;" id = {{hour}}TimeCol> 0{{hour}}:00</td>
                             {% else %}
-                                <td style = "padding: 0.5em;" id = {{hour}}TimeCol> {{hour}}:00</td>
+                                <td style = "width: 0.25em;" id = {{hour}}TimeCol> {{hour}}:00</td>
                             {% endif %}
                             <td class = "cells"  id = {{hour}}EventsCol>
                                 {% for event in events %}
@@ -59,6 +59,5 @@
 {% endblock calendar %}
 {% block scripts %}
 {{ super() }}
-<script src="{{ url_for('static', filename = 'javascript/navbar/highlight.js')}}"></script>
 <script>makeActive("day")</script>
 {% endblock scripts %}

@@ -47,7 +47,10 @@ def week():
 @authenticate.login_required
 def day():
     if request.method == 'POST':
-        if request.form.get('move') == 'prev':
+        print(request.form)
+        if request.form.get('friend') == 'friend':
+            print('test')
+        elif request.form.get('move') == 'prev':
             move('prev')
         else:
             move('next')

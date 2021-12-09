@@ -13,13 +13,13 @@ calendar_db = CalDB()
 #TODO
 #GENERAL: refactor log-in to not include password comparison
 #import
-#create function to test for ICS validity, name, start, end
-#make sure tz conversion works
+#create function to test for ICS validity, name, start, end 
+#make sure tz conversion works DONE
 #function to check csv validity, google csv
 #manage incoming strings as CSV
 #export
-#modify export return to formatted string
-#create csv template info
+#modify export return to formatted string DONE
+#create csv template info DONE
 
 #to be used for converting normal input into our datestring format, tz = pytz object of user timezone
 #can take int or string input, but assumes they are all the same
@@ -396,6 +396,38 @@ def import_calendar( username, cal_str, format, tz ):
 
     calendar_db.update_event_list(username,events)
 
+#MVC Wrappers for DB functions
+
+def create_user(username, password, first_name, last_name):
+    calendar_db.create_user(username, password, first_name, last_name)
+
+def edit_user(username, password=None, first_name=None, last_name=None):
+    calendar_db.edit_user(username, password, first_name, last_name)
+
+def find_user(username):
+    calendar_db.find_user(username)
+
+def create_event(username, event_id, start_time, end_time, description=None, location=None,recurrence=0):
+    calendar_db.create_event(username, event_id, start_time, end_time, description, location,recurrence)
+
+def edit_event(username, event_id, start_time, end_time, new_id=None,new_start=None,new_end=None,new_desc=None,new_loc=None,delete=False):
+    calendar_db.edit_event(username, event_id, start_time, end_time, new_id,new_start,new_end,new_desc,new_loc,delete)
+
+def add_friend(username, f_username):
+    
+    #check friend list for duplicate, if
+    friends = calendar_db.get_friends(username)["friends"]
+
+    for friend in friends:
+        if friend["username"] == f_username:
+            return
+    
+    calendar_db.add_friend(username,f_username)
+
+def remove_friend(username, f_username):
+    calendar_db.remove_friend(username, f_username)
+        
+
 #eastern = timezone('US/Eastern')
 
 #print( datetime.now(pytz.utc))
@@ -422,3 +454,4 @@ def import_calendar( username, cal_str, format, tz ):
 #dt3 = get_datetime("20211021T150000")
 #print( dt1 < dt3 <   dt2)
 
+#add_friend("testery","tdoe")

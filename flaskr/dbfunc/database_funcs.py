@@ -60,7 +60,7 @@ class CalDB():
 
         )
 
-    #built delete functionality into edit as you need to do the same iterative operation
+    #built delete functionality into edit
     #matching events on id, start, and end time. this combination should be unique, unless user is scheduling
     #duplicate events for some reason
     def edit_event(self, username, event_id, start_time, end_time, new_id=None,new_start=None,new_end=None,new_desc=None,new_loc=None,delete=False):
@@ -151,6 +151,17 @@ class CalDB():
                 '$pull': {"friends": {"username":f_username}}
             }
         )
+    
+    def get_friends(self, username):
+        return self.users_collection.find_one({"username": username}, {"_id":0,"friends":1})
+
+    #this kind of filtering doesn't work, we made friends objects and not strings in case we needed more attrs
+    # def friend_check(self, username, f_username):
+
+    #     if self.users_collection.find_one({"username":username, "friends":f_username} ,{"_id":1}) :
+    #         return True
+    #     else:
+    #         return False
 
 #cal = CalDB()
 

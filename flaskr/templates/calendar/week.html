@@ -14,7 +14,6 @@
     </h3>
 {% endblock view %}
 {% block side_content %}
-
 {% endblock side_content %}
 {% block calendar %}
     <div class="container-fluid my-2">
@@ -44,11 +43,12 @@
                             {% endif %}
 
                             {% for date, day in week %}
-                                <td class="cells" id="day:{{ day }}-{{ date }}">
+                                <td class="cells" id="day:{{ day }}-{{ hour }}" data-bs-target="#event-modal" data-bs-toggle="modal">
                                     {% for event in events %}
                                         {% if (event[2] == month or event[7] == month) and (event[1] == year or event[6] == year) %}
                                             {% if event[3] == date and event[4] == hour %}
                                                 <div class="small text-wrap bg-info bg-opacity-50 rounded-pill"
+                                                     data-bs-target="#event-modal" data-toggle="modal"
                                                      id="cell:{{ day }}-{{ date }}-{{ hour }}">
                                                     {{ event[0] }}
                                                 </div>
@@ -63,6 +63,9 @@
             </table>
         </div>
     </div>
+{% block modals %}
+    {{ super() }}
+{% endblock modals %}
 {% endblock calendar %}
 {% block scripts %}
     {{ super() }}

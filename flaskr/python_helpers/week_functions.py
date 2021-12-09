@@ -1,6 +1,6 @@
 import  calendar as pycal
 
-from datetime import datetime, timedelta
+from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from flaskr.python_helpers import cal_helpers as chs
 

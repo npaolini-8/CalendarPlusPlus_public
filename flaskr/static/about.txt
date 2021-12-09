@@ -1,1 +1,0 @@
-Meant for static files such as custom css or javascript goodness

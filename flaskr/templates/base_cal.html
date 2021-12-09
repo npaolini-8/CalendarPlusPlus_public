@@ -37,44 +37,47 @@
                 {% block modals %}
                     <div class="modal fade" id="event-modal" tabindex="-1" role="dialog" aria-labelledby="event-modal-label"
                          aria-hidden="true">
-                        <div class="modal-dialog" role="document">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="event-modal-label">Event</h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
+                                    <h5 class="modal-title text-center" id="event-modal-label">Event</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true"></span>
                                     </button>
                                 </div>
-                                <div class="modal-body">
-                                    <div class="form-group">
-                                        <label for="event-name">Name</label>
-                                        <input type="text" class="form-control" id="event-name" placeholder="Name">
+                                <form method="POST">
+                                    <div class="modal-body">
+                                        <div class="form-group form">
+                                            <label class="form-label" for="event-name">Title</label>
+                                            <input type="text" class="form-control" id="event-name" placeholder="Name"
+                                                   required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-label" for="event-description">Description</label>
+                                            <textarea class="form-control" id="event-description" rows="3" required>
+                                            </textarea>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-label" for="event-start-date">Start Date</label>
+                                            <input type="date" class="form-control" id="event-start-date" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-label" for="event-start-time">Start Time</label>
+                                            <input type="time" class="form-control" id="event-start-time" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-label" for="event-end-date">End Date</label>
+                                            <input type="date" class="form-control" id="event-end-date" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-label" for="event-end-time">End Time</label>
+                                            <input type="time" class="form-control" id="event-end-time" required>
+                                        </div>
                                     </div>
-                                    <div class="form-group">
-                                        <label for="event-description">Description</label>
-                                        <textarea class="form-control" id="event-description" rows="3"></textarea>
+                                    <div class="modal-footer">
+                                        <button type="submit" class="btn btn-primary" id="event-save">Save</button>
                                     </div>
-                                    <div class="form-group">
-                                        <label for="event-start-date">Start Date</label>
-                                        <input type="date" class="form-control" id="event-start-date">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="event-start-time">Start Time</label>
-                                        <input type="time" class="form-control" id="event-start-time">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="event-end-date">End Date</label>
-                                        <input type="date" class="form-control" id="event-end-date">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="event-end-time">End Time</label>
-                                        <input type="time" class="form-control" id="event-end-time">
-                                    </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                    <button type="button" class="btn btn-primary" id="event-save">Save changes</button>
-                                </div>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -86,5 +89,5 @@
 
 {% block scripts %}
     {{ super() }}
-    <!-- <script src="{{ url_for('static', filename = 'javascript/calendar/cells.js')}}"></script> -->
+    <script src="{{ url_for('static', filename = 'javascript/calendar/cells.js')}}"></script>
 {% endblock scripts %}

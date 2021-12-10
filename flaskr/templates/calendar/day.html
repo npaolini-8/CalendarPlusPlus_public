@@ -40,13 +40,16 @@
                             {% else %}
                                 <td class="text-center" style = "width: 5em;"> {{i}}:00</td>
                             {% endif %}
-                            <td class="cells">events go here</td>
+                            <td class="cells" data-bs-target="#event-modal" data-bs-toggle="modal">events go here</td>
                         </tr>  
                     {% endfor %}
              </tbody>
         </table>
     </div>
 </div>
+{% block modals %}
+    {{ super() }}
+{% endblock modals %}
 {% endblock calendar %}
 {% block scripts %}
 {{ super() }}

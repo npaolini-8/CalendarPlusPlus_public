@@ -3,7 +3,7 @@ import calendar as pycal
 from flask import Blueprint, render_template, request, flash, url_for, redirect
 from ..python_helpers.cal_helpers import get_todays_date, get_month, user_events
 from ..python_helpers.week_functions import set_current_date, get_formatted_week, on_next, on_previous
-from ..python_helpers.month_functions import create_date, create_month, format_month, format_iters
+from ..python_helpers.month_functions import create_month
 from ..dbfunc.cal_funcs import import_calendar
 
 from . import authenticate

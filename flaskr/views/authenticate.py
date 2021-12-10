@@ -1,5 +1,6 @@
 from functools import wraps
 from flask import Blueprint, flash, g, redirect, render_template, request, session, url_for
+from flaskr.python_helpers.week_functions import reset_date
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from flaskr.dbfunc import database_funcs as mongo
@@ -42,12 +43,8 @@ def login():
 
         user = db.find_user(username)
 
-        if user is None:
-            error = 'Incorrect username'
-            flash(error)
-            return redirect(url_for('auth.login'))
-        elif not check_password_hash(user['password'], password):
-            error = 'Incorrect password'
+        if user is None or not check_password_hash(user['password'], password):
+            error = 'Invalid credentials. Please try again.'
             flash(error)
             return redirect(url_for('auth.login'))
 
@@ -62,6 +59,7 @@ def login():
 
 @login_blueprint.route('/logout/')
 def logout():
+    reset_date()
     session.clear()
     return redirect(url_for('auth.login'))
 

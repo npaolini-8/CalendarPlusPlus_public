@@ -1,7 +1,9 @@
 import calendar as pycal
 
 from flask import Blueprint, render_template, request, flash, url_for, redirect
-from ..python_helpers.week_functions import on_previous, get_formatted_week, get_current_date
+from ..python_helpers.cal_helpers import get_todays_date, get_month, save_event, user_events
+from ..python_helpers.day_functions import move, get_current_day, resetDate
+from ..python_helpers.week_functions import set_current_date, get_formatted_week, on_next, on_previous
 from ..python_helpers.month_functions import create_month, month_move, reset_month
 from ..dbfunc.cal_funcs import import_calendar
 from ..python_helpers.cal_helpers import user_events, get_todays_date
@@ -44,10 +46,21 @@ def month():
 @authenticate.login_required
 def week():
     if request.method == 'POST':
-        on_previous()
+        if request.form.get('move') == 'prev':
+            on_previous()
+        elif request.form.get('move') == 'next':
+            on_next()
+        elif request.form.get('event-save') == 'save':
+            event_id = request.form.get('event-title')
+            event_desc = request.form.get('event-desc')
+            start_date = request.form.get('start-date')
+            end_date = request.form.get('end-date')
+            start_time = request.form.get('start-time')
+            end_time =request.form.get('end-time')
+            save_event(event_id, event_desc, start_date, end_date, start_time, end_time)
 
     week = get_formatted_week()
-    day, month, year = get_current_date()
+    day, month, year = set_current_date()
     events = user_events()
     return render_template('calendar/week.html',
                            cal=pycal,
@@ -57,11 +70,23 @@ def week():
                            events=events)
 
 
-@cal_blueprint.route('/day/')
+@cal_blueprint.route('/day/', methods = ['GET','POST'])
 @authenticate.login_required
 def day():
+    if request.method == 'POST':
+        print(request.form)
+        if request.form.get('friend') == 'friend':
+            print('test')
+        elif request.form.get('move') == 'prev':
+            move('prev')
+        else:
+            move('next')
+
+        date, day, month, year = get_current_day()
+    else:
+        date, day, month, year = get_todays_date()
+        resetDate()
     events = user_events()
-    day, month, year = get_todays_date()
     return render_template('calendar/day.html',
                            cal=pycal,
                            day=day,

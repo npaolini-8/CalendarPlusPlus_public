@@ -15,6 +15,7 @@
                         {% endblock %}
                         {% block side_content %}
                             {% include 'calendar/upload.html' %}
+                            {% include 'calendar/friend_button.html' %}
                         {% endblock side_content %}
                     </div>
                 </div>
@@ -35,6 +36,9 @@
                         </div>
                     </div>
                 {% endblock datehead %}
+                {% block modals %}
+                    {% include 'calendar/event_modal.html' %}
+                {% endblock modals %}
             {% endblock calendar %}
         </div>
     </div>

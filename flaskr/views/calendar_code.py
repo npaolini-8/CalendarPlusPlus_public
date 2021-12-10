@@ -2,6 +2,7 @@ import calendar as pycal
 
 from flask import Blueprint, render_template, request, flash, url_for, redirect
 from ..python_helpers.cal_helpers import get_todays_date, get_month, save_event, user_events
+from ..python_helpers.day_functions import move, get_current_day, resetDate
 from ..python_helpers.week_functions import set_current_date, get_formatted_week, on_next, on_previous
 from ..python_helpers.month_functions import create_month
 from ..dbfunc.cal_funcs import import_calendar
@@ -59,11 +60,23 @@ def week():
                            events=events)
 
 
-@cal_blueprint.route('/day/')
+@cal_blueprint.route('/day/', methods = ['GET','POST'])
 @authenticate.login_required
 def day():
+    if request.method == 'POST':
+        print(request.form)
+        if request.form.get('friend') == 'friend':
+            print('test')
+        elif request.form.get('move') == 'prev':
+            move('prev')
+        else:
+            move('next')
+
+        day, month, year = get_current_day()
+    else:
+        day, month, year = get_todays_date()
+        resetDate()
     events = user_events()
-    day, month, year = get_todays_date()
     return render_template('calendar/day.html',
                            cal=pycal,
                            day=day,

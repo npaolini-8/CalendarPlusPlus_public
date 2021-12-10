@@ -32,17 +32,29 @@
                     <th><h3>Events</h3></th>
                 </tr>
             </thead>
-            <tbody>   
-                    {% for i in range(24) %} 
-                        <tr>
-                            {% if i < 10%}
-                                <td class="text-center" style = "width: 5em;"> 0{{i}}:00</td>
-                            {% else %}
-                                <td class="text-center" style = "width: 5em;"> {{i}}:00</td>
-                            {% endif %}
-                            <td class="cells" data-bs-target="#event-modal" data-bs-toggle="modal">events go here</td>
-                        </tr>  
-                    {% endfor %}
+            <tbody class = "text-center" id = "table-body">
+                {% for hour in range(24) %}
+                    <tr class = cells-row id = {{hour}}>
+                        {% if hour < 10%}
+                            <td style = "width: 0.25em;" id = {{hour}}TimeCol> 0{{hour}}:00</td>
+                        {% else %}
+                            <td style = "width: 0.25em;" id = {{hour}}TimeCol> {{hour}}:00</td>
+                        {% endif %}
+                        <td class = "cells" id = {{hour}}EventsCol data-bs-target="#event-modal" data-bs-toggle="modal">
+                            {% for event in events %}
+                                {% if event[4] == hour and event[3] == day and
+                                    event[2] == month and event[1] == year%}
+                                    <div class="events small text-wrap bg-info bg-opacity-50 rounded-pill"
+                                    id="cell:{{ day }}-{{ month }}-{{ year }}-{{ hour }}">START: {{event[0]}}</div>
+                                {% elif event[9] == hour and event[8] == day and
+                                    event[7] == month and event[6] == year %}
+                                    <div class="events small text-wrap bg-info bg-opacity-50 rounded-pill"
+                                    id="cell:{{ day }}-{{ month }}-{{ year }}-{{ hour }}">END: {{event[0]}}</div>
+                                {%endif%}
+                            {% endfor %}
+                        </td>
+                    </tr>
+                {% endfor %}
              </tbody>
         </table>
     </div>

@@ -13,18 +13,25 @@
     </h3>
 {% endblock %}
 {% block side_content %}
-{{ super() }}
+    {{super()}}
 {%  endblock side_content %}
 {% block calendar %}
-<div class="container-md my-2">
+<div class="container-fluid my-2">
     {% block arrowhead %}
         {{ super() }}
     {% endblock arrowhead %}
     {% block date %}
-        <h1 id="date" class = text-center>{{ cal.month_name[month] }} {{ day }} {{ year }}</h1>
+        {% if day == 1 or day == 21 or day == 31%}
+            <h1 id="date" class = text-center>{{ cal.month_name[month] }} {{ day }}st, {{ year }}</h1>
+        {% elif day == 2 or day == 22%}
+            <h1 id="date" class = text-center>{{ cal.month_name[month] }} {{ day }}nd, {{ year }}</h1>
+        {% elif day == 3 or day == 23%}
+            <h1 id="date" class = text-center>{{ cal.month_name[month] }} {{ day }}rd, {{ year }}</h1>
+        {% else %}
+            <h1 id="date" class = text-center>{{ cal.month_name[month] }} {{ day }}th, {{ year }}</h1>
+        {% endif %}
     {% endblock date %}
     <div class="calendar-content mt-3">
-        Show Full Calendar
         <table id="calendar-table" class="table table-bordered table-hover">
             <thead class="table-primary text-center">
                 <tr>
@@ -65,6 +72,5 @@
 {% endblock calendar %}
 {% block scripts %}
 {{ super() }}
-<script src="{{ url_for('static', filename = 'javascript/navbar/highlight.js')}}"></script>
 <script>makeActive("day")</script>
 {% endblock scripts %}

@@ -13,7 +13,6 @@ year = current_date.year
 def get_current_day():
     return day, month, year
 
-
 def resetDate():
     global current_date
     global day
@@ -24,8 +23,9 @@ def resetDate():
     month = current_date.month
     year = current_date.year
 
+    
+def day_move(direction):
 
-def move(direction):
     global current_date
     global day
     global month
@@ -38,3 +38,4 @@ def move(direction):
     day = current_date.day
     month = current_date.month
     year = current_date.year
+

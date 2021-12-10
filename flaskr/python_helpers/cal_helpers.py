@@ -14,9 +14,9 @@ curr_month = current_date.month
 curr_year = current_date.year
 
 
-def get_todays_date() -> (int, int, int):
+def get_todays_date():
     """Returns the today's day, month and year"""
-    return curr_day, curr_month, curr_year
+    return current_date, curr_day, curr_month, curr_year
 
 
 def get_month_days(year=curr_year, month=curr_month) -> list:
@@ -55,3 +55,4 @@ def user_events() -> list:
 
     events = cf.get_event_list(session['user_id'], timezone('US/Eastern'))
     return events
+

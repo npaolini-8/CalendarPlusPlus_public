@@ -2,7 +2,7 @@ import calendar as pycal
 
 from flask import Blueprint, render_template, request, flash, url_for, redirect
 from ..python_helpers.week_functions import on_previous, get_formatted_week, get_current_date
-from ..python_helpers.month_functions import create_month
+from ..python_helpers.month_functions import create_month, month_move, reset_month
 from ..dbfunc.cal_funcs import import_calendar
 from ..python_helpers.cal_helpers import user_events, get_todays_date
 
@@ -16,10 +16,13 @@ pycal.setfirstweekday(6)
 @cal_blueprint.route('/month/', methods=['GET', 'POST'])
 @authenticate.login_required
 def month():
-    cal, header, year, month = create_month()
-    mth = pycal.month_name[month]
     if request.method == 'POST':
-        if 'upload_schedule' in request.files:
+        if request.form.get('move') == "prev":
+            month_move("prev")
+        elif request.form.get('move') == "next":
+            month_move("next")
+
+        if request.form.get('upload') == "upload" and 'upload_schedule' in request.files:
             sched = request.files['upload_schedule']
 
             if allowed_files(sched) and validate_csv(sched):
@@ -27,6 +30,13 @@ def month():
             else:
                 flash("Bro, this ain\'t a calendar")
                 return redirect(url_for('calendar.month'))
+    else:
+        reset_month()
+
+    cal, header, year, month = create_month()
+    mth = pycal.month_name[month]
+    events = user_events()
+
     return render_template('calendar/month.html', year=year, month=mth, day=cal, header=header)
 
 

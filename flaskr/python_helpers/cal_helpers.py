@@ -1,10 +1,9 @@
-import  calendar as pycal
+import calendar as pycal
 
 from datetime import datetime
 from ..dbfunc import cal_funcs as cf
 from flask import g, session
 from pytz import timezone
-
 
 pycal.setfirstweekday(6)
 cal = pycal.Calendar(6)
@@ -65,12 +64,20 @@ def save_event(event, desc, s_date, e_date, s_time, e_time):
     e_time = e_time.split(':')
 
     # convert start and end time to database format
-    start_time = cf.convert_date_input( s_date[0], s_date[1], s_date[2], s_time[0], s_time[0])
+    start_time = cf.convert_date_input(s_date[0], s_date[1], s_date[2], s_time[0], s_time[0])
     end_time = cf.convert_date_input(e_date[0], e_date[1], e_date[2], e_time[0], e_time[0])
 
     cf.create_event(session['user_id'], event, start_time, end_time, desc)
 
 
+def export_cal(format, tz=None):
+    zone = tz if tz else timezone('US/Eastern')
+    return cf.export_calendar(session['user_id'], format, zone)
+
+
+def import_cal(format, tz=None):
+    zone = tz if tz else timezone('US/Eastern')
+    return cf.import_calendar(session['user_id'], cal_str="???", format=format, tz=zone)
+
 #
 # def edit_event():
-

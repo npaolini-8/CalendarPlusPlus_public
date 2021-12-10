@@ -16,3 +16,5 @@ def validate_csv(csv):
     return validate
 
 
+def get_extension(filename):
+    return filename.rsplit('.', 1)[1].lower()

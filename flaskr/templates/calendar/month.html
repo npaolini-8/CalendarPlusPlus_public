@@ -14,7 +14,7 @@
         Month
     </h3>
     <p class="text-center text-light">
-        {{ month }} {{ year }}
+        {{ pycal.month_name[month] }} {{ year }}
     </p>
     <div>
         <table id="calendar-table" class="table">
@@ -53,7 +53,7 @@
       <div class="calendar-header">
             <div class="row header-title">
                 <div class="header-text my-3">
-                    <h1 id="date" class="text-center"> {{ month }}, {{ year }}</h1>
+                    <h1 id="date" class="text-center"> {{ pycal.month_name[month] }}, {{ year }}</h1>
                 </div>
             </div>
         </div>
@@ -72,7 +72,25 @@
                     {% for cell in row %}
                         {% if cell != 0 %}
                             <td class="cells text-center" data-bs-target="#event-modal" data-bs-toggle="modal"
-                                style="padding: 3em">{{ cell }}</td>
+                                style="padding: 3em">
+                                {{ cell }}
+                                {% set event_counter = namespace(value=0) %}
+                                {% for event in events %}
+                                    {% if (event[2] == month or event[7] == month) and (event[1] == year or event[6] == year) %}
+                                        {% if event[3] == cell %}
+                                            {% set event_counter.value = event_counter.value + 1 %}
+                                        {% endif %}
+                                    {% endif %}
+                                {% endfor %}
+                                {% if event_counter.value > 0 %}
+                                <div class="events small text-wrap bg-info bg-opacity-50 rounded-pill"
+                                     data-bs-target="#event-modal" data-toggle="modal"
+                                     id="cell:{{ date }}-{{ month }}-{{ year }}">
+
+                                    {{ event_counter.value }} event(s)
+                                </div>
+                                {% endif %}
+                            </td>
                         {% else %}
                             <td class="cells text-center" data-bs-target="#event-modal" data-bs-toggle="modal"
                                 style="padding: 3em"></td>

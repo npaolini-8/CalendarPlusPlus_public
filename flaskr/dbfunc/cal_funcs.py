@@ -140,9 +140,6 @@ def get_event_list(username, tz, start=None, end=None, ) -> list:
 
 #builds calendar file based on given format: ics, csv
 def export_calendar( username, format, tz):
-
-# builds calendar file based on given format: ics, csv
-def export_calendar(username, format):
     # db queries
     # TODO: Error handling
     user = calendar_db.find_user(username)

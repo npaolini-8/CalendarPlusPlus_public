@@ -49,6 +49,9 @@
     {{ super() }}
 {%  endblock side_content %}
 {% block calendar %}
+    {% block arrowhead %}
+        {{ super() }}
+    {% endblock %}
     <div class="container-md my-2">
       <div class="calendar-header">
             <div class="row header-title">

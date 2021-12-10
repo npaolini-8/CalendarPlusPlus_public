@@ -23,7 +23,7 @@ def resetDate():
     month = current_date.month
     year = current_date.year
 
-def move(direction):
+def day_move(direction):
     global current_date
     global day
     global month

@@ -4,7 +4,7 @@ from flask import Blueprint, render_template, request
 from flaskr.python_helpers.cal_helpers import get_todays_date, get_month, user_events
 from flaskr.python_helpers.week_functions import get_current_date, get_formatted_week, on_previous
 from flaskr.python_helpers.month_functions import create_date, format_month, format_iters
-from flaskr.python_helpers.day_functions import move, get_current_day, resetDate
+from flaskr.python_helpers.day_functions import day_move, get_current_day, resetDate
 
 from . import authenticate
 
@@ -47,13 +47,12 @@ def week():
 @authenticate.login_required
 def day():
     if request.method == 'POST':
-        print(request.form)
         if request.form.get('friend') == 'friend':
             print('test')
         elif request.form.get('move') == 'prev':
-            move('prev')
+            day_move('prev')
         else:
-            move('next')
+            day_move('next')
 
         day, month, year = get_current_day()
     else:

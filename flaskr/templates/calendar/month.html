@@ -46,6 +46,9 @@
     {{super()}}
 {%  endblock side_content %}
 {% block calendar %}
+    {% block arrowhead %}
+        {{ super() }}
+    {% endblock %}
     <div class="container-md my-2">
       <div class="calendar-header">
             <div class="row header-title">
@@ -68,9 +71,11 @@
                 <tr>
                     {% for cell in row %}
                         {% if cell != 0 %}
-                            <td class="cells text-center" style="padding: 3em">{{ cell }}</td>
+                            <td class="cells text-center" data-bs-target="#event-modal" data-bs-toggle="modal"
+                                style="padding: 3em">{{ cell }}</td>
                         {% else %}
-                            <td class="cells text-center" style="padding: 3em"></td>
+                            <td class="cells text-center" data-bs-target="#event-modal" data-bs-toggle="modal"
+                                style="padding: 3em"></td>
                         {% endif %}
                     {% endfor %}
                 </tr>
@@ -79,6 +84,9 @@
             </table>
         </div>
     </div>
+{% block modals %}
+    {{ super() }}
+{% endblock modals %}
 {% endblock calendar %}
 {% block scripts %}
     {{ super() }}

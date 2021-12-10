@@ -1,6 +1,6 @@
 import  calendar as pycal
 
-from datetime import datetime, timedelta
+from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from flaskr.python_helpers import cal_helpers as chs
 
@@ -13,7 +13,7 @@ year = current_date.year
 week, index = chs.get_week()
 
 
-def get_current_date():
+def set_current_date() -> (int, int, int):
     """Returns current day, month, year shown on the selected week of the calendar"""
     return day, month, year
 
@@ -31,8 +31,10 @@ def get_formatted_week() -> list:
     if zeros != 0:
         # if week is the last week in the month
         if index == 0:
-            ending_month = (current_date - relativedelta(weeks=1)).month
-            prev_month = cal.monthdayscalendar(month, ending_month)
+            ending_date = current_date - relativedelta(weeks=1)
+            ending_month = ending_date.month
+            ending_year = ending_date.year
+            prev_month = cal.monthdayscalendar(year, ending_month)
             prev_week = prev_month[len(prev_month) - 1]
             other_days = prev_week[0:zeros]
         else:
@@ -55,8 +57,8 @@ def get_formatted_week() -> list:
     return weekdays
 
 
-def on_previous():
-    """Updates month, day, year, week"""
+def on_next():
+    """Updates month, day, year, week if the next arrow is clicked on the weekly view"""
     global index
     global week
     global month
@@ -64,11 +66,44 @@ def on_previous():
     global day
     global current_date
 
-    index = index - 1
+    print(index)
+    index += 1
+
+    current_date = current_date + relativedelta(weeks=1)
+    day = current_date.day
+    year = current_date.year
+
+    # if previous week is the end of the previous month
+    if index >= len(chs.get_month(year, month)):
+        index = 0
+        month = current_date.month
+        next_cal_month = chs.get_month(year, month)
+        week = next_cal_month[index]
+    else:
+        # if (index == 0 and current_date.month != current_month):
+        #     month = current_date.month
+        #     index = len(chs.get_month(year, month)) - 1
+
+        week = chs.get_month(year, month)[index]
+
+    print("end_index: ", index)
+    print(f"day: {day}, month: {month}, year: {year}")
+    print("week: ", week)
+
+def on_previous():
+    """Updates month, day, year, week if the previous arrow is clicked on the weekly view"""
+    global index
+    global week
+    global month
+    global year
+    global day
+    global current_date
+
+    index -= 1
 
     current_month = month
     current_date = datetime(year, month, day)
-    current_date = current_date + relativedelta(weeks=-1)
+    current_date = current_date - relativedelta(weeks=1)
     day = current_date.day
     year = current_date.year
 
@@ -85,3 +120,14 @@ def on_previous():
             index = len(chs.get_month(year, month))-1
 
         week = chs.get_month(year, month)[index]
+
+
+def reset_date():
+    """Returns current day, month, year shown on the selected week of the calendar"""
+    # reset date if user logs out
+    global current_date
+    global day
+    global month
+    global year
+
+    current_date, day, month, year = chs.get_todays_date()

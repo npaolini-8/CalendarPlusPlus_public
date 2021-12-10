@@ -1,11 +1,14 @@
 import calendar as pycal
 
 from flask import Blueprint, render_template, request, flash, url_for, redirect
-from flaskr.python_helpers.cal_helpers import get_todays_date, get_month, user_events
-from flaskr.python_helpers.week_functions import get_current_date, get_formatted_week, on_previous, create_month
-from flaskr.python_helpers.month_functions import create_date, format_month, format_iters
-from flaskr.python_helpers.day_functions import day_move, get_current_day, resetDate
+
+from ..python_helpers.cal_helpers import get_todays_date, get_month, save_event, user_events
+from ..python_helpers.day_functions import move, get_current_day, resetDate
+from ..python_helpers.week_functions import set_current_date, get_formatted_week, on_next, on_previous
+from ..python_helpers.month_functions import create_month, month_move, reset_month
+
 from ..dbfunc.cal_funcs import import_calendar
+from ..python_helpers.cal_helpers import user_events, get_todays_date
 
 from . import authenticate
 from ..python_helpers.file_handling import validate_csv, allowed_files
@@ -17,10 +20,13 @@ pycal.setfirstweekday(6)
 @cal_blueprint.route('/month/', methods=['GET', 'POST'])
 @authenticate.login_required
 def month():
-    cal, header, year, month = create_month()
-    mth = pycal.month_name[month]
     if request.method == 'POST':
-        if 'upload_schedule' in request.files:
+        if request.form.get('move') == "prev":
+            month_move("prev")
+        elif request.form.get('move') == "next":
+            month_move("next")
+
+        if request.form.get('upload') == "upload" and 'upload_schedule' in request.files:
             sched = request.files['upload_schedule']
 
             if allowed_files(sched) and validate_csv(sched):
@@ -28,6 +34,13 @@ def month():
             else:
                 flash("Bro, this ain\'t a calendar")
                 return redirect(url_for('calendar.month'))
+    else:
+        reset_month()
+
+    cal, header, year, month = create_month()
+    mth = pycal.month_name[month]
+    events = user_events()
+
     return render_template('calendar/month.html', year=year, month=mth, day=cal, header=header)
 
 
@@ -35,10 +48,21 @@ def month():
 @authenticate.login_required
 def week():
     if request.method == 'POST':
-        on_previous()
+        if request.form.get('move') == 'prev':
+            on_previous()
+        elif request.form.get('move') == 'next':
+            on_next()
+        elif request.form.get('event-save') == 'save':
+            event_id = request.form.get('event-title')
+            event_desc = request.form.get('event-desc')
+            start_date = request.form.get('start-date')
+            end_date = request.form.get('end-date')
+            start_time = request.form.get('start-time')
+            end_time =request.form.get('end-time')
+            save_event(event_id, event_desc, start_date, end_date, start_time, end_time)
 
     week = get_formatted_week()
-    day, month, year = get_current_date()
+    day, month, year = set_current_date()
     events = user_events()
     return render_template('calendar/week.html',
                            cal=pycal,
@@ -52,16 +76,19 @@ def week():
 @authenticate.login_required
 def day():
     if request.method == 'POST':
+
+        print(request.form)
         if request.form.get('friend') == 'friend':
             print('test')
         elif request.form.get('move') == 'prev':
-            day_move('prev')
+            move('prev')
         else:
-            day_move('next')
+            move('next')
 
         day, month, year = get_current_day()
     else:
-        day, month, year = get_todays_date()
+        date, day, month, year = get_todays_date()
+
         resetDate()
     events = user_events()
     return render_template('calendar/day.html',

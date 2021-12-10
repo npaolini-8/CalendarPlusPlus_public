@@ -18,13 +18,8 @@
                                 Options
                             </h3>
                             {% include 'calendar/friend-button.html' %}
-                            <form class="sm-form" method="post" enctype="multipart/form-data">
-                                <div class="file-field">
-                                    <label class="m-1">Upload Schedule</label>
-                                    <input type="file" name="upload_schedule" class="form-control m-1 btn btn-info">
-                                    <input type="submit" class="form-control btn btn-info m-1" value="Upload">
-                                </div>
-                            </form>
+                            {% include 'calendar/upload.html' %}
+
                         {% endblock side_content %}
                     </div>
                 </div>
@@ -45,6 +40,9 @@
                         </div>
                     </div>
                 {% endblock datehead %}
+                {% block modals %}
+                    {% include 'calendar/event_modal.html' %}
+                {% endblock modals %}
             {% endblock calendar %}
         </div>
     </div>

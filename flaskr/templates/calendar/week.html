@@ -27,7 +27,7 @@
         <div class="table-responsive">
             <table class="table table-bordered table-hover" id="calendar-table">
                 <thead class="table-primary text-center" id="table-header">
-                    <th />
+                    <th/>
                     {% for date, day in week %}
                         <th>{{ cal.day_name[day] }}
                             <div class="text-muted small" id="weekday:{{ day }}-{{ date }}">{{ date }}</div>

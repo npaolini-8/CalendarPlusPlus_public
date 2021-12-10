@@ -48,7 +48,6 @@ def week():
             end_time =request.form.get('end-time')
             save_event(event_id, event_desc, start_date, end_date, start_time, end_time)
 
-
     week = get_formatted_week()
     day, month, year = set_current_date()
     events = user_events()
@@ -72,9 +71,9 @@ def day():
         else:
             move('next')
 
-        day, month, year = get_current_day()
+        date, day, month, year = get_current_day()
     else:
-        day, month, year = get_todays_date()
+        date, day, month, year = get_todays_date()
         resetDate()
     events = user_events()
     return render_template('calendar/day.html',

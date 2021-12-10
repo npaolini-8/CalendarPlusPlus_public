@@ -14,9 +14,9 @@ curr_month = current_date.month
 curr_year = current_date.year
 
 
-def get_todays_date() -> (int, int, int):
+def get_todays_date():
     """Returns the today's day, month and year"""
-    return curr_day, curr_month, curr_year
+    return current_date, curr_day, curr_month, curr_year
 
 
 def get_month_days(year=curr_year, month=curr_month) -> list:
@@ -69,3 +69,7 @@ def save_event(event, desc, s_date, e_date, s_time, e_time):
     end_time = cf.convert_date_input(e_date[0], e_date[1], e_date[2], e_time[0], e_time[0])
 
     cf.create_event(session['user_id'], event, start_time, end_time, desc)
+
+
+#
+# def edit_event():

@@ -5,15 +5,28 @@ from icalendar import Calendar, Event
 import pytz
 from pytz import timezone
 import csv
-from .database_funcs import CalDB
+from io import StringIO
+from .database_funcs import CalDB #TODO make sure . is here before push
 
 calendar_db = CalDB()
 
 
-# to be used for converting normal input into our datestring format, tz = pytz object of user timezone
-# can take int or string input, but assumes they are all the same
-# time switched to optional for more convenient input
-def convert_date_input(year, month, day, hour=None, minute=None, tz=pytz.utc) -> str:
+#TODO
+#GENERAL: refactor log-in to not include password comparison
+#import
+#create function to test for ICS validity, name, start, end 
+#make sure tz conversion works DONE
+#function to check csv validity, google csv
+#manage incoming strings as CSV
+#export
+#modify export return to formatted string DONE
+#create csv template info DONE
+
+#to be used for converting normal input into our datestring format, tz = pytz object of user timezone
+#can take int or string input, but assumes they are all the same
+#time switched to optional for more convenient input
+def convert_date_input( year, month, day, hour=None, minute=None, tz=pytz.utc) -> str:
+
     if type(year) is str:
         year = int(year)
         month = int(month)
@@ -125,6 +138,9 @@ def get_event_list(username, tz, start=None, end=None, ) -> list:
     return return_list
 
 
+#builds calendar file based on given format: ics, csv
+def export_calendar( username, format, tz):
+
 # builds calendar file based on given format: ics, csv
 def export_calendar(username, format):
     # db queries
@@ -133,31 +149,44 @@ def export_calendar(username, format):
     events = user["events"]
 
     if format.lower() == "ics":
-        # generate icalendar object from db events
-        # TODO: do we want to pass username and build that into ical file description?
-        cal = build_ics(events)
-        # generates string from ical object
+
+        #generate icalendar object from db events
+        #TODO: do we want to pass username and build that into ical file description?
+        cal = build_ics( events, tz )
+        #generates byte string from ical object
         data = cal.to_ical()
+        #print(data)
 
-        print(data)
+        #converts byte string to string and returns
 
-        # writes file
-        # TODO: will we ultimately switch this to string return and pass back to front end?
-        with open("export_test/test.ics", 'wb') as ical_file:
-            ical_file.write(data)
+        #output_str = data.decode("utf-8")
+        #print(output_str.strip())
+        return data.decode("utf-8")
 
-    elif format.lower() == "csv":
-        csv_cal = build_csv(events)
+        #writes file (deprecated, testing version)
+        #with open( "export_test/test.ics", 'wb') as ical_file:
+        #    ical_file.write(data)
+    
+    elif format.lower() == "csv" :
+        csv_cal = build_csv( events, tz )
 
-        with open("export_test/test.csv", 'w', encoding='utf-8') as csv_handler:
-            writer = csv.writer(csv_handler)
+        #with open( "export_test/test.csv", 'w', encoding='utf-8') as csv_handler:
+        #instead of file write to string io
+        csv_handler = StringIO()
+        writer = csv.writer(csv_handler)
+            
+        for row in csv_cal:
+            #print(row)
+            writer.writerow(row)
+        #move iterator back to start of file and print
+        csv_handler.seek(0)
+        return csv_handler.read().strip()
+        #csv_handler.seek(0)
+        #print(csv_handler.read().strip()) #NOTE THIS WILL NOT WORK IF RETURN IS INCLUDED W/O ANOTHER SEEK
+        
 
-            for row in csv_cal:
-                print(row)
-                writer.writerow(row)
+def build_ics( events, tz ) -> Calendar:
 
-
-def build_ics(events) -> Calendar:
     cal = Calendar()
     id = 0
 
@@ -173,9 +202,11 @@ def build_ics(events) -> Calendar:
         id += 1
 
         date = get_datetime(item["start_time"])
+        date = date.astimezone(tz)
         event.add('dtstart', date)
 
         date = get_datetime(item["end_time"])
+        date = date.astimezone(tz)
         event.add('dtend', date)
 
         # adds datestamp for format compliance
@@ -227,7 +258,8 @@ def get_date_components(datestr):
     return [year, month, day, hour, minute]
 
 
-def build_csv(events):
+def build_csv( events, tz):
+
     # csv_data : List[List[str]] = []
     csv_data = []
 
@@ -236,9 +268,15 @@ def build_csv(events):
     csv_data.append(row)
 
     for item in events:
-        # TODO: Timezone in google csv? Are we going to get this from front end?
-        start_components = get_date_components(item["start_time"])
-        end_components = get_date_components(item["end_time"])
+
+        #TODO: Timezone in google csv? Are we going to get this from front end?
+        start = get_datetime(item["start_time"])
+        start = start.astimezone(tz)
+        end = get_datetime(item["end_time"])
+        end = end.astimezone(tz)
+
+        start_components = get_date_components(start.strftime("%Y%m%dT%H%M%SZ"))
+        end_components = get_date_components(end.strftime("%Y%m%dT%H%M%SZ"))
 
         start_date = start_components[1] + "/" + start_components[2] + "/" + start_components[0]
         start_time = start_components[3] + ":" + start_components[4]
@@ -261,10 +299,12 @@ def build_csv(events):
     return csv_data
 
 
-# TODO: add accounting for optional fields
-def import_calendar(username, cal_str, format):
-    # assuming string input from app this file read would simply stay as variable input
-    # file read done for testing
+
+#TODO: add accounting for optional fields
+def import_calendar( username, cal_str, format, tz ):
+
+    #assuming string input from app this file read would simply stay as variable input
+    #file read done for testing
 
     events = calendar_db.find_user(username)["events"]
 
@@ -285,11 +325,16 @@ def import_calendar(username, cal_str, format):
                 # print(component.decoded('dtstart'))
                 # print(component.get('dtend').dt.astimezone(pytz.utc).strftime("%Y%m%dT%H%M%SZ"))
 
-                events.append({"event_id": component.get('summary'),
-                               "start_time": component.get('dtstart').dt.astimezone(pytz.utc).strftime(
-                                   "%Y%m%dT%H%M%SZ"), \
-                               "end_time": component.get('dtend').dt.astimezone(pytz.utc).strftime("%Y%m%dT%H%M%SZ"),
-                               "description": component.get('description'), "location": component.get('location')})
+
+                start = tz.localize(component.get('dtstart'))
+                start = start.astimezone(pytz.utc).strftime("%Y%m%dT%H%M%SZ")
+
+                end = tz.localize(component.get('dtend'))
+                end = end.astimezone(pytz.utc).strftime("%Y%m%dT%H%M%SZ")
+                
+                events.append({"event_id":component.get('summary'),"start_time":component.get('dtstart').dt.astimezone(pytz.utc).strftime("%Y%m%dT%H%M%SZ"),\
+                     "end_time":component.get('dtend').dt.astimezone(pytz.utc).strftime("%Y%m%dT%H%M%SZ"), "description":component.get('description'),  "location":component.get('location')})
+
 
     # TODO: timezone again for google csv format, not sure if it is ever listed. we may need to "assume" based on selected timezone of current user
     # TODO: this works for expected format of subject, start date, start time, end date, end time, description, and location, need to test for other cases
@@ -300,6 +345,7 @@ def import_calendar(username, cal_str, format):
             for row in csv_reader:
                 subj = row['Subject']
 
+                #I duplicated code here, i might fix eventually
                 csv_start_date = row['Start Date']
 
                 # finding /s to account for inconsistent format
@@ -324,9 +370,10 @@ def import_calendar(username, cal_str, format):
                         if start_time_digits[0] != "12":
                             start_time_digits[0] = str(int(start_time_digits[0]) + 12)
 
-                start_dt = datetime(int(s_start_date[2]), int(s_start_date[0]), int(s_start_date[1]),
-                                    int(start_time_digits[0]), int(start_time_digits[1]))
-                start_string = start_dt.strftime("%Y%m%dT%H%M%SZ")
+
+                start_dt = datetime(int(s_start_date[2]),int(s_start_date[0]), int(s_start_date[1]),int(start_time_digits[0]),int(start_time_digits[1]))
+                start_dt = tz.localize(start_dt)
+                start_string = start_dt.astimezone(pytz.utc).strftime("%Y%m%dT%H%M%SZ")
 
                 csv_end_date = row['End Date']
 
@@ -351,9 +398,10 @@ def import_calendar(username, cal_str, format):
                         if end_time_digits[0] != "12":
                             end_time_digits[0] = str(int(end_time_digits[0]) + 12)
 
-                end_dt = datetime(int(s_end_date[2]), int(s_end_date[0]), int(s_end_date[1]), int(end_time_digits[0]),
-                                  int(end_time_digits[1]))
-                end_string = end_dt.strftime("%Y%m%dT%H%M%SZ")
+
+                end_dt = datetime(int(s_end_date[2]),int(s_end_date[0]), int(s_end_date[1]),int(end_time_digits[0]),int(end_time_digits[1]))
+                end_dt = tz.localize(end_dt)
+                end_string = end_dt.astimezone(pytz.utc).strftime("%Y%m%dT%H%M%SZ")
 
                 desc = row['Description']
                 loc = row['Location']
@@ -362,11 +410,51 @@ def import_calendar(username, cal_str, format):
                     {"event_id": subj, "start_time": start_string, "end_time": end_string, "description": desc,
                      "location": loc})
 
-    calendar_db.update_event_list(username, events)
 
-# print( datetime.now(pytz.utc))
-# export_calendar( "testy", "ics" )
-# import_calendar("testery","test","gcsv")
+#MVC Wrappers for DB functions
+
+def create_user(username, password, first_name, last_name):
+    calendar_db.create_user(username, password, first_name, last_name)
+
+def edit_user(username, password=None, first_name=None, last_name=None):
+    calendar_db.edit_user(username, password, first_name, last_name)
+
+def find_user(username):
+    calendar_db.find_user(username)
+
+def create_event(username, event_id, start_time, end_time, description=None, location=None,recurrence=0):
+    calendar_db.create_event(username, event_id, start_time, end_time, description, location,recurrence)
+
+def edit_event(username, event_id, start_time, end_time, new_id=None,new_start=None,new_end=None,new_desc=None,new_loc=None,delete=False):
+    calendar_db.edit_event(username, event_id, start_time, end_time, new_id,new_start,new_end,new_desc,new_loc,delete)
+
+def add_friend(username, f_username):
+    
+    #check friend list for duplicate, if
+    friends = calendar_db.get_friends(username)["friends"]
+
+    for friend in friends:
+        if friend["username"] == f_username:
+            return
+    
+    calendar_db.add_friend(username,f_username)
+
+def remove_friend(username, f_username):
+    calendar_db.remove_friend(username, f_username)
+        
+
+#eastern = timezone('US/Eastern')
+
+#print( datetime.now(pytz.utc))
+#export_calendar( "Billy", "ics", eastern )
+#import_calendar("testery","test","gcsv")
+
+#print(pytz.common_timezones_set)
+
+#western = timezone('US/Pacific')
+#strftime("%Y%m%dT%H%M%SZ")
+#print(datetime.now(pytz.utc).astimezone(eastern).strftime("%Y"))
+
 
 # print(pytz.common_timezones_set)
 # eastern = timezone('US/Eastern')
@@ -383,7 +471,6 @@ def import_calendar(username, cal_str, format):
 
 # print(get_time_delta("20211021T140000","20211123T150000"))
 
-# dt1 = get_datetime("20211021T140000")
-# dt2 = get_datetime("20211123T150000")
-# dt3 = get_datetime("20211021T150000")
-# print( dt1 < dt3 <   dt2)
+
+#add_friend("testery","tdoe")
+

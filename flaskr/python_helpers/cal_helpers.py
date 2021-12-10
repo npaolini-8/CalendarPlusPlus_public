@@ -57,7 +57,7 @@ def user_events() -> list:
     return events
 
 
-def save_event(event, desc, s_date, e_date, s_time, e_time) -> bool:
+def save_event(event, desc, s_date, e_date, s_time, e_time):
     """Saves event to database"""
 
     # parse date and time
@@ -70,4 +70,4 @@ def save_event(event, desc, s_date, e_date, s_time, e_time) -> bool:
     start_time = cf.convert_date_input( s_date[0], s_date[1], s_date[2], s_time[0], s_time[0])
     end_time = cf.convert_date_input(e_date[0], e_date[1], e_date[2], e_time[0], e_time[0])
 
-    return cf.create_event(session['user_id'], event, start_time, end_time, desc)
+    cf.create_event(session['user_id'], event, start_time, end_time, desc)

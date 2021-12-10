@@ -52,14 +52,12 @@ def user_events() -> list:
         values:     0   1     2      3     4     5      6      7       8      9      10      11   12  13
         index_val: id st_yr st_mon st_dy st_hr st_min end_yr end_mon end_dy end_hr end_min desc loc recur
        Note: index is still numeric, i.e 0,1,2,3..."""
-
     events = cf.get_event_list(session['user_id'], timezone('US/Eastern'))
     return events
 
 
 def save_event(event, desc, s_date, e_date, s_time, e_time):
     """Saves event to database"""
-
     # parse date and time
     s_date = s_date.split('-')
     e_date = e_date.split('-')

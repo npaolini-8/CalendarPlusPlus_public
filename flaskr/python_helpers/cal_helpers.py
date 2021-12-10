@@ -55,3 +55,19 @@ def user_events() -> list:
 
     events = cf.get_event_list(session['user_id'], timezone('US/Eastern'))
     return events
+
+
+def save_event(event, desc, s_date, e_date, s_time, e_time) -> bool:
+    """Saves event to database"""
+
+    # parse date and time
+    s_date = s_date.split('-')
+    e_date = e_date.split('-')
+    s_time = s_time.split(':')
+    e_time = e_time.split(':')
+
+    # convert start and end time to database format
+    start_time = cf.convert_date_input( s_date[0], s_date[1], s_date[2], s_time[0], s_time[0])
+    end_time = cf.convert_date_input(e_date[0], e_date[1], e_date[2], e_time[0], e_time[0])
+
+    return cf.create_event(session['user_id'], event, start_time, end_time, desc)

@@ -18,6 +18,9 @@
 {% endblock side_content %}
 {% block calendar %}
     <div class="container-fluid my-2">
+        {% block messages %}
+            {{ super() }}
+        {% endblock %}
         {% block arrowhead %}
             {{ super() }}
         {% endblock arrowhead %}

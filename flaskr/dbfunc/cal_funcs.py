@@ -1,11 +1,12 @@
 from os import write
-from datetime import datetime, tzinfo
+from datetime import datetime, timedelta, tzinfo
 from re import split  # Used to get timestamps for database information
 from icalendar import Calendar, Event
 import pytz
 from pytz import timezone
 import csv
 from io import StringIO
+from dateutil.relativedelta import relativedelta
 import os
 from .database_funcs import CalDB #TODO make sure . is here before push
 
@@ -438,6 +439,113 @@ def import_calendar( username, cal_str, format, tz ):
     calendar_db.update_event_list(username,events)
     return good_input
 
+#checks if f_username is on username's friend list
+def friend_check(username, f_username):
+    friends = calendar_db.get_friends(username)["friends"]
+    for friend in friends:
+        if friend["username"] == f_username:
+            return True
+    
+    return False
+
+#recurrence takes day, week, month, year
+#rec_count is the number of times the event recurrs, EXCLUDING the first event
+#start/end time expecting UTC datetime strings, use convert_date_input
+#start/end are for the first event of the series
+def create_rec_event( username, event_id, start_time, end_time, recurrence, rec_count, description=None, location=None):
+
+    #events = calendar_db.find_user(username)["events"]
+    events = []
+    rec_count += 1 #adds the first event
+
+    start_time = get_datetime(start_time)
+    end_time = get_datetime(end_time)
+
+    rec_id = calendar_db.get_rec_id(username)
+
+    if recurrence == "day":
+        for i in range(rec_count):
+            #increment after to make sure we get initial day
+            start = start_time.strftime("%Y%m%dT%H%M%SZ")
+            end = end_time.strftime("%Y%m%dT%H%M%SZ")
+            start_time += timedelta(days=1)
+            end_time += timedelta(days=1)
+
+            event = {
+                "event_id": event_id,
+                "start_time": start,
+                "end_time": end,
+                "description": description,
+                "location": location,
+                "reccurence": rec_id
+            }
+
+            events.append(event)
+    elif recurrence == "week":
+        for i in range(rec_count):
+            #increment after to make sure we get initial day
+            start = start_time.strftime("%Y%m%dT%H%M%SZ")
+            end = end_time.strftime("%Y%m%dT%H%M%SZ")
+            start_time += timedelta(days=7)
+            end_time += timedelta(days=7)
+
+            event = {
+                "event_id": event_id,
+                "start_time": start,
+                "end_time": end,
+                "description": description,
+                "location": location,
+                "reccurence": rec_id
+            }
+
+            events.append(event)
+    elif recurrence == "month":
+        #for month and year the delta needs to be relative to the initial date, different from day increments
+        n_start = start_time
+        n_end = end_time
+        for i in range(rec_count):
+            #increment goes first in this case since we start by adding 0
+            n_start = start_time + relativedelta(months=i)
+            n_end = end_time + relativedelta(months=i)
+            start = n_start.strftime("%Y%m%dT%H%M%SZ")
+            end = n_end.strftime("%Y%m%dT%H%M%SZ")
+            
+
+            event = {
+                "event_id": event_id,
+                "start_time": start,
+                "end_time": end,
+                "description": description,
+                "location": location,
+                "reccurence": rec_id
+            }
+
+            events.append(event)
+    elif recurrence == "year":
+        n_start = start_time
+        n_end = end_time
+        for i in range(rec_count):
+            n_start = start_time + relativedelta(years=i)
+            n_end = end_time + relativedelta(years=i)
+            start = n_start.strftime("%Y%m%dT%H%M%SZ")
+            end = n_end.strftime("%Y%m%dT%H%M%SZ")
+
+            event = {
+                "event_id": event_id,
+                "start_time": start,
+                "end_time": end,
+                "description": description,
+                "location": location,
+                "reccurence": rec_id
+            }
+
+            events.append(event)
+
+    calendar_db.append_event_list(username,events)
+    calendar_db.inc_rec_id(username)
+    #calendar_db.update_event_list(username,events)
+
+
 #MVC Wrappers for DB functions
 
 def create_user(username, password, first_name, last_name):
@@ -456,18 +564,16 @@ def edit_event(username, event_id, start_time, end_time, new_id=None,new_start=N
     calendar_db.edit_event(username, event_id, start_time, end_time, new_id,new_start,new_end,new_desc,new_loc,delete)
 
 def add_friend(username, f_username):
+    #check friend list for duplicate, if not, add
+    if friend_check(username,f_username):
+        calendar_db.add_friend(username,f_username)
 
-    #check friend list for duplicate, if
-    friends = calendar_db.get_friends(username)["friends"]
-
-    for friend in friends:
-        if friend["username"] == f_username:
-            return
-
-    calendar_db.add_friend(username,f_username)
 
 def remove_friend(username, f_username):
     calendar_db.remove_friend(username, f_username)
+
+def get_friends(username):
+    return calendar_db.get_friends(username)["friends"]
 
 
 #eastern = timezone('US/Eastern')
@@ -532,3 +638,5 @@ def remove_friend(username, f_username):
 # print(import_calendar("testery",csv_string,"ics",eastern))
 
 #DTSTART:20210906T070000
+
+#create_rec_event("testery","rec_event_test", "20211031T070000","20211031T081500","month",2,"rec testing", "recland")

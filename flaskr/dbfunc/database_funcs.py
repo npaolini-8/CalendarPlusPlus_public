@@ -1,6 +1,7 @@
 from pymongo import MongoClient  # MongoDB Library to connect to database.
 from datetime import datetime, tzinfo  # Used to get timestamps for database information
 import ssl  # Used to specify certificate connection for MongoDB
+import random,string
 
 
 class CalDB():
@@ -10,7 +11,10 @@ class CalDB():
         self.cal_db = self.cluster["calendar"]
         self.users_collection = self.cal_db["users"]
 
-    def create_user(self, username, password, first_name, last_name):
+    def generate_salt(self):
+        return "".join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(32))
+
+    def create_user(self, username, password, salt, first_name, last_name):
         self.users_collection.insert_one(
             {
                 "username": username,
@@ -19,13 +23,24 @@ class CalDB():
                 "last_name": last_name,
                 "events": [],
                 "friends": [],
-                "rec_count": 1
+                "rec_count": 1,
+                "salt":salt
             }
         )
 
     def find_user(self, username):
-        user = self.users_collection.find_one({"username": username})
+        user = self.users_collection.find_one({"username": username},{"password":0,"salt":0})
         return user
+
+    def get_salt(self,username):
+        return self.users_collection.find_one({"username":username},{"_id":0,"salt":1})["salt"]
+
+    def auth_user(self, username, hashed_pw):
+        return self.users_collection.find_one({"username": username, "password":hashed_pw},{"password":0})
+
+    def check_user(self, username):
+        return self.users_collection.find_one({"username": username},{"username":1})
+
 
     def edit_user(self, username, password=None, first_name=None, last_name=None):
         edit_dict = {}
@@ -186,3 +201,4 @@ class CalDB():
 #cal.inc_rec_id("testery")
 #print(cal.get_rec_id("testery"))
 #cal.append_event_list("CSGO_Sweat",[])
+#print(cal.generate_salt())

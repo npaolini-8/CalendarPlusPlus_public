@@ -46,6 +46,9 @@
     {{super()}}
 {%  endblock side_content %}
 {% block calendar %}
+    {% block messages %}
+        {{ super() }}
+    {% endblock %}
     {% block arrowhead %}
         {{ super() }}
     {% endblock %}

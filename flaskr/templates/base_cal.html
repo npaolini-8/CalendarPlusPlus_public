@@ -19,7 +19,7 @@
                             </h3>
                             {% include 'calendar/friend-button.html' %}
                             {% include 'calendar/upload.html' %}
-
+                            {% include 'calendar/export.html' %}
                         {% endblock side_content %}
                     </div>
                 </div>
@@ -27,6 +27,16 @@
         {% endblock sidebar %}
         <div class="col col-lg min-vh-100">
             {% block calendar %}
+
+                {% block messages %}
+                {% with m = get_flashed_messages() %}
+                    {% if m %}
+                        {% for i in m %}
+                            <h4 class="text-center text-danger">{{ i }}</h4>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+                {% endblock messages %}
                 {% block arrowhead %}
                     {% include 'calendar/arrows.html' %}
                 {% endblock arrowhead %}

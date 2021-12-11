@@ -1,4 +1,6 @@
 import calendar as pycal
+import os
+import shutil
 
 from datetime import datetime
 from ..dbfunc import cal_funcs as cf
@@ -70,14 +72,25 @@ def save_event(event, desc, s_date, e_date, s_time, e_time):
     cf.create_event(session['user_id'], event, start_time, end_time, desc)
 
 
+tmp_path = "flaskr/static/tmp"
+
+
 def export_cal(format, tz=None):
+    os.makedirs(os.path.join(tmp_path, session['user_id']))
     zone = tz if tz else timezone('US/Eastern')
     return cf.export_calendar(session['user_id'], format, zone)
 
 
 def import_cal(format, tz=None):
+    os.makedirs(os.path.join(tmp_path, session['user_id']))
     zone = tz if tz else timezone('US/Eastern')
     return cf.import_calendar(session['user_id'], cal_str="???", format=format, tz=zone)
+
+
+def clear_path():
+    file_path = os.path.join(tmp_path, session['user_id'])
+    if os.path.exists(file_path) and os.path.isdir(file_path):
+        shutil.rmtree(file_path)
 
 #
 # def edit_event():

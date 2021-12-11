@@ -6,10 +6,12 @@ import pytz
 from pytz import timezone
 import csv
 from io import StringIO
+import os
 from .database_funcs import CalDB #TODO make sure . is here before push
 
 calendar_db = CalDB()
 
+tmp_path = "flaskr/static/tmp"
 
 #TODO
 #GENERAL: refactor log-in to not include password comparison
@@ -149,7 +151,7 @@ def export_calendar( username, format, tz):
     try:
         user = calendar_db.find_user(username)
         events = user["events"]
-        
+
         if format.lower() == "ics":
             #generate icalendar object from db events
             #TODO: do we want to pass username and build that into ical file description?
@@ -163,19 +165,19 @@ def export_calendar( username, format, tz):
             #print(output_str.strip())
             #return data.decode("utf-8")
 
-            #writes file 
-            with open( "export_test/test.ics", 'wb') as ical_file:
+            #writes file
+            with open( os.path.join(tmp_path, username, "export.ics"), 'wb') as ical_file:
                 ical_file.write(data)
 
-        
+
         elif format.lower() == "csv" :
             csv_cal = build_csv( events, tz )
 
-            with open( "export_test/test.csv", 'w', encoding='utf-8') as csv_handler:
+            with open( os.path.join(tmp_path, username, "export.csv"), 'w', encoding='utf-8') as csv_handler:
                 #instead of file write to string io
                 #csv_handler = StringIO()
                 writer = csv.writer(csv_handler)
-                    
+
                 for row in csv_cal:
                     #print(row)
                     writer.writerow(row)
@@ -191,7 +193,7 @@ def export_calendar( username, format, tz):
         good_input = False
 
     return good_input
-        
+
 
 def build_ics( events, tz ) -> Calendar:
 
@@ -324,8 +326,7 @@ def import_calendar( username, cal_str, format, tz ):
     if format == "ics":
         try:
             cal = Calendar()
-
-            cal_file = open("export_test/test.ics", 'r')
+            cal_file = open(os.path.join(tmp_path, username, "import.ics"), 'r')
             cal_str = cal_file.read()
             components = cal.from_ical(cal_str)
 
@@ -349,7 +350,7 @@ def import_calendar( username, cal_str, format, tz ):
                     if end.tzinfo is None:
                         end = tz.localize(end)
                     end = end.astimezone(pytz.utc).strftime("%Y%m%dT%H%M%SZ")
-                    
+
                     events.append({"event_id":component.get('summary'),"start_time":component.get('dtstart').dt.astimezone(pytz.utc).strftime("%Y%m%dT%H%M%SZ"),\
                         "end_time":component.get('dtend').dt.astimezone(pytz.utc).strftime("%Y%m%dT%H%M%SZ"), "description":component.get('description'),  "location":component.get('location')})
         except Exception:
@@ -358,9 +359,9 @@ def import_calendar( username, cal_str, format, tz ):
 
     # TODO: timezone again for google csv format, not sure if it is ever listed. we may need to "assume" based on selected timezone of current user
     # TODO: this works for expected format of subject, start date, start time, end date, end time, description, and location, need to test for other cases
-    elif format == "gcsv":
+    elif format == "csv":
         try:
-            with open("export_test/test.csv", 'r') as csv_file:
+            with open(os.path.join(tmp_path, username, "import.csv"), 'r') as csv_file:
                 csv_reader = csv.DictReader(csv_file)
                 #csv_reader = csv.DictReader(cal_str, delimiter=',')
                 #csv_reader.fieldnames = ["Subject","Start Date","Start Time","End Date","End Time","Description","Location"]
@@ -453,19 +454,19 @@ def edit_event(username, event_id, start_time, end_time, new_id=None,new_start=N
     calendar_db.edit_event(username, event_id, start_time, end_time, new_id,new_start,new_end,new_desc,new_loc,delete)
 
 def add_friend(username, f_username):
-    
+
     #check friend list for duplicate, if
     friends = calendar_db.get_friends(username)["friends"]
 
     for friend in friends:
         if friend["username"] == f_username:
             return
-    
+
     calendar_db.add_friend(username,f_username)
 
 def remove_friend(username, f_username):
     calendar_db.remove_friend(username, f_username)
-        
+
 
 #eastern = timezone('US/Eastern')
 

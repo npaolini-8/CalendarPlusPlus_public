@@ -1,3 +1,5 @@
+from ..dbfunc.cal_funcs import import_calendar, export_calendar
+
 ALLOWED_EXTENSIONS = {'ical', 'csv', 'ics'}
 
 
@@ -8,10 +10,3 @@ def allowed_files(filename):
 def get_extension(filename):
     return filename.rsplit('.', 1)[1].lower()
 
-
-def create_export():
-    pass
-
-
-def import_wrapper():
-    pass

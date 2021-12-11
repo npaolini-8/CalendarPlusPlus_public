@@ -2,7 +2,7 @@ import calendar as pycal
 
 from flask import Blueprint, render_template, request, flash, url_for, redirect, send_from_directory, abort, current_app
 
-from ..python_helpers.cal_helpers import get_todays_date, save_event, user_events, import_cal
+from ..python_helpers.cal_helpers import get_todays_date, save_event, user_events, import_cal, export_cal, clear_path
 from ..python_helpers.day_functions import day_move, get_current_day, resetDate
 from ..python_helpers.week_functions import set_current_date, get_formatted_week, on_next, on_previous, reset_date
 from ..python_helpers.month_functions import create_month, month_move, reset_month
@@ -37,11 +37,11 @@ def month():
 
         if request.form.get('export') == 'export':
             filename = 'export.' + request.form.get('exports')
-            # TODO: create the temporary file
+            export_cal(filename)
             url_for("export_cal", filename=filename)
     else:
         reset_month()
-        # TODO: create temp file remover
+        clear_path()
 
     cal, header, year, month = create_month()
     events = user_events()

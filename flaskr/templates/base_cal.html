@@ -19,7 +19,6 @@
                             </h3>
                             {% include 'calendar/friend_button.html' %}
                             {% include 'calendar/upload.html' %}
-
                         {% endblock side_content %}
                     </div>
                 </div>
@@ -41,6 +40,7 @@
                     </div>
                 {% endblock datehead %}
                 {% block modals %}
+                    {% include 'calendar/event_dialog_modal.html' %}
                     {% include 'calendar/event_modal.html' %}
                 {% endblock modals %}
             {% endblock calendar %}
@@ -50,7 +50,6 @@
 
 {% block scripts %}
     {{ super() }}
-    <script src="{{ url_for('static', filename = 'javascript/calendar/events.js')}}"></script>
     <script src="{{ url_for('static', filename = 'javascript/calendar/cells.js')}}"></script>
     <script src = "{{ url_for('static', filename = 'javascript/calendar/friendButton.js')}}"></script>
     <script src="{{ url_for('static', filename = 'javascript/navbar/highlight.js')}}"></script>

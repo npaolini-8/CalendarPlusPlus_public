@@ -65,6 +65,7 @@ def week():
 
     day, month, year = set_current_date()
     week = get_formatted_week()
+    print(day, month, year, week)
     events = user_events()
     return render_template('calendar/week.html',
                            cal=pycal,

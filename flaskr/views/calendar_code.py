@@ -143,6 +143,7 @@ def week():
 
     day, month, year = set_current_date()
     week = get_formatted_week()
+    print(day, month, year, week)
     events = user_events()
 
     friends_list = get_friends(session['user_id'])  # get user friends(some may not be mutual)
@@ -219,3 +220,4 @@ def day():
                            friends=valid_friends,
                            mdays=mdays,
                            header=header)
+

@@ -57,7 +57,7 @@ def user_events() -> list:
     return events
 
 
-def save_event(event, desc, s_date, e_date, s_time, e_time):
+def save_event(event, desc, s_date, e_date, s_time, e_time, loc=None, recur=None):
     """Saves event to database"""
     # parse date and time
     s_date = s_date.split('-')
@@ -71,6 +71,10 @@ def save_event(event, desc, s_date, e_date, s_time, e_time):
 
     cf.create_event(session['user_id'], event, start_time, end_time, desc)
 
+
+def edit_event(event_id, start_time, end_time, new_id=None,new_start=None,new_end=None,new_desc=None,new_loc=None,delete=False):
+    """Edits event in database"""
+    cf.edit_event(session['user_id'], event_id, start_time, end_time, new_id,new_start,new_end,new_desc,new_loc,delete=False)
 
 tmp_path = "flaskr/static/tmp"
 
@@ -96,5 +100,4 @@ def clear_path():
     if os.path.exists(file_path) and os.path.isdir(file_path):
         shutil.rmtree(file_path)
 
-#
-# def edit_event():
+

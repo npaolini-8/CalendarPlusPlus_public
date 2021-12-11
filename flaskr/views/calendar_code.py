@@ -101,9 +101,3 @@ def day():
                            month=month,
                            year=year,
                            events=events)
-
-
-@cal_blueprint.route('/year/')
-@authenticate.login_required
-def year():
-    return render_template('calendar/year.html')

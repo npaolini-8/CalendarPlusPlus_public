@@ -31,7 +31,7 @@ def month():
             if allowed_files(sched) and validate_csv(sched):
                 import_cal(get_extension(sched))
             else:
-                flash("Bro, this ain\'t a calendar")
+                flash("Bro, this ain\'t a calendar we can use...", "info")
                 return redirect(url_for('calendar.month'))
 
         if request.form.get('export') == 'export':

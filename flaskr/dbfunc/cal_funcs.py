@@ -8,7 +8,8 @@ import csv
 from io import StringIO
 from dateutil.relativedelta import relativedelta
 import os
-from .database_funcs import CalDB #TODO make sure . is here before push
+from database_funcs import CalDB #TODO make sure . is here before push
+import hashlib
 
 calendar_db = CalDB()
 
@@ -477,7 +478,7 @@ def create_rec_event( username, event_id, start_time, end_time, recurrence, rec_
                 "end_time": end,
                 "description": description,
                 "location": location,
-                "reccurence": rec_id
+                "recurrence": rec_id
             }
 
             events.append(event)
@@ -495,7 +496,7 @@ def create_rec_event( username, event_id, start_time, end_time, recurrence, rec_
                 "end_time": end,
                 "description": description,
                 "location": location,
-                "reccurence": rec_id
+                "recurrence": rec_id
             }
 
             events.append(event)
@@ -517,7 +518,7 @@ def create_rec_event( username, event_id, start_time, end_time, recurrence, rec_
                 "end_time": end,
                 "description": description,
                 "location": location,
-                "reccurence": rec_id
+                "recurrence": rec_id
             }
 
             events.append(event)
@@ -536,7 +537,7 @@ def create_rec_event( username, event_id, start_time, end_time, recurrence, rec_
                 "end_time": end,
                 "description": description,
                 "location": location,
-                "reccurence": rec_id
+                "recurrence": rec_id
             }
 
             events.append(event)
@@ -545,11 +546,29 @@ def create_rec_event( username, event_id, start_time, end_time, recurrence, rec_
     calendar_db.inc_rec_id(username)
     #calendar_db.update_event_list(username,events)
 
+def encode_password( password, salt):
+    if salt is not None:
+        encode_str = salt + password
+        return hashlib.sha256(encode_str.encode()).hexdigest()
+    else:
+        return None
+
 
 #MVC Wrappers for DB functions
+def generate_salt():
+    return calendar_db.generate_salt()
+
+def get_salt(username):
+    return calendar_db.get_salt(username)
 
 def create_user(username, password, first_name, last_name):
     calendar_db.create_user(username, password, first_name, last_name)
+
+def check_user(username):
+    return calendar_db.check_user(username)
+
+def auth_user(username, hashed_pw):
+    return calendar_db.auth_user(username,hashed_pw)
 
 def edit_user(username, password=None, first_name=None, last_name=None):
     calendar_db.edit_user(username, password, first_name, last_name)
@@ -565,6 +584,7 @@ def edit_event(username, event_id, start_time, end_time, new_id=None,new_start=N
 
 def add_friend(username, f_username):
     #check friend list for duplicate, if not, add
+
     if not friend_check(username,f_username):
         calendar_db.add_friend(username,f_username)
 
@@ -575,6 +595,8 @@ def remove_friend(username, f_username):
 def get_friends(username):
     return calendar_db.get_friends(username)["friends"]
 
+
+#print(encode_password("plaintext", get_salt("testery")))
 
 #eastern = timezone('US/Eastern')
 
@@ -640,3 +662,13 @@ def get_friends(username):
 #DTSTART:20210906T070000
 
 #create_rec_event("testery","rec_event_test", "20211031T070000","20211031T081500","month",2,"rec testing", "recland")
+
+#need 14 salts
+#for i in range(14):
+#    print(generate_salt())
+
+#un = "pariatur"
+#pw = "exercitation"
+#print("Username: " + un)
+#print("Password: " + pw)
+#print("Encoded PW: " + encode_password(pw, get_salt(un))) 

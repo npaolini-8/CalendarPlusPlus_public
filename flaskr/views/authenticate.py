@@ -1,12 +1,13 @@
 from functools import wraps
 from flask import Blueprint, flash, g, redirect, render_template, request, session, url_for
 from flaskr.python_helpers.week_functions import reset_date
-from werkzeug.security import check_password_hash, generate_password_hash
+#from werkzeug.security import check_password_hash, generate_password_hash
 
-from flaskr.dbfunc import database_funcs as mongo
+#from flaskr.dbfunc import database_funcs as mongo
+from flaskr.dbfunc import cal_funcs
 
 login_blueprint = Blueprint("auth", __name__, url_prefix='/account')
-db = mongo.CalDB()
+#db = mongo.CalDB()
 
 
 @login_blueprint.route('/register/', methods=['GET', 'POST'])
@@ -18,15 +19,19 @@ def register():
         last_name = request.form['last_name']
         error = None
 
-        user = db.find_user(username)
+        user = cal_funcs.check_user(username)
 
         if user is not None:
             error = f"User {username} is already registered. Try again"
             return redirect(url_for('auth.register'))
+        elif len(password) < 8:
+            error = f"Please enter a password that is at least 8 characters long."
+            return redirect(url_for('auth.register'))
 
         if error is None:
-            password = generate_password_hash(password)
-            db.create_user(username, password, first_name, last_name)
+            salt = cal_funcs.generate_salt()
+            password = cal_funcs.encode_password(password,salt)
+            cal_funcs.create_user(username, password, salt, first_name, last_name)
             error = f"Welcome {username}! Thank you for registering."
             return redirect(url_for('main.home'))
 
@@ -40,10 +45,15 @@ def login():
         username = request.form['username']
         password = request.form['password']
         error = None
+        #password = hashlib.sha256(password.encode()).hexdigest()
+        #print(password)
 
-        user = db.find_user(username)
+        salt = cal_funcs.get_salt(username)
+        user = cal_funcs.auth_user(username, cal_funcs.encode_password(password,salt))
 
-        if user is None or not check_password_hash(user['password'], password):
+        #if user is None or not check_password_hash(user['password'], password):
+        #salt being none means bad username, user being none means password doesnt match
+        if salt is None or user is None:
             error = 'Invalid credentials. Please try again.'
             flash(error)
             return redirect(url_for('auth.login'))
@@ -73,7 +83,7 @@ def load_logged_in_user():
     if user_id is None:
         g.user = None
     else:
-        g.user = db.find_user(user_id)
+        g.user = cal_funcs.find_user(user_id)
 
 
 # This decorator returns a new view function that wraps the original view it’s applied to.

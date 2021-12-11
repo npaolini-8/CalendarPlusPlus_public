@@ -565,7 +565,7 @@ def edit_event(username, event_id, start_time, end_time, new_id=None,new_start=N
 
 def add_friend(username, f_username):
     #check friend list for duplicate, if not, add
-    if friend_check(username,f_username):
+    if not friend_check(username,f_username):
         calendar_db.add_friend(username,f_username)
 
 

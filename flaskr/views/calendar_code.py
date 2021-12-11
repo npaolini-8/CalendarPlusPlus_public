@@ -3,7 +3,7 @@ import calendar as pycal
 from ..dbfunc.cal_funcs import *
 
 from flask import Blueprint, render_template, request, flash, url_for, redirect, send_from_directory, \
-    current_app, session, g
+    current_app, session
 from werkzeug.utils import secure_filename
 
 from ..python_helpers.cal_helpers import get_todays_date, save_event, user_events, import_cal, export_cal, clear_path
@@ -85,6 +85,13 @@ def month():
 
     cal, header, year, month = create_month()
     events = user_events()
+    friends_list = get_friends(session['user_id'])  # get user friends(some may not be mutual)
+    valid_friends = []
+    for friend in friends_list:
+        if friend_check(friend['username'], session['user_id']) == True:
+            #only include users with currently logged in user on their friends lists
+            valid_friends.append(friend)
+
 
     return render_template('calendar/month.html',
                            year=year,
@@ -92,7 +99,8 @@ def month():
                            month=month,
                            mdays=cal,
                            header=header,
-                           events=events)
+                           events=events,
+                           friends=valid_friends)
 
 
 @cal_blueprint.route('/week/', methods=['GET', 'POST'])
@@ -136,13 +144,23 @@ def week():
     day, month, year = set_current_date()
     week = get_formatted_week()
     events = user_events()
+
+    friends_list = get_friends(session['user_id'])  # get user friends(some may not be mutual)
+    valid_friends = []
+    for friend in friends_list:
+        if friend_check(friend['username'], session['user_id']) == True:
+            #only include users with currently logged in user on their friends lists
+            valid_friends.append(friend)
+            
     mdays, header = create_month()[0], create_month()[1]
+    
     return render_template('calendar/week.html',
                            cal=pycal,
                            month=month,
                            year=year,
                            week=week,
                            events=events,
+                           friends=valid_friends,
                            mdays=mdays,
                            header=header)
 
@@ -183,11 +201,12 @@ def day():
         clear_path()
 
     events = user_events()  # populate events
-    friends_list = g.user['friends']  # get user friends
+    friends_list = get_friends(session['user_id'])  # get user friends(some may not be mutual)
     valid_friends = []
     for friend in friends_list:
-        # if validate_friend(friend['username']) == True:#only include mutual friends
-        valid_friends.append(friend)
+        if friend_check(friend['username'], session['user_id']) == True:
+            #only include users with currently logged in user on their friends lists
+            valid_friends.append(friend)
 
     mdays, header = create_month()[0], create_month()[1]
 

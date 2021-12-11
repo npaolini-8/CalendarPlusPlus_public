@@ -14,11 +14,18 @@
                             <h3>Base Calendar</h3>
                         {% endblock %}
                         {% block side_content %}
-                            <h3 class="text-center text-light">
+                            <h5 class="text-center text-light">
                                 Options
-                            </h3>
-                            {% include 'calendar/friend-button.html' %}
+                            </h5>
+                            <hr class = "text-light" style = "height: 0.25em;">
+                            <div class = "friend_button text-center">
+                                <button class = "form-control btn btn-info m-1" type = 'button' id = "friend_button" data-bs-target="#friend-modal" data-bs-toggle="modal">Add Friend</button>
+                            </div>
+                            <hr class = "text-light" style = "height: 0.25em;">
                             {% include 'calendar/upload.html' %}
+                            <hr class = "text-light" style = "height: 0.25em;">
+                            {% include 'calendar/compare.html' %}
+                            <hr class = "text-light" style = "height: 0.25em;">
                             {% include 'calendar/export.html' %}
                         {% endblock side_content %}
                     </div>
@@ -51,6 +58,7 @@
                     </div>
                 {% endblock datehead %}
                 {% block modals %}
+                    {% include 'calendar/friend_modal.html' %}
                     {% include 'calendar/event_modal.html' %}
                 {% endblock modals %}
             {% endblock calendar %}
@@ -61,6 +69,5 @@
 {% block scripts %}
     {{ super() }}
     <script src="{{ url_for('static', filename = 'javascript/calendar/cells.js')}}"></script>
-    <script src = "{{ url_for('static', filename = 'javascript/calendar/friendButton.js')}}"></script>
     <script src="{{ url_for('static', filename = 'javascript/navbar/highlight.js')}}"></script>
 {% endblock scripts %}

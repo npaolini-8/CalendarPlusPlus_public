@@ -1,6 +1,8 @@
 import calendar as pycal
 import os
 
+from ..dbfunc.cal_funcs import *
+
 from flask import Blueprint, render_template, request, flash, url_for, redirect, send_from_directory, abort, \
     current_app, session
 from werkzeug.utils import secure_filename
@@ -9,6 +11,7 @@ from ..python_helpers.cal_helpers import get_todays_date, save_event, user_event
 from ..python_helpers.day_functions import day_move, get_current_day, resetDate
 from ..python_helpers.week_functions import set_current_date, get_formatted_week, on_next, on_previous, reset_date
 from ..python_helpers.month_functions import create_month, month_move, reset_month
+
 
 from . import authenticate
 from ..python_helpers.file_handling import allowed_files, get_extension
@@ -55,8 +58,14 @@ def handle_export(extension):
 @authenticate.login_required
 def month():
     if request.method == 'POST':
-
-        # movement buttons
+      
+        if request.form.get('friend') == 'friend':
+            friend = find_user(request.form['friend-name'])#validate friend
+            if friend != None:
+                add_friend(session['user_id'], request.form['friend-name'])
+            else:
+                flash("Invalid User!")
+                
         if request.form.get('move') == "prev":
             month_move("prev")
         elif request.form.get('move') == "next":
@@ -87,7 +96,13 @@ def month():
 @authenticate.login_required
 def week():
     if request.method == 'POST':
-        if request.form.get('move') == 'prev':
+        if request.form.get('friend') == 'friend':
+            friend = find_user(request.form['friend-name'])
+            if friend != None:
+                add_friend(session['user_id'], request.form['friend-name'])
+            else:
+                flash("Invalid User!")
+        elif request.form.get('move') == 'prev':
             on_previous()
         elif request.form.get('move') == 'next':
             on_next()
@@ -128,14 +143,22 @@ def week():
 @authenticate.login_required
 def day():
     if request.method == 'POST':
+        if request.form.get('friend-add') == 'friend':#add friend operation
+            friend = find_user(request.form['friend-name'])#look for new friend in DB
+            if friend != None:#true if friend exists in DB, can be added to user's friend list
+                add_friend(session['user_id'], request.form['friend-name'])
+            else:
+                flash("Invalid User!")#friend passed is not real
+        elif request.form.get('compare-friends') == 'compare':#Schedule comparison operation
+            compare_list = request.form.getlist('friend-check') #returns all checked boxes as a list
+            #now that we have the user list, do comparisons here
 
-        print(request.form)
-        if request.form.get('friend') == 'friend':
-            print('test')
-        elif request.form.get('move') == 'prev':
+
+        if request.form.get('move') == 'prev':#move backwards operation
             day_move('prev')
-        else:
+        else:#move forwards operation
             day_move('next')
+
 
         # try and give the server a schedule to use
         if request.form.get('upload') == "upload" and 'upload_schedule' in request.files:
@@ -146,17 +169,26 @@ def day():
             extension = request.form.get('exports')
             return handle_export(extension)
 
+
         day, month, year = get_current_day()
 
     else:
         date, day, month, year = get_todays_date()
         resetDate()
         clear_path()
+        
+    events = user_events() #populate events
+    friends_list = g.user['friends']#get user friends
+    valid_friends = []
+    for friend in friends_list:
+        #if validate_friend(friend['username']) == True:#only include mutual friends
+        valid_friends.append(friend)
 
-    events = user_events()
     return render_template('calendar/day.html',
                            cal=pycal,
                            day=day,
                            month=month,
                            year=year,
-                           events=events)
+                           events=events,
+                           friends = valid_friends)
+

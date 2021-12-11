@@ -86,7 +86,12 @@ def month():
     cal, header, year, month = create_month()
     events = user_events()
 
-    return render_template('calendar/month.html', year=year, pycal=pycal, month=month, day=cal, header=header,
+    return render_template('calendar/month.html',
+                           year=year,
+                           cal=pycal,
+                           month=month,
+                           mdays=cal,
+                           header=header,
                            events=events)
 
 
@@ -131,12 +136,15 @@ def week():
     day, month, year = set_current_date()
     week = get_formatted_week()
     events = user_events()
+    mdays, header = create_month()[0], create_month()[1]
     return render_template('calendar/week.html',
                            cal=pycal,
                            month=month,
                            year=year,
                            week=week,
-                           events=events)
+                           events=events,
+                           mdays=mdays,
+                           header=header)
 
 
 @cal_blueprint.route('/day/', methods=['GET', 'POST'])
@@ -181,10 +189,14 @@ def day():
         # if validate_friend(friend['username']) == True:#only include mutual friends
         valid_friends.append(friend)
 
+    mdays, header = create_month()[0], create_month()[1]
+
     return render_template('calendar/day.html',
                            cal=pycal,
                            day=day,
                            month=month,
                            year=year,
                            events=events,
-                           friends=valid_friends)
+                           friends=valid_friends,
+                           mdays=mdays,
+                           header=header)

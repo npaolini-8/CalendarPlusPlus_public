@@ -11,6 +11,9 @@
     <h2 class="text-center mb-4">
         Day
     </h2>
+    {% block tinymonth %}
+        {{ super() }}
+    {% endblock tinymonth %}
 {% endblock %}
 {% block side_content %}
     {{super()}}

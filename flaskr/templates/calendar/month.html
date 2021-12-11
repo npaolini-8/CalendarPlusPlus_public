@@ -13,34 +13,9 @@
     <h2 class="text-center mb-4">
         Month
     </h2>
-    <p class="text-center text-light">
-        {{ pycal.month_name[month] }} {{ year }}
-    </p>
-    <div>
-        <table id="calendar-table" class="table">
-            <thead class="text-light">
-            <tr>
-                {% for day in header %}
-                    <td class="text-center"> {{ day }}</td>
-                {% endfor %}
-            </tr>
-            </thead>
-            <tbody>
-            {% for row in day %}
-                <tr>
-                    {% for cell in row %}
-                        {% if cell != 0 %}
-                            <td class="text-center text-light">{{ cell }}</td>
-                        {% else %}
-                            <td class="text-center" ></td>
-                        {% endif %}
-
-                    {% endfor %}
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    </div>
+    {% block tinymonth %}
+        {{ super() }}
+    {% endblock tinymonth %}
 {% endblock %}
 {% block side_content %}
     {{super()}}
@@ -56,7 +31,7 @@
       <div class="calendar-header">
             <div class="row header-title">
                 <div class="header-text my-3">
-                    <h1 id="date" class="text-center"> {{ pycal.month_name[month] }} {{ year }}</h1>
+                    <h1 id="date" class="text-center"> {{ cal.month_name[month] }} {{ year }}</h1>
                 </div>
             </div>
         </div>
@@ -70,7 +45,7 @@
                     </tr>
                 </thead>
             <tbody>
-            {% for row in day %}
+            {% for row in mdays %}
                 <tr>
                     {% for cell in row %}
                         {% if cell != 0 %}

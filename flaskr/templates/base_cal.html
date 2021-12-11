@@ -12,6 +12,9 @@
                     <div class="sidebar-header">
                         {% block view %}
                             <h3>Base Calendar</h3>
+                            {% block tinymonth %}
+                                {% include 'calendar/tiny_month.html' %}
+                            {% endblock tinymonth %}
                         {% endblock %}
                         {% block side_content %}
                             <h5 class="text-center text-light">

@@ -12,6 +12,9 @@
     <h2 class="text-center mb-4">
         Week
     </h2>
+    {% block tinymonth %}
+        {{ super() }}
+    {% endblock tinymonth %}
 {% endblock view %}
 {% block side_content %}
     {{super()}}

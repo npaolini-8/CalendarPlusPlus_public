@@ -71,7 +71,7 @@
                 <tr>
                     {% for cell in row %}
                         {% if cell != 0 %}
-                            <td class="cells text-center" data-bs-target="#event-modal" data-bs-toggle="modal"
+                            <td class="cells text-center"
                                 style="padding: 3em">
                                 {{ cell }}
                                 {% set event_counter = namespace(value=0) %}
@@ -83,17 +83,14 @@
                                     {% endif %}
                                 {% endfor %}
                                 {% if event_counter.value > 0 %}
-                                <div class="events small text-wrap bg-info bg-opacity-50 rounded-pill"
-                                     data-bs-target="#event-modal" data-toggle="modal"
-                                     id="cell:{{ date }}-{{ month }}-{{ year }}">
-
+                                <div class=" small text-wrap bg-info bg-opacity-50 rounded-pill"
+                                     id="cell:{{ cell }}-{{ month }}">
                                     {{ event_counter.value }} event(s)
                                 </div>
                                 {% endif %}
                             </td>
                         {% else %}
-                            <td class="cells text-center" data-bs-target="#event-modal" data-bs-toggle="modal"
-                                style="padding: 3em"></td>
+                            <td class="cells text-center" style="padding: 3em" id="cell:{{ cell }}-{{ month }}"></td>
                         {% endif %}
                     {% endfor %}
                 </tr>
@@ -102,9 +99,6 @@
             </table>
         </div>
     </div>
-{% block modals %}
-    {{ super() }}
-{% endblock modals %}
 {% endblock calendar %}
 {% block scripts %}
     {{ super() }}

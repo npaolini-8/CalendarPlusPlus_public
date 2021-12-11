@@ -50,6 +50,7 @@
 
 {% block scripts %}
     {{ super() }}
+    <script src="{{ url_for('static', filename = 'javascript/calendar/events.js')}}"></script>
     <script src="{{ url_for('static', filename = 'javascript/calendar/cells.js')}}"></script>
     <script src = "{{ url_for('static', filename = 'javascript/calendar/friendButton.js')}}"></script>
     <script src="{{ url_for('static', filename = 'javascript/navbar/highlight.js')}}"></script>

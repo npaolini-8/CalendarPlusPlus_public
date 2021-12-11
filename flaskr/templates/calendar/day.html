@@ -47,16 +47,16 @@
                         {% else %}
                             <td style = "width: 0.25em;" id = {{hour}}TimeCol> {{hour}}:00</td>
                         {% endif %}
-                        <td class = "cells" id = {{hour}}EventsCol data-bs-target="#event-modal" data-bs-toggle="modal">
+                        <td class = "cells position-relative" id = "cell-{{ day }}-{{ month }}-{{ year }}-{{ hour }}" data-bs-target="#event-modal" data-bs-toggle="modal">
                             {% for event in events %}
                                 {% if event[4] == hour and event[3] == day and
                                     event[2] == month and event[1] == year%}
                                     <div class="events small text-wrap bg-info bg-opacity-50 rounded-pill"
-                                    id="cell:{{ day }}-{{ month }}-{{ year }}-{{ hour }}">START: {{event[0]}}</div>
+                                    id="event-{{ day }}-{{ month }}-{{ year }}-{{ hour }}">START: {{event[0]}}</div>
                                 {% elif event[9] == hour and event[8] == day and
                                     event[7] == month and event[6] == year %}
-                                    <div class="events small text-wrap bg-info bg-opacity-50 rounded-pill"
-                                    id="cell:{{ day }}-{{ month }}-{{ year }}-{{ hour }}">END: {{event[0]}}</div>
+                                    <div class="events small position-absolute top-50 start-50 translate-middle text-wrap bg-info bg-opacity-50 rounded-pill"
+                                    id="event-{{ day }}-{{ month }}-{{ year }}-{{ hour }}">END: {{event[0]}}</div>
                                 {%endif%}
                             {% endfor %}
                         </td>

@@ -76,13 +76,17 @@ tmp_path = "flaskr/static/tmp"
 
 
 def export_cal(format, tz=None):
-    os.makedirs(os.path.join(tmp_path, session['user_id']))
+    file_path = os.path.join(tmp_path, session['user_id'])
+    if not os.path.exists(file_path) and not os.path.isdir(file_path):
+        os.makedirs(file_path)
     zone = tz if tz else timezone('US/Eastern')
     return cf.export_calendar(session['user_id'], format, zone)
 
 
 def import_cal(format, tz=None):
-    os.makedirs(os.path.join(tmp_path, session['user_id']))
+    file_path = os.path.join(tmp_path, session['user_id'])
+    if not os.path.exists(file_path) and not os.path.isdir(file_path):
+        os.makedirs(file_path)
     zone = tz if tz else timezone('US/Eastern')
     return cf.import_calendar(session['user_id'], cal_str="???", format=format, tz=zone)
 

@@ -190,6 +190,7 @@ def export_calendar( username, format, tz):
                 #csv_handler.seek(0)
                 #print(csv_handler.read().strip()) #NOTE THIS WILL NOT WORK IF RETURN IS INCLUDED W/O ANOTHER SEEK
     except Exception as e:
+        print(e)
         good_input = False
 
     return good_input
@@ -352,7 +353,8 @@ def import_calendar( username, cal_str, format, tz ):
                     end = end.astimezone(pytz.utc).strftime("%Y%m%dT%H%M%SZ")
 
                     events.append({"event_id":component.get('summary'),"start_time":component.get('dtstart').dt.astimezone(pytz.utc).strftime("%Y%m%dT%H%M%SZ"),\
-                        "end_time":component.get('dtend').dt.astimezone(pytz.utc).strftime("%Y%m%dT%H%M%SZ"), "description":component.get('description'),  "location":component.get('location')})
+                        "end_time":component.get('dtend').dt.astimezone(pytz.utc).strftime("%Y%m%dT%H%M%SZ"), "description":component.get('description'),  "location":component.get('location'),
+                                   "recurrence":0})
         except Exception:
             good_input = False
 
@@ -428,7 +430,7 @@ def import_calendar( username, cal_str, format, tz ):
                     desc = row['Description']
                     loc = row['Location']
 
-                    events.append({"event_id": subj,"start_time": start_string,"end_time": end_string,"description": desc, "location": loc })
+                    events.append({"event_id": subj,"start_time": start_string,"end_time": end_string,"description": desc, "location": loc, "recurrence": 0 })
         except Exception as e:
             print(e)
             good_input = False

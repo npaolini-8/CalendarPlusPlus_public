@@ -1,6 +1,9 @@
 import calendar as pycal
+import os
 
-from flask import Blueprint, render_template, request, flash, url_for, redirect, send_from_directory, abort, current_app
+from flask import Blueprint, render_template, request, flash, url_for, redirect, send_from_directory, abort, \
+    current_app, session
+from werkzeug.utils import secure_filename
 
 from ..python_helpers.cal_helpers import get_todays_date, save_event, user_events, import_cal, export_cal, clear_path
 from ..python_helpers.day_functions import day_move, get_current_day, resetDate
@@ -28,17 +31,23 @@ def month():
         if request.form.get('upload') == "upload" and 'upload_schedule' in request.files:
             sched = request.files['upload_schedule']
 
-            if allowed_files(sched):
-                # TODO: Check the import state
-                import_cal(get_extension(sched))
+            if allowed_files(sched.filename):
+                sched.filename = secure_filename(sched.filename)
+                oldext = os.path.splitext(sched.filename)[1]
+                file_path = os.path.join(current_app.config['TMP'], session['user_id'])
+                if not os.path.exists(file_path) and not os.path.isdir(file_path):
+                    os.makedirs(file_path)
+                sched.save(os.path.join(file_path, "import" + oldext))
+                import_cal(get_extension(sched.filename))
             else:
                 flash("Bro, this ain\'t a calendar we can use...", "info")
                 return redirect(url_for('calendar.month'))
 
         if request.form.get('export') == 'export':
             filename = 'export.' + request.form.get('exports')
-            export_cal(filename)
-            url_for("export_cal", filename=filename)
+            export_cal(request.form.get('exports'))
+            return send_from_directory(os.path.join(current_app.config['TMP'], session['user_id']), filename,
+                                       as_attachment=True)
     else:
         reset_month()
         clear_path()
@@ -48,15 +57,6 @@ def month():
 
     return render_template('calendar/month.html', year=year, pycal=pycal, month=month, day=cal, header=header,
                            events=events)
-
-
-@cal_blueprint.route('/uploads/<filename>')
-@authenticate.login_required
-def export_cal(filename):
-    try:
-        return send_from_directory(current_app.config['TMP'], filename)
-    except FileNotFoundError:
-        abort(404)
 
 
 @cal_blueprint.route('/week/', methods=['GET', 'POST'])

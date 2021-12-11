@@ -1,6 +1,6 @@
 import calendar as pycal
 
-from flask import Blueprint, render_template, request, flash, url_for, redirect, send_file
+from flask import Blueprint, render_template, request, flash, url_for, redirect, send_from_directory, abort
 
 from ..python_helpers.cal_helpers import get_todays_date, get_month, save_event, user_events, export_cal, import_cal
 from ..python_helpers.day_functions import day_move, get_current_day, resetDate
@@ -36,14 +36,25 @@ def month():
 
         if request.form.get('export') == 'export':
             dl_cal = export_cal(request.form.get('exports'))
-            print(type(dl_cal))
     else:
         reset_month()
 
     cal, header, year, month = create_month()
     events = user_events()
 
-    return render_template('calendar/month.html', year=year, pycal=pycal, month=month, day=cal, header=header, events=events)
+    return render_template('calendar/month.html', year=year, pycal=pycal, month=month, day=cal, header=header,
+                           events=events)
+
+
+@cal_blueprint.route('/uploads/<filename>')
+@authenticate.login_required
+def export_cal(filename):
+    try:
+        return
+    except FileNotFoundError:
+        abort(404)
+
+
 
 
 @cal_blueprint.route('/week/', methods=['GET', 'POST'])
@@ -60,7 +71,7 @@ def week():
             start_date = request.form.get('start-date')
             end_date = request.form.get('end-date')
             start_time = request.form.get('start-time')
-            end_time =request.form.get('end-time')
+            end_time = request.form.get('end-time')
             save_event(event_id, event_desc, start_date, end_date, start_time, end_time)
     else:
         reset_date()
@@ -76,7 +87,7 @@ def week():
                            events=events)
 
 
-@cal_blueprint.route('/day/', methods = ['GET','POST'])
+@cal_blueprint.route('/day/', methods=['GET', 'POST'])
 @authenticate.login_required
 def day():
     if request.method == 'POST':

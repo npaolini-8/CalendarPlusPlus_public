@@ -8,15 +8,21 @@
     </title>
 {%endblock head %}
 {% block view %}
-    <h3 class="text-center mb-4">
+    <h2 class="text-center mb-4">
         Day
-    </h3>
+    </h2>
+    {% block tinymonth %}
+        {{ super() }}
+    {% endblock tinymonth %}
 {% endblock %}
 {% block side_content %}
     {{super()}}
 {%  endblock side_content %}
 {% block calendar %}
 <div class="container-fluid my-2">
+    {% block messages %}
+        {{ super() }}
+    {% endblock %}
     {% block arrowhead %}
         {{ super() }}
     {% endblock arrowhead %}

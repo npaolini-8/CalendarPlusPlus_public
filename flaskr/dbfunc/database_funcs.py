@@ -18,7 +18,8 @@ class CalDB():
                 "first_name": first_name,
                 "last_name": last_name,
                 "events": [],
-                "friends": []
+                "friends": [],
+                "rec_count": 1
             }
         )
 
@@ -127,6 +128,12 @@ class CalDB():
     def update_event_list(self, username, events):
         self.users_collection.update_one(
             {"username": username},
+            {"$push": {"events": {"$each": events}}}
+        )
+
+    def append_event_list(self, username, events):
+        self.users_collection.update_one(
+            {"username": username},
             {"$set": {"events": events}}
         )
 
@@ -163,6 +170,12 @@ class CalDB():
     #     else:
     #         return False
 
+    def get_rec_id(self,username):
+        return self.users_collection.find_one({"username":username}, {"rec_count":1})["rec_count"]
+
+    def inc_rec_id(self,username):
+        self.users_collection.update_one({"username":username}, {"$inc": {"rec_count":1}})
+
 #cal = CalDB()
 
 #cal.create_event("testery","2A","20211021T140000","20211021T150000") #passed
@@ -170,3 +183,6 @@ class CalDB():
 #cal.edit_event("testery","2A","20211021T140000","20211021T150000",delete=True) #passed
 #cal.remove_friend("testery","testy") #passed
 #cal.add_friend("testery","testy") #passed
+#cal.inc_rec_id("testery")
+#print(cal.get_rec_id("testery"))
+#cal.append_event_list("CSGO_Sweat",[])

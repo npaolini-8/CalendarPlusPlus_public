@@ -1,10 +1,11 @@
-import  calendar as pycal
+import calendar as pycal
+import os
+import shutil
 
 from datetime import datetime
 from ..dbfunc import cal_funcs as cf
 from flask import g, session
 from pytz import timezone
-
 
 pycal.setfirstweekday(6)
 cal = pycal.Calendar(6)
@@ -65,7 +66,7 @@ def save_event(event, desc, s_date, e_date, s_time, e_time, loc=None, recur=None
     e_time = e_time.split(':')
 
     # convert start and end time to database format
-    start_time = cf.convert_date_input( s_date[0], s_date[1], s_date[2], s_time[0], s_time[0])
+    start_time = cf.convert_date_input(s_date[0], s_date[1], s_date[2], s_time[0], s_time[0])
     end_time = cf.convert_date_input(e_date[0], e_date[1], e_date[2], e_time[0], e_time[0])
 
     cf.create_event(session['user_id'], event, start_time, end_time, desc)
@@ -74,4 +75,29 @@ def save_event(event, desc, s_date, e_date, s_time, e_time, loc=None, recur=None
 def edit_event(event_id, start_time, end_time, new_id=None,new_start=None,new_end=None,new_desc=None,new_loc=None,delete=False):
     """Edits event in database"""
     cf.edit_event(session['user_id'], event_id, start_time, end_time, new_id,new_start,new_end,new_desc,new_loc,delete=False)
+
+tmp_path = "flaskr/static/tmp"
+
+
+def export_cal(format, tz=None):
+    file_path = os.path.join(tmp_path, session['user_id'])
+    if not os.path.exists(file_path) and not os.path.isdir(file_path):
+        os.makedirs(file_path)
+    zone = tz if tz else timezone('US/Eastern')
+    return cf.export_calendar(session['user_id'], format, zone)
+
+
+def import_cal(format, tz=None):
+    file_path = os.path.join(tmp_path, session['user_id'])
+    if not os.path.exists(file_path) and not os.path.isdir(file_path):
+        os.makedirs(file_path)
+    zone = tz if tz else timezone('US/Eastern')
+    return cf.import_calendar(session['user_id'], cal_str="???", format=format, tz=zone)
+
+
+def clear_path():
+    file_path = os.path.join(tmp_path, session['user_id'])
+    if os.path.exists(file_path) and os.path.isdir(file_path):
+        shutil.rmtree(file_path)
+
 

@@ -1,0 +1,12 @@
+<form name = friend-comparison method="POST" style="margin-top: 1em;">
+    <label class = "text-light"> Compare Friends</label>
+    {% for friend in friends%}
+        <div>
+            <input type = checkbox id = "friend-check" name = "friend-check"  value = "{{ friend['username'] }}">
+            <label for = friend-check >{{ friend['username'] }}</label>
+        </div>
+    {% endfor %}
+    <div class = text-center>
+        <button class = "form-control btn btn-info m-1" type = submit name = compare-friends value = compare>Compare</button>
+    </div>
+</form>

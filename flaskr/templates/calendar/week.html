@@ -9,15 +9,21 @@
     </title>
 {% endblock head%}
 {% block view %}
-    <h3 class="text-center mb-4">
+    <h2 class="text-center mb-4">
         Week
-    </h3>
+    </h2>
+    {% block tinymonth %}
+        {{ super() }}
+    {% endblock tinymonth %}
 {% endblock view %}
 {% block side_content %}
     {{super()}}
 {% endblock side_content %}
 {% block calendar %}
     <div class="container-fluid my-2">
+        {% block messages %}
+            {{ super() }}
+        {% endblock %}
         {% block arrowhead %}
             {{ super() }}
         {% endblock arrowhead %}
@@ -27,7 +33,7 @@
         <div class="table-responsive">
             <table class="table table-bordered table-hover" id="calendar-table">
                 <thead class="table-primary text-center" id="table-header">
-                    <th/>
+                    <th>
                     {% for date, day in week %}
                         <th>{{ cal.day_name[day] }}
                             <div class="text-muted small" id="weekday:{{ day }}-{{ date }}">{{ date }}</div>

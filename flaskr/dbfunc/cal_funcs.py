@@ -1,20 +1,24 @@
 from os import write
-from datetime import datetime, tzinfo
+from datetime import datetime, timedelta, tzinfo
 from re import split  # Used to get timestamps for database information
 from icalendar import Calendar, Event
 import pytz
 from pytz import timezone
 import csv
 from io import StringIO
+from dateutil.relativedelta import relativedelta
+import os
 from .database_funcs import CalDB #TODO make sure . is here before push
 
 calendar_db = CalDB()
 
+tmp_path = "flaskr/static/tmp"
 
 #TODO
 #GENERAL: refactor log-in to not include password comparison
 #import
-#create function to test for ICS validity, name, start, end 
+#create function to test for ICS validity, name, start, end DONEish
+#make sure import works for ics strings DONE
 #make sure tz conversion works DONE
 #function to check csv validity, google csv
 #manage incoming strings as CSV
@@ -84,8 +88,9 @@ def get_event_list(username, tz, start=None, end=None, ) -> list:
 
         for event in events:
             s_date = get_datetime(event["start_time"])
+            e_date = get_datetime(event["end_time"])
 
-            if start <= s_date <= end:
+            if e_date >= start and s_date <= end:
                 req_events.append(event)
     elif start is not None:  # only start given, include all events AFTER
         start = get_datetime(start)
@@ -140,47 +145,57 @@ def get_event_list(username, tz, start=None, end=None, ) -> list:
 
 #builds calendar file based on given format: ics, csv
 def export_calendar( username, format, tz):
-    # db queries
-    # TODO: Error handling
-    user = calendar_db.find_user(username)
-    events = user["events"]
 
-    if format.lower() == "ics":
+    good_input = True
 
-        #generate icalendar object from db events
-        #TODO: do we want to pass username and build that into ical file description?
-        cal = build_ics( events, tz )
-        #generates byte string from ical object
-        data = cal.to_ical()
-        #print(data)
+    #db queries
+    try:
+        user = calendar_db.find_user(username)
+        events = user["events"]
 
-        #converts byte string to string and returns
+        if format.lower() == "ics":
+            #generate icalendar object from db events
+            #TODO: do we want to pass username and build that into ical file description?
+            cal = build_ics( events, tz )
+            #generates byte string from ical object
+            data = cal.to_ical()
+            #print(data)
 
-        #output_str = data.decode("utf-8")
-        #print(output_str.strip())
-        return data.decode("utf-8")
+            #converts byte string to string and returns (string version)
+            #output_str = data.decode("utf-8")
+            #print(output_str.strip())
+            #return data.decode("utf-8")
 
-        #writes file (deprecated, testing version)
-        #with open( "export_test/test.ics", 'wb') as ical_file:
-        #    ical_file.write(data)
-    
-    elif format.lower() == "csv" :
-        csv_cal = build_csv( events, tz )
+            #writes file
+            with open( os.path.join(tmp_path, username, "export.ics"), 'wb') as ical_file:
+                ical_file.write(data)
 
-        #with open( "export_test/test.csv", 'w', encoding='utf-8') as csv_handler:
-        #instead of file write to string io
-        csv_handler = StringIO()
-        writer = csv.writer(csv_handler)
-            
-        for row in csv_cal:
-            #print(row)
-            writer.writerow(row)
-        #move iterator back to start of file and print
-        csv_handler.seek(0)
-        return csv_handler.read().strip()
-        #csv_handler.seek(0)
-        #print(csv_handler.read().strip()) #NOTE THIS WILL NOT WORK IF RETURN IS INCLUDED W/O ANOTHER SEEK
-        
+
+        elif format.lower() == "csv" :
+            csv_cal = build_csv( events, tz )
+
+            with open( os.path.join(tmp_path, username, "export.csv"), 'w', encoding='utf-8') as csv_handler:
+                #instead of file write to string io
+                #csv_handler = StringIO()
+                writer = csv.writer(csv_handler)
+
+                for row in csv_cal:
+                    #print(row)
+                    writer.writerow(row)
+                csv_handler.close()
+
+                #string version
+                #move iterator back to start of file and print
+                #csv_handler.seek(0)
+                #return csv_handler.read().strip()
+                #csv_handler.seek(0)
+                #print(csv_handler.read().strip()) #NOTE THIS WILL NOT WORK IF RETURN IS INCLUDED W/O ANOTHER SEEK
+    except Exception as e:
+        print(e)
+        good_input = False
+
+    return good_input
+
 
 def build_ics( events, tz ) -> Calendar:
 
@@ -297,8 +312,13 @@ def build_csv( events, tz):
 
 
 
-#TODO: add accounting for optional fields
+#TODO: add accounting for optional fields, done for ICS
+#RETURNS BOOLEAN: True if no failures from input, False if Exceptions show up
+#this is likely to catch all formatting failures as the type conversions rely on specific input
+
 def import_calendar( username, cal_str, format, tz ):
+
+    good_input = True
 
     #assuming string input from app this file read would simply stay as variable input
     #file read done for testing
@@ -306,106 +326,224 @@ def import_calendar( username, cal_str, format, tz ):
     events = calendar_db.find_user(username)["events"]
 
     if format == "ics":
+        try:
+            cal = Calendar()
+            cal_file = open(os.path.join(tmp_path, username, "import.ics"), 'r')
+            cal_str = cal_file.read()
+            components = cal.from_ical(cal_str)
 
-        cal = Calendar()
+            #strftime string is formatted string output from datetime object to match current convention
+            #source: https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
+            for component in components.walk():
+                if component.name == "VEVENT":
+                    #print(component.get('summary'))
+                    # print(component.get('dtstart').dt.astimezone(pytz.utc).strftime("%Y%m%dT%H%M%SZ"))
+                    # print(component.decoded('dtstart'))
+                    # print(component.get('dtend').dt.astimezone(pytz.utc).strftime("%Y%m%dT%H%M%SZ"))
 
-        cal_file = open("export_test/test.ics", 'r')
-        cal_str = cal_file.read()
-        components = cal.from_ical(cal_str)
+                    #start = tz.localize(component.get('dtstart').dt)
+                    start = component.get('dtstart').dt
+                    if start.tzinfo is None:
+                        start = tz.localize(start)
+                    start = start.astimezone(pytz.utc).strftime("%Y%m%dT%H%M%SZ")
 
-        # strftime string is formatted string output from datetime object to match current convention
-        # source: https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
-        for component in components.walk():
-            if component.name == "VEVENT":
-                # print(component.get('summary'))
-                # print(component.get('dtstart').dt.astimezone(pytz.utc).strftime("%Y%m%dT%H%M%SZ"))
-                # print(component.decoded('dtstart'))
-                # print(component.get('dtend').dt.astimezone(pytz.utc).strftime("%Y%m%dT%H%M%SZ"))
+                    #end = tz.localize(component.get('dtend').dt)
+                    end = component.get('dtend').dt
+                    if end.tzinfo is None:
+                        end = tz.localize(end)
+                    end = end.astimezone(pytz.utc).strftime("%Y%m%dT%H%M%SZ")
 
-
-                start = tz.localize(component.get('dtstart'))
-                start = start.astimezone(pytz.utc).strftime("%Y%m%dT%H%M%SZ")
-
-                end = tz.localize(component.get('dtend'))
-                end = end.astimezone(pytz.utc).strftime("%Y%m%dT%H%M%SZ")
-                
-                events.append({"event_id":component.get('summary'),"start_time":component.get('dtstart').dt.astimezone(pytz.utc).strftime("%Y%m%dT%H%M%SZ"),\
-                     "end_time":component.get('dtend').dt.astimezone(pytz.utc).strftime("%Y%m%dT%H%M%SZ"), "description":component.get('description'),  "location":component.get('location')})
+                    events.append({"event_id":component.get('summary'),"start_time":component.get('dtstart').dt.astimezone(pytz.utc).strftime("%Y%m%dT%H%M%SZ"),\
+                        "end_time":component.get('dtend').dt.astimezone(pytz.utc).strftime("%Y%m%dT%H%M%SZ"), "description":component.get('description'),  "location":component.get('location'),
+                                   "recurrence":0})
+        except Exception:
+            good_input = False
 
 
     # TODO: timezone again for google csv format, not sure if it is ever listed. we may need to "assume" based on selected timezone of current user
     # TODO: this works for expected format of subject, start date, start time, end date, end time, description, and location, need to test for other cases
-    elif format == "gcsv":
-        with open("export_test/test.csv", 'r') as csv_file:
-            csv_reader = csv.DictReader(csv_file)
+    elif format == "csv":
+        try:
+            with open(os.path.join(tmp_path, username, "import.csv"), 'r') as csv_file:
+                csv_reader = csv.DictReader(csv_file)
+                #csv_reader = csv.DictReader(cal_str, delimiter=',')
+                #csv_reader.fieldnames = ["Subject","Start Date","Start Time","End Date","End Time","Description","Location"]
 
-            for row in csv_reader:
-                subj = row['Subject']
+                for row in csv_reader:
+                    subj = row['Subject']
 
-                #I duplicated code here, i might fix eventually
-                csv_start_date = row['Start Date']
+                    #I duplicated code here, i might fix eventually
+                    csv_start_date = row['Start Date']
 
-                # finding /s to account for inconsistent format
-                s_start_date = csv_start_date.split('/')
+                    #finding /s to account for inconsistent format
+                    s_start_date = csv_start_date.split('/')
 
-                # accounts for 2 digit year input
-                if len(s_start_date[2]) == 2:
-                    s_start_date[2] = "20" + s_start_date[2]
+                    #accounts for 2 digit year input
+                    if len(s_start_date[2]) == 2:
+                        s_start_date[2] = "20" + s_start_date[2]
 
-                csv_start_time = row['Start Time']
+                    csv_start_time = row['Start Time']
 
-                # splitting to account for AM/PM addition
-                s_start_time = csv_start_time.split()
-                start_time_digits = s_start_time[0].split(":")
+                    #splitting to account for AM/PM addition
+                    s_start_time = csv_start_time.split()
+                    start_time_digits = s_start_time[0].split(":")
 
-                # check for am/pm listing and modify hour accordingly
-                if len(s_start_time) > 1:
-                    if s_start_time[1] == "AM":
-                        if start_time_digits[0] == "12":
-                            start_time_digits[0] = "00"
-                    elif s_start_time[1] == "PM":
-                        if start_time_digits[0] != "12":
-                            start_time_digits[0] = str(int(start_time_digits[0]) + 12)
+                    #check for am/pm listing and modify hour accordingly
+                    if len(s_start_time) > 1:
+                        if s_start_time[1] == "AM":
+                            if start_time_digits[0] == "12":
+                                start_time_digits[0] = "00"
+                        elif s_start_time[1] == "PM":
+                            if start_time_digits[0] != "12":
+                                start_time_digits[0] = str( int(start_time_digits[0]) + 12)
 
+                    start_dt = datetime(int(s_start_date[2]),int(s_start_date[0]), int(s_start_date[1]),int(start_time_digits[0]),int(start_time_digits[1]))
+                    start_dt = tz.localize(start_dt)
+                    start_string = start_dt.astimezone(pytz.utc).strftime("%Y%m%dT%H%M%SZ")
 
-                start_dt = datetime(int(s_start_date[2]),int(s_start_date[0]), int(s_start_date[1]),int(start_time_digits[0]),int(start_time_digits[1]))
-                start_dt = tz.localize(start_dt)
-                start_string = start_dt.astimezone(pytz.utc).strftime("%Y%m%dT%H%M%SZ")
+                    csv_end_date = row['End Date']
 
-                csv_end_date = row['End Date']
+                    s_end_date = csv_end_date.split('/')
 
-                s_end_date = csv_end_date.split('/')
+                    #accounts for 2 digit year input
+                    if len(s_end_date[2]) == 2:
+                        s_end_date[2] = "20" + s_end_date[2]
 
-                # accounts for 2 digit year input
-                if len(s_end_date[2]) == 2:
-                    s_end_date[2] = "20" + s_end_date[2]
+                    csv_end_time = row['End Time']
 
-                csv_end_time = row['End Time']
+                    #splitting to account for AM/PM addition
+                    s_end_time = csv_end_time.split()
+                    end_time_digits = s_end_time[0].split(":")
 
-                # splitting to account for AM/PM addition
-                s_end_time = csv_end_time.split()
-                end_time_digits = s_end_time[0].split(":")
+                    #check for am/pm listing and modify hour accordingly
+                    if len(s_end_time) > 1:
+                        if s_end_time[1] == "AM":
+                            if end_time_digits[0] == "12":
+                                end_time_digits[0] = "00"
+                        elif s_end_time[1] == "PM":
+                            if end_time_digits[0] != "12":
+                                end_time_digits[0] = str( int(end_time_digits[0]) + 12)
 
-                # check for am/pm listing and modify hour accordingly
-                if len(s_end_time) > 1:
-                    if s_end_time[1] == "AM":
-                        if end_time_digits[0] == "12":
-                            end_time_digits[0] = "00"
-                    elif s_end_time[1] == "PM":
-                        if end_time_digits[0] != "12":
-                            end_time_digits[0] = str(int(end_time_digits[0]) + 12)
+                    end_dt = datetime(int(s_end_date[2]),int(s_end_date[0]), int(s_end_date[1]),int(end_time_digits[0]),int(end_time_digits[1]))
+                    end_dt = tz.localize(end_dt)
+                    end_string = end_dt.astimezone(pytz.utc).strftime("%Y%m%dT%H%M%SZ")
 
+                    desc = row['Description']
+                    loc = row['Location']
 
-                end_dt = datetime(int(s_end_date[2]),int(s_end_date[0]), int(s_end_date[1]),int(end_time_digits[0]),int(end_time_digits[1]))
-                end_dt = tz.localize(end_dt)
-                end_string = end_dt.astimezone(pytz.utc).strftime("%Y%m%dT%H%M%SZ")
+                    events.append({"event_id": subj,"start_time": start_string,"end_time": end_string,"description": desc, "location": loc, "recurrence": 0 })
+        except Exception as e:
+            print(e)
+            good_input = False
 
-                desc = row['Description']
-                loc = row['Location']
+    calendar_db.update_event_list(username,events)
+    return good_input
 
-                events.append(
-                    {"event_id": subj, "start_time": start_string, "end_time": end_string, "description": desc,
-                     "location": loc})
+#checks if f_username is on username's friend list
+def friend_check(username, f_username):
+    friends = calendar_db.get_friends(username)["friends"]
+    for friend in friends:
+        if friend["username"] == f_username:
+            return True
+    
+    return False
+
+#recurrence takes day, week, month, year
+#rec_count is the number of times the event recurrs, EXCLUDING the first event
+#start/end time expecting UTC datetime strings, use convert_date_input
+#start/end are for the first event of the series
+def create_rec_event( username, event_id, start_time, end_time, recurrence, rec_count, description=None, location=None):
+
+    #events = calendar_db.find_user(username)["events"]
+    events = []
+    rec_count += 1 #adds the first event
+
+    start_time = get_datetime(start_time)
+    end_time = get_datetime(end_time)
+
+    rec_id = calendar_db.get_rec_id(username)
+
+    if recurrence == "day":
+        for i in range(rec_count):
+            #increment after to make sure we get initial day
+            start = start_time.strftime("%Y%m%dT%H%M%SZ")
+            end = end_time.strftime("%Y%m%dT%H%M%SZ")
+            start_time += timedelta(days=1)
+            end_time += timedelta(days=1)
+
+            event = {
+                "event_id": event_id,
+                "start_time": start,
+                "end_time": end,
+                "description": description,
+                "location": location,
+                "reccurence": rec_id
+            }
+
+            events.append(event)
+    elif recurrence == "week":
+        for i in range(rec_count):
+            #increment after to make sure we get initial day
+            start = start_time.strftime("%Y%m%dT%H%M%SZ")
+            end = end_time.strftime("%Y%m%dT%H%M%SZ")
+            start_time += timedelta(days=7)
+            end_time += timedelta(days=7)
+
+            event = {
+                "event_id": event_id,
+                "start_time": start,
+                "end_time": end,
+                "description": description,
+                "location": location,
+                "reccurence": rec_id
+            }
+
+            events.append(event)
+    elif recurrence == "month":
+        #for month and year the delta needs to be relative to the initial date, different from day increments
+        n_start = start_time
+        n_end = end_time
+        for i in range(rec_count):
+            #increment goes first in this case since we start by adding 0
+            n_start = start_time + relativedelta(months=i)
+            n_end = end_time + relativedelta(months=i)
+            start = n_start.strftime("%Y%m%dT%H%M%SZ")
+            end = n_end.strftime("%Y%m%dT%H%M%SZ")
+            
+
+            event = {
+                "event_id": event_id,
+                "start_time": start,
+                "end_time": end,
+                "description": description,
+                "location": location,
+                "reccurence": rec_id
+            }
+
+            events.append(event)
+    elif recurrence == "year":
+        n_start = start_time
+        n_end = end_time
+        for i in range(rec_count):
+            n_start = start_time + relativedelta(years=i)
+            n_end = end_time + relativedelta(years=i)
+            start = n_start.strftime("%Y%m%dT%H%M%SZ")
+            end = n_end.strftime("%Y%m%dT%H%M%SZ")
+
+            event = {
+                "event_id": event_id,
+                "start_time": start,
+                "end_time": end,
+                "description": description,
+                "location": location,
+                "reccurence": rec_id
+            }
+
+            events.append(event)
+
+    calendar_db.append_event_list(username,events)
+    calendar_db.inc_rec_id(username)
+    #calendar_db.update_event_list(username,events)
 
 
 #MVC Wrappers for DB functions
@@ -417,7 +555,7 @@ def edit_user(username, password=None, first_name=None, last_name=None):
     calendar_db.edit_user(username, password, first_name, last_name)
 
 def find_user(username):
-    calendar_db.find_user(username)
+    return calendar_db.find_user(username)
 
 def create_event(username, event_id, start_time, end_time, description=None, location=None,recurrence=0):
     calendar_db.create_event(username, event_id, start_time, end_time, description, location,recurrence)
@@ -426,25 +564,23 @@ def edit_event(username, event_id, start_time, end_time, new_id=None,new_start=N
     calendar_db.edit_event(username, event_id, start_time, end_time, new_id,new_start,new_end,new_desc,new_loc,delete)
 
 def add_friend(username, f_username):
-    
-    #check friend list for duplicate, if
-    friends = calendar_db.get_friends(username)["friends"]
+    #check friend list for duplicate, if not, add
+    if not friend_check(username,f_username):
+        calendar_db.add_friend(username,f_username)
 
-    for friend in friends:
-        if friend["username"] == f_username:
-            return
-    
-    calendar_db.add_friend(username,f_username)
 
 def remove_friend(username, f_username):
     calendar_db.remove_friend(username, f_username)
-        
+
+def get_friends(username):
+    return calendar_db.get_friends(username)["friends"]
+
 
 #eastern = timezone('US/Eastern')
 
 #print( datetime.now(pytz.utc))
-#export_calendar( "Billy", "ics", eastern )
-#import_calendar("testery","test","gcsv")
+#export_calendar( "Billy", "csv", eastern )
+
 
 #print(pytz.common_timezones_set)
 
@@ -471,3 +607,36 @@ def remove_friend(username, f_username):
 
 #add_friend("testery","tdoe")
 
+#add_friend("testery","tdoe")
+
+#please dont flame giant test string ty
+
+# ics_string = """BEGIN:VCALENDAR
+# VERSION:2.0
+# PRODID:-//calendarplusplus export//
+# BEGIN:VEVENT
+# SUMMARY:Computer Science Senior Project
+# DTSTART:20210906T070000
+# DTEND:20210906T081500
+# DTSTAMP;VALUE=DATE-TIME:20211209T045712Z
+
+# END:VEVENT
+# BEGIN:VEVENT
+# SUMMARY:Computer Science Senior Project
+# DTSTART:20210913T070000
+# DTEND:20210913T081500
+# DTSTAMP;VALUE=DATE-TIME:20211209T045712Z
+# DESCRIPTION:McKee class
+# LOCATION:Robinson 207
+# END:VEVENT
+# END:VCALENDAR"""
+
+# csv_string = """Subject,Start Date,Start Time,End Date,End Time,Description,Location
+# 0A,10/21/2021,08:00,10/21/2021,09:00,,test location (optional?)
+# 1A,10/21/2021,10:00,10/21/2021,11:00,a second test event,maybe a location"""
+
+# print(import_calendar("testery",csv_string,"ics",eastern))
+
+#DTSTART:20210906T070000
+
+#create_rec_event("testery","rec_event_test", "20211031T070000","20211031T081500","month",2,"rec testing", "recland")

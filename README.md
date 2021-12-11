@@ -7,14 +7,14 @@
 
 ## ToDo's
 - [X] User Accounts
-- [ ] Downloadable/Uploadable template for schedules
+- [X] Downloadable/Uploadable template for schedules
 - [ ] Compare Schedules
 - [ ] Timed Schedules
 - [ ] Ability to block out if there is an activity 
 - [ ] Deploy App
 
 ## Big MVP Goals
-- [ ] Local instance for single users
+- [X] Local instance for single users
 
 ## Stretch Goals
 - [ ] Online interaction with other users

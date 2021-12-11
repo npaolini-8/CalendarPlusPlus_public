@@ -52,11 +52,11 @@
                                 {% if event[4] == hour and event[3] == day and
                                     event[2] == month and event[1] == year%}
                                     <div>
-                                    <div class="events small top-50 start-50 translate-middle text-wrap bg-info bg-opacity-50 rounded-pill"
+                                    <div class="events small text-wrap bg-info bg-opacity-50 rounded-pill"
                                     id="event-{{ day }}-{{ month }}-{{ year }}-{{ hour }}">START: {{event[0]}}</div></div>
                                 {% elif event[9] == hour and event[8] == day and
                                     event[7] == month and event[6] == year %}
-                                    <div><div class="events small top-50 start-50 translate-middle text-wrap bg-info bg-opacity-50 rounded-pill"
+                                    <div><div class="events small text-wrap bg-info bg-opacity-50 rounded-pill"
                                     id="event-{{ day }}-{{ month }}-{{ year }}-{{ hour }}">END: {{event[0]}}</div></div>
                                 {%endif%}
                             {% endfor %}

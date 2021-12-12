@@ -16,18 +16,6 @@ calendar_db = CalDB()
 
 tmp_path = "flaskr/static/tmp"
 
-#TODO
-#GENERAL: refactor log-in to not include password comparison
-#import
-#create function to test for ICS validity, name, start, end DONEish
-#make sure import works for ics strings DONE
-#make sure tz conversion works DONE
-#function to check csv validity, google csv
-#manage incoming strings as CSV
-#export
-#modify export return to formatted string DONE
-#create csv template info DONE
-
 #to be used for converting normal input into our datestring format, tz = pytz object of user timezone
 #can take int or string input, but assumes they are all the same
 #time switched to optional for more convenient input
@@ -469,7 +457,7 @@ def friend_check(username, f_username):
 #rec_count is the number of times the event recurrs, EXCLUDING the first event
 #start/end time expecting UTC datetime strings, use convert_date_input
 #start/end are for the first event of the series
-def create_rec_event( username, event_id, start_time, end_time, recurrence, rec_count, description=None, location=None):
+def create_rec_event( username, event_id, start_time, end_time, rec_type, rec_count, description=None, location=None):
 
     #events = calendar_db.find_user(username)["events"]
     events = []
@@ -480,7 +468,7 @@ def create_rec_event( username, event_id, start_time, end_time, recurrence, rec_
 
     rec_id = calendar_db.get_rec_id(username)
 
-    if recurrence == "day":
+    if rec_type == "day":
         for i in range(rec_count):
             #increment after to make sure we get initial day
             start = start_time.strftime("%Y%m%dT%H%M%SZ")
@@ -498,7 +486,7 @@ def create_rec_event( username, event_id, start_time, end_time, recurrence, rec_
             }
 
             events.append(event)
-    elif recurrence == "week":
+    elif rec_type == "week":
         for i in range(rec_count):
             #increment after to make sure we get initial day
             start = start_time.strftime("%Y%m%dT%H%M%SZ")
@@ -516,7 +504,7 @@ def create_rec_event( username, event_id, start_time, end_time, recurrence, rec_
             }
 
             events.append(event)
-    elif recurrence == "month":
+    elif rec_type == "month":
         #for month and year the delta needs to be relative to the initial date, different from day increments
         n_start = start_time
         n_end = end_time
@@ -538,7 +526,7 @@ def create_rec_event( username, event_id, start_time, end_time, recurrence, rec_
             }
 
             events.append(event)
-    elif recurrence == "year":
+    elif rec_type == "year":
         n_start = start_time
         n_end = end_time
         for i in range(rec_count):
@@ -663,8 +651,11 @@ def edit_user(username, password=None, first_name=None, last_name=None):
 def find_user(username):
     return calendar_db.find_user(username)
 
-def create_event(username, event_id, start_time, end_time, description=None, location=None,recurrence=0):
-    calendar_db.create_event(username, event_id, start_time, end_time, description, location,recurrence)
+def create_event(username, event_id, start_time, end_time, description=None, location=None,recurrence=0,rec_type=None,rec_count=None):
+    if rec_type is not None and rec_count is not None:
+        create_rec_event(username,event_id,start_time,end_time,rec_type,rec_count,description,location)
+    else:
+        calendar_db.create_event(username, event_id, start_time, end_time, description, location,recurrence)
 
 def edit_event(username, event_id, start_time, end_time, new_id=None,new_start=None,new_end=None,new_desc=None,new_loc=None,delete=False):
     calendar_db.edit_event(username, event_id, start_time, end_time, new_id,new_start,new_end,new_desc,new_loc,delete)

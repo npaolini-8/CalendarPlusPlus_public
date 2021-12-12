@@ -8,7 +8,7 @@
 ## ToDo's
 - [X] User Accounts
 - [X] Downloadable/Uploadable template for schedules
-- [ ] Compare Schedules
+- [X] Compare Schedules
 - [ ] Timed Schedules
 - [ ] Ability to block out if there is an activity 
 - [ ] Deploy App

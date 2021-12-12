@@ -119,14 +119,8 @@ def week():
         elif request.form.get('move') == 'next':
             on_next()
 
-        if request.form.get('event-save') == 'save':
-            event_id = request.form.get('event-title')
-            event_desc = request.form.get('event-desc')
-            start_date = request.form.get('start-date')
-            end_date = request.form.get('end-date')
-            start_time = request.form.get('start-time')
-            end_time = request.form.get('end-time')
-            save_event(event_id, event_desc, start_date, end_date, start_time, end_time)
+        if request.form.get('event-button'):
+            event_operation(request.form)
 
         # try and give the server a schedule to use
         if request.form.get('upload') == "upload" and 'upload_schedule' in request.files:
@@ -178,7 +172,13 @@ def day():
                 flash("Invalid User!")  # friend passed is not real
         elif request.form.get('compare-friends') == 'compare':  # Schedule comparison operation
             compare_list = request.form.getlist('friend-check')  # returns all checked boxes as a list
+            compare_list.append(session['user_id'])
+            date = request.form.get('compare-date')
+            #compare(compare_list, date, timezone('US/Eastern'))
             # now that we have the user list, do comparisons here
+
+        if request.form.get('event-button'):
+            event_operation(request.form)
 
         if request.form.get('move') == 'prev':  # move backwards operation
             day_move('prev')
@@ -221,3 +221,17 @@ def day():
                            mdays=mdays,
                            header=header)
 
+def event_operation(form):
+    #parse form
+    event_id = form['event-title']
+    event_desc = form['event-desc']
+    start_date = form['start-date']
+    end_date = form['end-date']
+    start_time = form['start-time']
+    end_time = form['end-time']
+    if form['event_button'] == 'save':#save-op
+        save_event()
+    elif form['event_button'] == 'update':#update
+        edit_event()
+    else:#delete
+        edit_event(delete = True)

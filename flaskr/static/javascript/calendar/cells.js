@@ -29,6 +29,7 @@ document.querySelectorAll(".cells").forEach(day => {
                    document.querySelector(".modal-body #event-end-date ").valueAsDate = event_date
                    document.getElementById("event-save").hidden = true
                    document.getElementById("event-update").hidden = false
+                   document.getElementById("event-delete").hidden = false
                }
 
                document.getElementById("event-dialog-add").onclick = () => {
@@ -60,4 +61,5 @@ function reset(cell_id) {
     document.querySelector(".modal-body #event-end-time ").value = "00:00"
     document.getElementById("event-save").hidden = false
     document.getElementById("event-update").hidden = true
+    document.getElementById("event-delete").hidden = true
 }

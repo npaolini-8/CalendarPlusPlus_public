@@ -53,7 +53,8 @@
                         {% else %}
                             <td style = "width: 0.25em;" id = {{hour}}TimeCol> {{hour}}:00</td>
                         {% endif %}
-                        <td class = "cells" id = "cell-{{ day }}-{{ month }}-{{ year }}-{{ hour }}" data-target="#event-dialog-modal" data-toggle="modal">
+                        <td class = "cells" id = "cell-{{ day }}-{{ month }}-{{ year }}-{{ hour }}"
+                            data-target="#event-dialog-modal" data-toggle="modal">
                             {% for event in events %}
                                 {% if event[4] == hour and event[3] == day and
                                     event[2] == month and event[1] == year%}

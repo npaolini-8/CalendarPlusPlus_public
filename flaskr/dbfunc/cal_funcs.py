@@ -8,8 +8,9 @@ import csv
 from io import StringIO
 from dateutil.relativedelta import relativedelta
 import os
-from database_funcs import CalDB #TODO make sure . is here before push
+from .database_funcs import CalDB #TODO make sure . is here before push
 import hashlib
+import math
 
 calendar_db = CalDB()
 
@@ -142,6 +143,21 @@ def get_event_list(username, tz, start=None, end=None, ) -> list:
         return_list.append(row)
 
     return return_list
+
+def get_event_list_raw(username, start: datetime, end: datetime) -> list:
+
+    events = calendar_db.get_event_list(username, start=None, end=None)
+
+    req_events = []
+
+    for event in events:
+        s_date = get_datetime(event["start_time"])
+        e_date = get_datetime(event["end_time"])
+
+        if e_date >= start and s_date <= end:
+            req_events.append(event)
+
+    return req_events
 
 
 #builds calendar file based on given format: ics, csv
@@ -553,6 +569,77 @@ def encode_password( password, salt):
     else:
         return None
 
+#YYYY-MM-DD
+def compare(user_list: list, date: str, tz=pytz.utc) -> list:
+
+    split_date = date.split("-")
+    date = datetime(int(split_date[0]),int(split_date[1]),int(split_date[2]),tzinfo=pytz.utc)
+    #date = tz.localize(pytz.utc)
+
+    user_event_list = []
+
+    for user in user_list:
+        e_list = get_event_list_raw(user,date,date+timedelta(days=1))
+        if e_list is not None:
+            user_event_list.extend(e_list)
+
+    avail_list = []
+
+    # load array, 0 representing no event scheduled at this time
+    # each cell is represents the date starting at 
+    # 00:00:00 + index* 15minutes
+    for _ in range(96):
+        avail_list.append(0)
+
+    for event in user_event_list:
+        e_start = get_datetime(event["start_time"])
+        e_end = get_datetime(event["end_time"])
+
+        if e_start < date:
+            incd_time = date
+            i = 0
+            while incd_time < e_end and incd_time < date + timedelta(days=1):
+                avail_list[i] = 1
+                incd_time += timedelta(minutes=15)
+                i += 1
+        else: #e_start must be >= date and < date + 1 day as per day restriction
+            incd_time = e_start
+
+            diff = e_start - date
+            diff_str = diff.__str__().split(":")
+            i = int(diff_str[0])*4 + math.ceil(int(diff_str[1])/15) #starting index of reserved time, from 15 minute intervals
+            while incd_time < e_end and incd_time < date + timedelta(days=1):
+                avail_list[i] = 1
+                incd_time += timedelta(minutes=15)
+                i += 1
+    
+    # for i in range(len(avail_list)): #flip the list to mark open time as 1
+    #     if avail_list[i] == 0:
+    #         avail_list[i] = 1
+    #     else:
+    #         avail_list[i] = 0
+
+    #prepare return list
+    time_blocks = []
+    block = []
+
+    for i in range(len(avail_list)):
+        if len(block) == 0: #need block start
+            if avail_list[i] == 0: #free time found
+                block.append(time_inc_converter(i))
+        else: #need end of block
+            if avail_list[i] == 1 or i == len(avail_list)-1:
+                block.append(time_inc_converter(i))
+                time_blocks.append(block)
+                block = []
+    
+    return time_blocks
+
+
+def time_inc_converter(i):
+    date = datetime(2021,1,1,0,0,0,tzinfo=pytz.utc) + timedelta(minutes=15*i)
+    return date.time().__str__()
+    
 
 #MVC Wrappers for DB functions
 def generate_salt():
@@ -671,4 +758,28 @@ def get_friends(username):
 #pw = "exercitation"
 #print("Username: " + un)
 #print("Password: " + pw)
-#print("Encoded PW: " + encode_password(pw, get_salt(un))) 
+#print("Encoded PW: " + encode_password(pw, get_salt(un)))
+
+# t1 = datetime(2021,12,13, 0,0)
+# t2 = datetime(2021,12,13,1,00)
+# t3 = datetime(2021,12,13,8,15)
+# t4 = datetime(2021,12,12,23)
+
+# diff = t2 - t1
+
+# diff_str = diff.__str__().split(":")
+
+# diff_15mins = int(diff_str[0])*4 + int(diff_str[1])/15
+
+# print(diff_15mins)
+
+# listy = compare(["testy","testery"],"2021-10-21")
+
+# print(listy)
+
+# dt = datetime(2021,10,21,00,00,00,tzinfo=pytz.utc)
+
+# for i in range(len(list)):
+#     print( (dt+timedelta(minutes=i*15)).time().__str__() + " " + str(list[i]) + "\n")
+
+#print(get_event_list_raw("testy",datetime(2021,10,21,00,00,00,tzinfo=pytz.utc),datetime(2021,10,22,00,00,00,tzinfo=pytz.utc) ))

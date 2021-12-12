@@ -178,6 +178,9 @@ def day():
                 flash("Invalid User!")  # friend passed is not real
         elif request.form.get('compare-friends') == 'compare':  # Schedule comparison operation
             compare_list = request.form.getlist('friend-check')  # returns all checked boxes as a list
+            compare_list.append(session['user_id'])
+            date = request.form.get('compare-date')
+            #compare(compare_list, date, timezone('US/Eastern'))
             # now that we have the user list, do comparisons here
 
         if request.form.get('move') == 'prev':  # move backwards operation

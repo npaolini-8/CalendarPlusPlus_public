@@ -8,7 +8,7 @@ import csv
 from io import StringIO
 from dateutil.relativedelta import relativedelta
 import os
-from database_funcs import CalDB #TODO make sure . is here before push
+from .database_funcs import CalDB #TODO make sure . is here before push
 import hashlib
 
 calendar_db = CalDB()

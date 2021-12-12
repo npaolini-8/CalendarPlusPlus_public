@@ -55,6 +55,7 @@ def handle_export(extension):
 @cal_blueprint.route('/month/', methods=['GET', 'POST'])
 @authenticate.login_required
 def month():
+    free_time_block = []
     if request.method == 'POST':
 
         if request.form.get('friend-add') == 'friend':
@@ -63,6 +64,12 @@ def month():
                 add_friend(session['user_id'], request.form['friend-name'])
             else:
                 flash("Invalid User!")
+
+        if request.form.get('compare-friends'):  # Schedule comparison operation
+            compare_list = request.form.getlist('friend-check')  # returns all checked boxes as a list
+            compare_list.append(session['user_id'])
+            date = request.form.get('compare-date')
+            free_time_block = compare(compare_list, date, timezone('US/Eastern'))
 
         if request.form.get('move') == "prev":
             month_move("prev")
@@ -100,12 +107,14 @@ def month():
                            mdays=cal,
                            header=header,
                            events=events,
-                           friends=valid_friends)
+                           friends=valid_friends,
+                           free_time_block=free_time_block)
 
 
 @cal_blueprint.route('/week/', methods=['GET', 'POST'])
 @authenticate.login_required
 def week():
+    free_time_block = []
     if request.method == 'POST':
         if request.form.get('friend-add') == 'friend':
             friend = find_user(request.form['friend-name'])
@@ -113,6 +122,12 @@ def week():
                 add_friend(session['user_id'], request.form['friend-name'])
             else:
                 flash("Invalid User!")
+
+        if request.form.get('compare-friends'):  # Schedule comparison operation
+            compare_list = request.form.getlist('friend-check')  # returns all checked boxes as a list
+            compare_list.append(session['user_id'])
+            date = request.form.get('compare-date')
+            free_time_block = compare(compare_list, date, timezone('US/Eastern'))
 
         if request.form.get('move') == 'prev':
             on_previous()
@@ -157,12 +172,14 @@ def week():
                            events=events,
                            friends=valid_friends,
                            mdays=mdays,
-                           header=header)
+                           header=header,
+                           free_time_block=free_time_block)
 
 
 @cal_blueprint.route('/day/', methods=['GET', 'POST'])
 @authenticate.login_required
 def day():
+    free_time_block = []
     if request.method == 'POST':
         if request.form.get('friend-add') == 'friend':  # add friend operation
             friend = find_user(request.form['friend-name'])  # look for new friend in DB
@@ -170,11 +187,13 @@ def day():
                 add_friend(session['user_id'], request.form['friend-name'])
             else:
                 flash("Invalid User!")  # friend passed is not real
-        elif request.form.get('compare-friends') == 'compare':  # Schedule comparison operation
+
+        if request.form.get('compare-friends'):  # Schedule comparison operation
             compare_list = request.form.getlist('friend-check')  # returns all checked boxes as a list
             compare_list.append(session['user_id'])
             date = request.form.get('compare-date')
-            #compare(compare_list, date, timezone('US/Eastern'))
+            free_time_block = compare(compare_list, date, timezone('US/Eastern'))
+
             # now that we have the user list, do comparisons here
 
         if request.form.get('event-button'):
@@ -219,7 +238,8 @@ def day():
                            events=events,
                            friends=valid_friends,
                            mdays=mdays,
-                           header=header)
+                           header=header,
+                           free_time_block=free_time_block)
 
 def event_operation(form):
     #parse form

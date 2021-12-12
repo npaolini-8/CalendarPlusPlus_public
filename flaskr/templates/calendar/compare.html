@@ -12,6 +12,19 @@
                                placeholder="" required>
     </div>
     <div class = text-center>
-        <button class = "form-control btn btn-info m-1" type = submit name = compare-friends value = compare>Compare</button>
+        <button class = "form-control btn btn-info m-1" type = submit name = compare-friends value = compare
+                 id="compare-time" >Compare</button>
+    </div>
+    {% if free_time_block %}
+        <div class="text-center m-1">
+            <h5 id="times">Available Times </h5>
+        </div>
+    {% endif %}
+    <div class="text-center text-light">
+        {% for time in free_time_block %}
+            <div>
+                From {{ time[0] }} to {{ time[1] }}
+            </div>
+        {% endfor %}
     </div>
 </form>

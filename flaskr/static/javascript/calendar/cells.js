@@ -5,6 +5,10 @@ document.querySelectorAll(".cells").forEach(day => {
             const event_div = event.currentTarget.querySelector(".events")
             const current_page = document.location.pathname.split("/")[2]
 
+            if(current_page == "month"){
+                window.location.href = "http://127.0.0.1:5000/calendar/day/"
+            }
+
             // if event_div is not empty, parse the events and display them
             if(event_div != null|undefined) {
                 myModal = new bootstrap.Modal(document.getElementById("event-dialog-modal"))

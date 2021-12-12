@@ -60,11 +60,11 @@
                                     event[2] == month and event[1] == year%}
                                     <div>
                                     <div class="events small text-wrap bg-info bg-opacity-50 rounded-pill"
-                                    id="event-{{ day }}-{{ month }}-{{ year }}-{{ hour }}">START: {{event[0]}}</div></div>
+                                    id="event-{{ day }}-{{ month }}-{{ year }}-{{ hour }}-{{ event }}">START: {{event[0]}}</div></div>
                                 {% elif event[9] == hour and event[8] == day and
                                     event[7] == month and event[6] == year %}
                                     <div><div class="events small text-wrap bg-info bg-opacity-50 rounded-pill"
-                                    id="event-{{ day }}-{{ month }}-{{ year }}-{{ hour }}">END: {{event[0]}}</div></div>
+                                    id="event-{{ day }}-{{ month }}-{{ year }}-{{ hour }}-{{ event }}">END: {{event[0]}}</div></div>
                                 {%endif%}
                             {% endfor %}
                         </td>

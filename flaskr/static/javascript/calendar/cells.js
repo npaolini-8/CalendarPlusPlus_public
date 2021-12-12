@@ -31,6 +31,13 @@ document.querySelectorAll(".cells").forEach(day => {
                    document.querySelector(".modal-body #event-name ").value = event_id
                    document.querySelector(".modal-body #event-start-date ").valueAsDate = event_date
                    document.querySelector(".modal-body #event-end-date ").valueAsDate = event_date
+
+                   document.querySelector(".modal-footer #old-title ").value = event_id
+                   document.querySelector(".modal-footer #old-start-time ").value = event_hour
+                   document.querySelector(".modal-footer #old-end-time ").value = event_hour
+                   document.querySelector(".modal-footer #old-start-day ").valueAsDate = event_date
+                   document.querySelector(".modal-footer #old-end-day ").valueAsDate = event_date
+
                    document.getElementById("event-save").hidden = true
                    document.getElementById("event-update").hidden = false
                    document.getElementById("event-delete").hidden = false

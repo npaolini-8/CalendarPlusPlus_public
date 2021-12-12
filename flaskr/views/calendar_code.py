@@ -229,8 +229,11 @@ def event_operation(form):
     end_date = form['end-date']
     start_time = form['start-time']
     end_time = form['end-time']
+    location = form['location']
+    recurrence = form['recurrence']
+
     if form['event-button'] == 'save':#save-op
-        save_event()
+        save_event(event_id, event_desc, start_date, end_date, start_time, end_time, location)
     elif form['event-button'] == 'update':#update
         edit_event()
     else:#delete

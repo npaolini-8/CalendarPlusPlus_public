@@ -573,8 +573,8 @@ def encode_password( password, salt):
 def compare(user_list: list, date: str, tz=pytz.utc) -> list:
 
     split_date = date.split("-")
-    date = datetime(int(split_date[0]),int(split_date[1]),int(split_date[2]),tzinfo=pytz.utc)
-    #date = tz.localize(pytz.utc)
+    date = datetime(int(split_date[0]),int(split_date[1]),int(split_date[2]),0,0,0)
+    date = tz.localize(date)
 
     user_event_list = []
 
@@ -592,8 +592,8 @@ def compare(user_list: list, date: str, tz=pytz.utc) -> list:
         avail_list.append(0)
 
     for event in user_event_list:
-        e_start = get_datetime(event["start_time"])
-        e_end = get_datetime(event["end_time"])
+        e_start = get_datetime(event["start_time"]).astimezone(tz)
+        e_end = get_datetime(event["end_time"]).astimezone(tz)
 
         if e_start < date:
             incd_time = date
@@ -637,7 +637,7 @@ def compare(user_list: list, date: str, tz=pytz.utc) -> list:
 
 
 def time_inc_converter(i):
-    date = datetime(2021,1,1,0,0,0,tzinfo=pytz.utc) + timedelta(minutes=15*i)
+    date = datetime(2021,3,15,0,0,0,tzinfo=pytz.utc) + timedelta(minutes=15*i)
     return date.time().__str__()
     
 
@@ -772,8 +772,8 @@ def get_friends(username):
 # diff_15mins = int(diff_str[0])*4 + int(diff_str[1])/15
 
 # print(diff_15mins)
-
-# listy = compare(["testy","testery"],"2021-10-21")
+# eastern = timezone('US/Eastern')
+# listy = compare(["CSGO_Sweat","Billy","HockeyNerd"],"2021-12-06",tz=eastern)
 
 # print(listy)
 

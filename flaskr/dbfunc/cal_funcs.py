@@ -547,7 +547,7 @@ def create_rec_event( username, event_id, start_time, end_time, rec_type:str, re
 
             events.append(event)
 
-    calendar_db.append_event_list(username,events)
+    calendar_db.update_event_list(username,events)
     calendar_db.inc_rec_id(username)
     #calendar_db.update_event_list(username,events)
 

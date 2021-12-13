@@ -40,12 +40,17 @@
                         <input type="time" name="end-time" class="form-control" id="event-end-time" required>
                     </div>
                     <div class="form-group">
-                        <select class="form-select" name="recurrenc" id="event-recurrences" aria-label="Recurrence">
-                          <option selected>Select Recurrence</option>
-                          <option value="1">Daily</option>
-                          <option value="2">Weekly</option>
-                          <option value="3">Monthly</option>
+                        <label  id = "event-recurrence-label" class="form-label" for="event-recurrence">Recurrence Frequency</label>
+                        <select class="form-select" name="recurrence" id="event-recurrence" aria-label="Recurrence" onchange="showRecurrenceCount()">
+                          <option selected value="None">None</option>
+                          <option value="Daily">Daily</option>
+                          <option value="Weekly">Weekly</option>
+                          <option value="Monthly">Monthly</option>
                         </select>
+                    </div>
+                    <div class="form-group">
+                        <label hidden class="form-label" for="event-recurrence-count" id="event-recurrence-count-label">Number of Recurrences</label>
+                        <input hidden type = "number" min = 1 max = 120 name="recurrence-count" class="form-control" id="event-recurrence-count">
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -55,8 +60,14 @@
                             id="event-delete">Delete</button>
                     <button type="submit" name="event-button" value="update" class="btn btn-primary hidden"
                             id="event-update">Update</button>
+                    <input class="hidden" name="old-title" id="old-title">
+                    <input type=time class="hidden" name="old-start-time" id="old-start-time">
+                    <input type=time class="hidden" name="old-end-time" id="old-end-time">
+                    <input type=date class="hidden" name="old-start-date" id="old-start-date">
+                    <input type=date class="hidden" name="old-end-date" id="old-end-date">
                 </div>
             </form>
         </div>
     </div>
 </div>
+<script src = "{{url_for('static', filename = 'javascript/calendar/recurrence.js')}}"></script>

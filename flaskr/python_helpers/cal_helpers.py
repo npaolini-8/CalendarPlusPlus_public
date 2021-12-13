@@ -69,12 +69,36 @@ def save_event(event, desc, s_date, e_date, s_time, e_time, loc=None, recur=None
     start_time = cf.convert_date_input(s_date[0], s_date[1], s_date[2], s_time[0], s_time[0])
     end_time = cf.convert_date_input(e_date[0], e_date[1], e_date[2], e_time[0], e_time[0])
 
-    cf.create_event(session['user_id'], event, start_time, end_time, desc)
+    cf.create_event(session['user_id'], event, start_time, end_time, desc, loc, recur)
 
 
-def edit_event(event_id, start_time, end_time, new_id=None,new_start=None,new_end=None,new_desc=None,new_loc=None,delete=False):
+def edit_event(event_id, start_time, end_time, start_date, end_date, new_id=None, new_start_time=None, new_end_time=None,
+               new_start_date=None, new_end_date=None,new_desc=None, new_loc=None,
+               delete=False):
+
+    s_date = start_date.split('-')
+    e_date = end_date.split('-')
+    s_time = start_time.split(':')
+    e_time = end_time.split(':')
+    # convert start and end time to database format
+    start = cf.convert_date_input(s_date[0], s_date[1], s_date[2], s_time[0], s_time[0])
+    end = cf.convert_date_input(e_date[0], e_date[1], e_date[2], e_time[0], e_time[0])
+
+    new_start = None
+    new_end = None
+    if not delete:
+        ns_date = new_start_date.split('-')
+        ne_date = new_end_date.split('-')
+        ns_time = new_start_time.split(':')
+        ne_time = new_end_time.split(':')
+
+        new_start = cf.convert_date_input(ns_date[0], ns_date[1], ns_date[2], ns_time[0], ns_time[0])
+        new_end = cf.convert_date_input(ne_date[0], ne_date[1], ne_date[2], ne_time[0], ne_time[0])
+
     """Edits event in database"""
-    cf.edit_event(session['user_id'], event_id, start_time, end_time, new_id,new_start,new_end,new_desc,new_loc,delete=False)
+    cf.edit_event(session['user_id'], event_id, start, end, new_id, new_start, new_end, new_desc,
+                  new_loc, delete=delete)
+
 
 tmp_path = "flaskr/static/tmp"
 
@@ -99,5 +123,3 @@ def clear_path():
     file_path = os.path.join(tmp_path, session['user_id'])
     if os.path.exists(file_path) and os.path.isdir(file_path):
         shutil.rmtree(file_path)
-
-

@@ -1,12 +1,14 @@
 import calendar as pycal
+import os
 
-from ..dbfunc.cal_funcs import *
+from ..dbfunc.cal_funcs import get_friends, find_user, add_friend, timezone, compare, friend_check
 
 from flask import Blueprint, render_template, request, flash, url_for, redirect, send_from_directory, \
     current_app, session
 from werkzeug.utils import secure_filename
 
-from ..python_helpers.cal_helpers import get_todays_date, save_event, user_events, import_cal, export_cal, clear_path
+from ..python_helpers.cal_helpers import get_todays_date, save_event, user_events, import_cal, export_cal, clear_path, \
+    edit_event
 from ..python_helpers.day_functions import day_move, get_current_day, resetDate
 from ..python_helpers.week_functions import set_current_date, get_formatted_week, on_next, on_previous, reset_date
 from ..python_helpers.month_functions import create_month, month_move, reset_month
@@ -96,9 +98,8 @@ def month():
     valid_friends = []
     for friend in friends_list:
         if friend_check(friend['username'], session['user_id']) == True:
-            #only include users with currently logged in user on their friends lists
+            # only include users with currently logged in user on their friends lists
             valid_friends.append(friend)
-
 
     return render_template('calendar/month.html',
                            year=year,
@@ -159,11 +160,11 @@ def week():
     valid_friends = []
     for friend in friends_list:
         if friend_check(friend['username'], session['user_id']) == True:
-            #only include users with currently logged in user on their friends lists
+            # only include users with currently logged in user on their friends lists
             valid_friends.append(friend)
-            
+
     mdays, header = create_month()[0], create_month()[1]
-    
+
     return render_template('calendar/week.html',
                            cal=pycal,
                            month=month,
@@ -225,7 +226,7 @@ def day():
     valid_friends = []
     for friend in friends_list:
         if friend_check(friend['username'], session['user_id']) == True:
-            #only include users with currently logged in user on their friends lists
+            # only include users with currently logged in user on their friends lists
             valid_friends.append(friend)
 
     mdays, header = create_month()[0], create_month()[1]
@@ -241,20 +242,37 @@ def day():
                            header=header,
                            free_time_block=free_time_block)
 
+
 def event_operation(form):
-    #parse form
+    # parse form
     event_id = form['event-title']
     event_desc = form['event-desc']
     start_date = form['start-date']
     end_date = form['end-date']
     start_time = form['start-time']
     end_time = form['end-time']
-    location = form['location']
-    recurrence = form['recurrence']
+    location = form['event-location']
+    recurrence_type = form['recurrence']
+    recurrence_count = form['recurrence-count']
 
-    if form['event-button'] == 'save':#save-op
-        save_event(event_id, event_desc, start_date, end_date, start_time, end_time, location)
-    elif form['event-button'] == 'update':#update
-        edit_event()
-    else:#delete
-        edit_event(delete = True)
+    print(form)
+    print(recurrence_type)
+    print(type(recurrence_count))
+
+    old_title = form['old-title']
+    old_start_time = form['old-start-time']
+    old_end_time = form['old-end-time']
+    old_start_date = form['old-start-date']
+    old_end_date = form['old-end-date']
+
+    if form['event-button'] == 'save':  # save-op
+        #save_event(event_id, event_desc, start_date, end_date, start_time, end_time, location, rec_type = recurrence_type, rec_count = recurrence_count)
+        pass
+    elif form['event-button'] == 'update':  # update
+        edit_event(event_id=old_title, start_time=old_start_time, end_time=old_end_time, start_date=old_start_date,
+                   end_date=old_end_date, new_id=event_id, new_start_time=start_time, new_end_time=end_time,
+                   new_start_date=start_date, new_end_date=end_date, new_desc=event_desc, new_loc=location,
+                   delete=False)
+    else:  # delete
+        edit_event(event_id=old_title, start_time=old_start_time, end_time=old_end_time, start_date=old_start_date,
+                   end_date=old_end_date, delete=True)

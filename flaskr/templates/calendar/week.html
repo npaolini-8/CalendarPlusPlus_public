@@ -57,7 +57,7 @@
                                             or event[6] == year) %}
                                             {% if event[3] == date and event[4] == hour %}
                                                 <div class="events small text-wrap bg-info bg-opacity-50 rounded-pill"
-                                                     id="event-{{ day }}-{{ month }}-{{ year }}-{{ hour }}">
+                                                     id="{{ event[0] }},{{ event[1] }},{{ event[2] }},{{ event[3] }},{{ event[4] }},{{ event[5] }},{{ event[6] }},{{ event[7] }},{{ event[8] }},{{ event[9] }},{{ event[10] }},{{ event[11] }},{{ event[12] }}">
                                                     {{ event[0] }}
                                                 </div>
                                             {% endif %}

@@ -637,8 +637,8 @@ def generate_salt():
 def get_salt(username):
     return calendar_db.get_salt(username)
 
-def create_user(username, password, first_name, last_name):
-    calendar_db.create_user(username, password, first_name, last_name)
+def create_user(username, password, salt, first_name, last_name):
+    calendar_db.create_user(username, password, salt, first_name, last_name)
 
 def check_user(username):
     return calendar_db.check_user(username)

@@ -457,18 +457,19 @@ def friend_check(username, f_username):
 #rec_count is the number of times the event recurrs, EXCLUDING the first event
 #start/end time expecting UTC datetime strings, use convert_date_input
 #start/end are for the first event of the series
-def create_rec_event( username, event_id, start_time, end_time, rec_type, rec_count, description=None, location=None):
+def create_rec_event( username, event_id, start_time, end_time, rec_type:str, rec_count, description=None, location=None):
 
     #events = calendar_db.find_user(username)["events"]
     events = []
     rec_count += 1 #adds the first event
+    rec_type = rec_type.lower()
 
     start_time = get_datetime(start_time)
     end_time = get_datetime(end_time)
 
     rec_id = calendar_db.get_rec_id(username)
 
-    if rec_type == "day":
+    if rec_type == "daily":
         for i in range(rec_count):
             #increment after to make sure we get initial day
             start = start_time.strftime("%Y%m%dT%H%M%SZ")
@@ -486,7 +487,7 @@ def create_rec_event( username, event_id, start_time, end_time, rec_type, rec_co
             }
 
             events.append(event)
-    elif rec_type == "week":
+    elif rec_type == "weekly":
         for i in range(rec_count):
             #increment after to make sure we get initial day
             start = start_time.strftime("%Y%m%dT%H%M%SZ")
@@ -504,7 +505,7 @@ def create_rec_event( username, event_id, start_time, end_time, rec_type, rec_co
             }
 
             events.append(event)
-    elif rec_type == "month":
+    elif rec_type == "monthly":
         #for month and year the delta needs to be relative to the initial date, different from day increments
         n_start = start_time
         n_end = end_time
@@ -526,7 +527,7 @@ def create_rec_event( username, event_id, start_time, end_time, rec_type, rec_co
             }
 
             events.append(event)
-    elif rec_type == "year":
+    elif rec_type == "yearly":
         n_start = start_time
         n_end = end_time
         for i in range(rec_count):
@@ -652,10 +653,14 @@ def find_user(username):
     return calendar_db.find_user(username)
 
 def create_event(username, event_id, start_time, end_time, description=None, location=None,recurrence=0,rec_type=None,rec_count=None):
-    if rec_type is not None and rec_count is not None:
-        create_rec_event(username,event_id,start_time,end_time,rec_type,rec_count,description,location)
-    else:
+    if rec_type is None or rec_type == "None":
         calendar_db.create_event(username, event_id, start_time, end_time, description, location,recurrence)
+    else:
+        try: #check for rec count being a number by adding
+            rec_count + 1
+            create_rec_event(username,event_id,start_time,end_time,rec_type,rec_count,description,location)
+        except TypeError:
+            pass
 
 def edit_event(username, event_id, start_time, end_time, new_id=None,new_start=None,new_end=None,new_desc=None,new_loc=None,delete=False):
     calendar_db.edit_event(username, event_id, start_time, end_time, new_id,new_start,new_end,new_desc,new_loc,delete)

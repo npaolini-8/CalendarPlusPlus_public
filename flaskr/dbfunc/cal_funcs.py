@@ -657,7 +657,7 @@ def create_event(username, event_id, start_time, end_time, description=None, loc
         calendar_db.create_event(username, event_id, start_time, end_time, description, location,recurrence)
     else:
         try: #check for rec count being a number by adding
-            rec_count + 1
+            rec_count = int(rec_count)
             create_rec_event(username,event_id,start_time,end_time,rec_type,rec_count,description,location)
         except TypeError:
             pass

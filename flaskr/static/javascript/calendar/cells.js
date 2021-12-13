@@ -31,10 +31,10 @@ document.querySelectorAll(".cells").forEach(cell => {
                     start_min = Number(start_min)
                     start_min = start_min < 10 ? start_min + "0" : String(start_min)
 
-                    start_hour = Number(start_hour)%12 
+                    start_hour = Number(start_hour) 
                     start_time = start_hour < 10 ? "0" + start_hour + ":" + start_min : start_hour + ":" + start_min
 
-                    end_hour = Number(end_hour)%12
+                    end_hour = Number(end_hour)
                     end_time = end_hour < 10 ? "0" + end_hour + ":" + end_min : end_hour + ":" + end_min
 
 

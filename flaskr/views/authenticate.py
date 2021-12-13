@@ -48,21 +48,26 @@ def login():
         #password = hashlib.sha256(password.encode()).hexdigest()
         #print(password)
 
-        salt = cal_funcs.get_salt(username)
-        user = cal_funcs.auth_user(username, cal_funcs.encode_password(password,salt))
+        try:
+            salt = cal_funcs.get_salt(username)
+            user = cal_funcs.auth_user(username, cal_funcs.encode_password(password,salt))
 
-        #if user is None or not check_password_hash(user['password'], password):
-        #salt being none means bad username, user being none means password doesnt match
-        if salt is None or user is None:
+            #if user is None or not check_password_hash(user['password'], password):
+            #salt being none means bad username, user being none means password doesnt match
+            if salt is None or user is None:
+                error = 'Invalid credentials. Please try again.'
+                flash(error)
+                return redirect(url_for('auth.login'))
+
+            if error is None:
+                session.clear()
+                session['user_id'] = user['username']
+                return redirect(url_for('calendar.month'))
+            flash(error)
+        except Exception:
             error = 'Invalid credentials. Please try again.'
             flash(error)
             return redirect(url_for('auth.login'))
-
-        if error is None:
-            session.clear()
-            session['user_id'] = user['username']
-            return redirect(url_for('calendar.month'))
-        flash(error)
 
     return render_template('account/login.html')
 

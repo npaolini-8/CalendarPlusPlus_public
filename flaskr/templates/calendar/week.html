@@ -53,14 +53,14 @@
                                 <td class="cells" id ="cell-{{ date }}-{{ month }}-{{ year }}-{{ hour }}"
                                     data-target="#event-dialog-modal" data-toggle="modal">
                                     {% for event in events %}
-                                        {% if event[4] == hour and event[3] == day and
+                                        {% if event[4] == hour and event[3] == date and
                                         event[2] == month and event[1] == year%}
                                             <div>
                                                 <div class="events small text-wrap bg-info bg-opacity-50 rounded-pill"
                                                     id="{{ event[0] }},{{ event[1] }},{{ event[2] }},{{ event[3] }},{{ event[4] }},{{ event[5] }},{{ event[6] }},{{ event[7] }},{{ event[8] }},{{ event[9] }},{{ event[10] }},{{ event[11] }},{{ event[12] }}">
                                                 START: {{event[0]}}</div>
                                             </div>
-                                        {% elif event[9] == hour and event[8] == day and
+                                        {% elif event[9] == hour and event[8] == date and
                                             event[7] == month and event[6] == year %}
                                             <div>
                                                 <div class="events small text-wrap bg-info bg-opacity-50 rounded-pill"

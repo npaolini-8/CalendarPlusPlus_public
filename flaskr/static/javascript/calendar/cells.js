@@ -28,13 +28,10 @@ document.querySelectorAll(".cells").forEach(cell => {
                     event_desc = the_event[11]//all event values populated
                     event_loc = the_event[12]
                     
-                    start_min = Number(start_min)
-                    start_min = start_min < 10 ? start_min + "0" : String(start_min)
+                    start_min = start_min < 10 ? "0" + start_min  : start_min
+                    end_min = end_min < 10 ? "0" + end_min : end_min
 
-                    start_hour = Number(start_hour)%12 
                     start_time = start_hour < 10 ? "0" + start_hour + ":" + start_min : start_hour + ":" + start_min
-
-                    end_hour = Number(end_hour)%12
                     end_time = end_hour < 10 ? "0" + end_hour + ":" + end_min : end_hour + ":" + end_min
 
 
@@ -88,13 +85,15 @@ function reset(cell_id) {
     cell_day = cell_date[1]
     cell_month = cell_date[2]
     cell_year = cell_date[3]
+    cell_hour = cell_date[4]
+    cell_hour = cell_hour < 10 ? "0" + cell_hour  : cell_hour
     cell_date = new Date(cell_year + "/" + cell_month + "/" + cell_day)
 
     document.querySelector(".modal-body #event-name ").value = ""
     document.querySelector(".modal-body #event-start-date ").valueAsDate = cell_date
     document.querySelector(".modal-body #event-end-date ").valueAsDate = cell_date
-    document.querySelector(".modal-body #event-start-time ").value = "00:00"
-    document.querySelector(".modal-body #event-end-time ").value = "00:00"
+    document.querySelector(".modal-body #event-start-time ").value = cell_hour + ":00"
+    document.querySelector(".modal-body #event-end-time ").value = cell_hour + ":00"
     document.querySelector(".modal-body #event-description").value = ""
     document.querySelector(".modal-body #event-location").value = ""
     document.getElementById("event-save").hidden = false

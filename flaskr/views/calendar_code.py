@@ -254,11 +254,7 @@ def event_operation(form):
     location = form['event-location']
     recurrence_type = form['recurrence']
     recurrence_count = form['recurrence-count']
-
-    print(form)
-    print(recurrence_type)
-    print(type(recurrence_count))
-
+    print(request.form)
     old_title = form['old-title']
     old_start_time = form['old-start-time']
     old_end_time = form['old-end-time']
@@ -266,8 +262,7 @@ def event_operation(form):
     old_end_date = form['old-end-date']
 
     if form['event-button'] == 'save':  # save-op
-        #save_event(event_id, event_desc, start_date, end_date, start_time, end_time, location, rec_type = recurrence_type, rec_count = recurrence_count)
-        pass
+        save_event(event_id, event_desc, start_date, end_date, start_time, end_time, location, rec_type = recurrence_type, rec_count = recurrence_count)
     elif form['event-button'] == 'update':  # update
         edit_event(event_id=old_title, start_time=old_start_time, end_time=old_end_time, start_date=old_start_date,
                    end_date=old_end_date, new_id=event_id, new_start_time=start_time, new_end_time=end_time,

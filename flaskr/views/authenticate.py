@@ -1,14 +1,9 @@
 from functools import wraps
 from flask import Blueprint, flash, g, redirect, render_template, request, session, url_for
 from flaskr.python_helpers.week_functions import reset_date
-#from werkzeug.security import check_password_hash, generate_password_hash
-
-#from flaskr.dbfunc import database_funcs as mongo
 from flaskr.dbfunc import cal_funcs
 
 login_blueprint = Blueprint("auth", __name__, url_prefix='/account')
-#db = mongo.CalDB()
-
 
 @login_blueprint.route('/register/', methods=['GET', 'POST'])
 def register():
@@ -45,8 +40,6 @@ def login():
         username = request.form['username']
         password = request.form['password']
         error = None
-        #password = hashlib.sha256(password.encode()).hexdigest()
-        #print(password)
 
         try:
             salt = cal_funcs.get_salt(username)
@@ -78,7 +71,6 @@ def logout():
     session.clear()
     return redirect(url_for('auth.login'))
 
-
 # registers a function that runs before the view, no matter what URL is requested
 # code snippet taken from https://flask.palletsprojects.com/en/2.0.x/tutorial/views/
 @login_blueprint.before_app_request
@@ -89,7 +81,6 @@ def load_logged_in_user():
         g.user = None
     else:
         g.user = cal_funcs.find_user(user_id)
-
 
 # This decorator returns a new view function that wraps the original view it’s applied to.
 # The new function checks if a user is loaded and redirects to the login page otherwise.

@@ -1,11 +1,11 @@
-from os import write
+#from os import write
 from datetime import datetime, timedelta, tzinfo
 from re import split  # Used to get timestamps for database information
 from icalendar import Calendar, Event
 import pytz
 from pytz import timezone
 import csv
-from io import StringIO
+#from io import StringIO #needed for string version
 from dateutil.relativedelta import relativedelta
 import os
 from .database_funcs import CalDB #TODO make sure . is here before push
@@ -132,6 +132,7 @@ def get_event_list(username, tz, start=None, end=None, ) -> list:
 
     return return_list
 
+#returns full event list with start/end as datetime objects
 def get_event_list_raw(username, start: datetime, end: datetime) -> list:
 
     events = calendar_db.get_event_list(username, start=None, end=None)
@@ -149,6 +150,7 @@ def get_event_list_raw(username, start: datetime, end: datetime) -> list:
 
 
 #builds calendar file based on given format: ics, csv
+#NOTE string version left in for future update
 def export_calendar( username, format, tz):
 
     good_input = True
@@ -248,22 +250,14 @@ def build_ics( events, tz ) -> Calendar:
 # format: YYYYMMDDTHHMMSS
 # assumes we are storing in utc, tags objects accordingly
 def get_datetime(datestr) -> datetime:
-    # year = int(datestr[0:4])
-    # month = int(datestr[4:6])
-    # day = int(datestr[6:8])
-
-    # hour = int(datestr[9:11])
-    # minute = int(datestr[11:13])
 
     datestr = datestr.replace('\xad', '')
     date_components = get_date_components(datestr)
-    # print(date_components)
 
-    # return datetime(year,month,day,hour,minute, tzinfo=pytz.utc)
     return datetime(int(date_components[0]), int(date_components[1]), int(date_components[2]), int(date_components[3]),
                     int(date_components[4]), tzinfo=pytz.utc)
 
-
+#returns usable date components from db string
 def get_date_components(datestr):
     year = datestr[0:4]
     month = datestr[4:6]
@@ -323,12 +317,13 @@ def build_csv( events, tz):
 
 def import_calendar( username, cal_str, format, tz ):
 
-    good_input = True
+    good_input = True #"file valuidation"
 
     #assuming string input from app this file read would simply stay as variable input
     #file read done for testing
 
-    events = calendar_db.find_user(username)["events"]
+    #events = calendar_db.find_user(username)["events"]
+    events = []
 
     if format == "ics":
         try:
@@ -341,18 +336,12 @@ def import_calendar( username, cal_str, format, tz ):
             #source: https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
             for component in components.walk():
                 if component.name == "VEVENT":
-                    #print(component.get('summary'))
-                    # print(component.get('dtstart').dt.astimezone(pytz.utc).strftime("%Y%m%dT%H%M%SZ"))
-                    # print(component.decoded('dtstart'))
-                    # print(component.get('dtend').dt.astimezone(pytz.utc).strftime("%Y%m%dT%H%M%SZ"))
-
-                    #start = tz.localize(component.get('dtstart').dt)
+            
                     start = component.get('dtstart').dt
                     if start.tzinfo is None:
                         start = tz.localize(start)
                     start = start.astimezone(pytz.utc).strftime("%Y%m%dT%H%M%SZ")
 
-                    #end = tz.localize(component.get('dtend').dt)
                     end = component.get('dtend').dt
                     if end.tzinfo is None:
                         end = tz.localize(end)
@@ -364,9 +353,7 @@ def import_calendar( username, cal_str, format, tz ):
         except Exception:
             good_input = False
 
-
-    # TODO: timezone again for google csv format, not sure if it is ever listed. we may need to "assume" based on selected timezone of current user
-    # TODO: this works for expected format of subject, start date, start time, end date, end time, description, and location, need to test for other cases
+    # TODO: this works for expected format of subject, start date, start time, end date, end time, description, and locations
     elif format == "csv":
         try:
             with open(os.path.join(tmp_path, username, "import.csv"), 'r') as csv_file:
@@ -549,7 +536,6 @@ def create_rec_event( username, event_id, start_time, end_time, rec_type:str, re
 
     calendar_db.update_event_list(username,events)
     calendar_db.inc_rec_id(username)
-    #calendar_db.update_event_list(username,events)
 
 def encode_password( password, salt):
     if salt is not None:
@@ -559,6 +545,7 @@ def encode_password( password, salt):
         return None
 
 #YYYY-MM-DD
+#returns list of ordered pairs of start and end times of available blocks
 def compare(user_list: list, date: str, tz=pytz.utc) -> list:
 
     split_date = date.split("-")
@@ -602,12 +589,6 @@ def compare(user_list: list, date: str, tz=pytz.utc) -> list:
                 incd_time += timedelta(minutes=15)
                 i += 1
     
-    # for i in range(len(avail_list)): #flip the list to mark open time as 1
-    #     if avail_list[i] == 0:
-    #         avail_list[i] = 1
-    #     else:
-    #         avail_list[i] = 0
-
     #prepare return list
     time_blocks = []
     block = []
@@ -624,7 +605,8 @@ def compare(user_list: list, date: str, tz=pytz.utc) -> list:
     
     return time_blocks
 
-
+#helper method for compare schedule, builds relative time off of 15 minute increments
+#timezone agnostic, delta depends on converted time
 def time_inc_converter(i):
     date = datetime(2021,3,15,0,0,0,tzinfo=pytz.utc) + timedelta(minutes=15*i)
     return date.time().__str__()
@@ -677,105 +659,3 @@ def remove_friend(username, f_username):
 
 def get_friends(username):
     return calendar_db.get_friends(username)["friends"]
-
-
-#print(encode_password("plaintext", get_salt("testery")))
-
-#eastern = timezone('US/Eastern')
-
-#print( datetime.now(pytz.utc))
-#export_calendar( "Billy", "csv", eastern )
-
-
-#print(pytz.common_timezones_set)
-
-#western = timezone('US/Pacific')
-#strftime("%Y%m%dT%H%M%SZ")
-#print(datetime.now(pytz.utc).astimezone(eastern).strftime("%Y"))
-
-
-# print(pytz.common_timezones_set)
-# eastern = timezone('US/Eastern')
-# western = timezone('US/Pacific')
-# strftime("%Y%m%dT%H%M%SZ")
-# print(datetime.now(pytz.utc).astimezone(eastern).strftime("%Y"))
-
-# print(get_event_list("Billy",eastern))
-# 20210906T110000
-# 20211021T140000
-# 2021110­­3T183000
-# print(get_event_list("testery",eastern,start= "20211020T140000",end="20211023T140000"))
-# print(convert_date_input("2021","10","21","8","00",eastern))
-
-# print(get_time_delta("20211021T140000","20211123T150000"))
-
-
-#add_friend("testery","tdoe")
-
-#add_friend("testery","tdoe")
-
-#please dont flame giant test string ty
-
-# ics_string = """BEGIN:VCALENDAR
-# VERSION:2.0
-# PRODID:-//calendarplusplus export//
-# BEGIN:VEVENT
-# SUMMARY:Computer Science Senior Project
-# DTSTART:20210906T070000
-# DTEND:20210906T081500
-# DTSTAMP;VALUE=DATE-TIME:20211209T045712Z
-
-# END:VEVENT
-# BEGIN:VEVENT
-# SUMMARY:Computer Science Senior Project
-# DTSTART:20210913T070000
-# DTEND:20210913T081500
-# DTSTAMP;VALUE=DATE-TIME:20211209T045712Z
-# DESCRIPTION:McKee class
-# LOCATION:Robinson 207
-# END:VEVENT
-# END:VCALENDAR"""
-
-# csv_string = """Subject,Start Date,Start Time,End Date,End Time,Description,Location
-# 0A,10/21/2021,08:00,10/21/2021,09:00,,test location (optional?)
-# 1A,10/21/2021,10:00,10/21/2021,11:00,a second test event,maybe a location"""
-
-# print(import_calendar("testery",csv_string,"ics",eastern))
-
-#DTSTART:20210906T070000
-
-#create_rec_event("testery","rec_event_test", "20211031T070000","20211031T081500","month",2,"rec testing", "recland")
-
-#need 14 salts
-#for i in range(14):
-#    print(generate_salt())
-
-#un = "pariatur"
-#pw = "exercitation"
-#print("Username: " + un)
-#print("Password: " + pw)
-#print("Encoded PW: " + encode_password(pw, get_salt(un)))
-
-# t1 = datetime(2021,12,13, 0,0)
-# t2 = datetime(2021,12,13,1,00)
-# t3 = datetime(2021,12,13,8,15)
-# t4 = datetime(2021,12,12,23)
-
-# diff = t2 - t1
-
-# diff_str = diff.__str__().split(":")
-
-# diff_15mins = int(diff_str[0])*4 + int(diff_str[1])/15
-
-# print(diff_15mins)
-# eastern = timezone('US/Eastern')
-# listy = compare(["CSGO_Sweat","Billy","HockeyNerd"],"2021-12-06",tz=eastern)
-
-# print(listy)
-
-# dt = datetime(2021,10,21,00,00,00,tzinfo=pytz.utc)
-
-# for i in range(len(list)):
-#     print( (dt+timedelta(minutes=i*15)).time().__str__() + " " + str(list[i]) + "\n")
-
-#print(get_event_list_raw("testy",datetime(2021,10,21,00,00,00,tzinfo=pytz.utc),datetime(2021,10,22,00,00,00,tzinfo=pytz.utc) ))

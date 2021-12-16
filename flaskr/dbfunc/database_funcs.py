@@ -1,8 +1,10 @@
 from pymongo import MongoClient  # MongoDB Library to connect to database.
-from datetime import datetime, tzinfo  # Used to get timestamps for database information
+#from datetime import datetime, tzinfo  # Used to get timestamps for database information
 import ssl  # Used to specify certificate connection for MongoDB
 import random,string
 
+#NOTE: if i were do this again i would leave start and end times in discrete fields for easier querying and sorting
+#      would also give events an ID outside of name
 
 class CalDB():
     def __init__(self):
@@ -81,7 +83,7 @@ class CalDB():
     #duplicate events for some reason
     def edit_event(self, username, event_id, start_time, end_time, new_id=None,new_start=None,new_end=None,new_desc=None,new_loc=None,delete=False):
         
-        if delete is not True: #dont bother looking at edit dict if youre
+        if delete is not True: #dont bother looking at edit dict if youre deleting
             edit_dict ={}
             if new_id is not None:
                 edit_dict.update({"events.$[eventitem].event_id": new_id})
@@ -123,6 +125,7 @@ class CalDB():
             )
 
     #start and end params to get events in a given date range, after a start date, or before an end date
+    #NOTE range functionality not implemented here, relies on cal_funcs, should be improved in business release
     def get_event_list(self, username, start=None,end=None):
 
         events = self.find_user(username)["events"]
@@ -146,6 +149,7 @@ class CalDB():
             {"$push": {"events": {"$each": events}}}
         )
 
+    #NOTE: Deprecated function, NAMING IS REVERSED, THIS DOES NOT APPEND :(
     def append_event_list(self, username, events):
         self.users_collection.update_one(
             {"username": username},
@@ -177,28 +181,8 @@ class CalDB():
     def get_friends(self, username):
         return self.users_collection.find_one({"username": username}, {"_id":0,"friends":1})
 
-    #this kind of filtering doesn't work, we made friends objects and not strings in case we needed more attrs
-    # def friend_check(self, username, f_username):
-
-    #     if self.users_collection.find_one({"username":username, "friends":f_username} ,{"_id":1}) :
-    #         return True
-    #     else:
-    #         return False
-
     def get_rec_id(self,username):
         return self.users_collection.find_one({"username":username}, {"rec_count":1})["rec_count"]
 
     def inc_rec_id(self,username):
         self.users_collection.update_one({"username":username}, {"$inc": {"rec_count":1}})
-
-#cal = CalDB()
-
-#cal.create_event("testery","2A","20211021T140000","20211021T150000") #passed
-#cal.edit_event("testery","2A","20211021T140000","20211021T150000",new_desc="update event test") #passed
-#cal.edit_event("testery","2A","20211021T140000","20211021T150000",delete=True) #passed
-#cal.remove_friend("testery","testy") #passed
-#cal.add_friend("testery","testy") #passed
-#cal.inc_rec_id("testery")
-#print(cal.get_rec_id("testery"))
-#cal.append_event_list("CSGO_Sweat",[])
-#print(cal.generate_salt())

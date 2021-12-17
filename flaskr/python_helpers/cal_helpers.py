@@ -83,8 +83,6 @@ def edit_event(event_id, start_time, end_time, start_date, end_date, new_id=None
     # convert start and end time to database format
     start = cf.convert_date_input(s_date[0], s_date[1], s_date[2], s_time[0], s_time[1], tz=timezone("US/Eastern"))
     end = cf.convert_date_input(e_date[0], e_date[1], e_date[2], e_time[0], e_time[1], tz=timezone("US/Eastern"))
-    print(start)
-    print(end)
     new_start = None
     new_end = None
     if not delete:
@@ -96,8 +94,6 @@ def edit_event(event_id, start_time, end_time, start_date, end_date, new_id=None
         new_start = cf.convert_date_input(ns_date[0], ns_date[1], ns_date[2], ns_time[0], ns_time[1], tz=timezone("US/Eastern"))
         new_end = cf.convert_date_input(ne_date[0], ne_date[1], ne_date[2], ne_time[0], ne_time[1], tz=timezone("US/Eastern"))
 
-        print(new_start)
-        print(new_end)
     """Edits event in database"""
     cf.edit_event(session['user_id'], event_id, start, end, new_id, new_start, new_end, new_desc,
                   new_loc, delete=delete)
@@ -107,6 +103,13 @@ tmp_path = "flaskr/static/tmp"
 
 
 def export_cal(format, tz=None):
+    """
+    Exports calendar and allows user to download it
+
+    :param format: file format (csv, ical, ics)
+    :param tz: Timezone
+    :return: boolean confirming export
+    """
     file_path = os.path.join(tmp_path, session['user_id'])
     if not os.path.exists(file_path) and not os.path.isdir(file_path):
         os.makedirs(file_path)
@@ -115,6 +118,13 @@ def export_cal(format, tz=None):
 
 
 def import_cal(format, tz=None):
+    """
+    Imports the calendar and saves it to the database, allowing for usage in the calendar
+
+    :param format: file format (csv, ical, ics)
+    :param tz: Timezone
+    :return: boolean confirming export
+    """
     file_path = os.path.join(tmp_path, session['user_id'])
     if not os.path.exists(file_path) and not os.path.isdir(file_path):
         os.makedirs(file_path)
@@ -123,6 +133,9 @@ def import_cal(format, tz=None):
 
 
 def clear_path():
+    """
+    Clears temp file path for downloads and uploads
+    """
     file_path = os.path.join(tmp_path, session['user_id'])
     if os.path.exists(file_path) and os.path.isdir(file_path):
         shutil.rmtree(file_path)

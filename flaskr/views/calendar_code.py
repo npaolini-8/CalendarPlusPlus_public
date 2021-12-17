@@ -21,6 +21,14 @@ pycal.setfirstweekday(6)
 
 
 def handle_import(doc_request, view):
+    """
+    Handles all imports and delivers it to the database.
+    After imports it will redirect the page to the appropriate page.
+
+    :param doc_request: Web request (check Flask request)
+    :param view: page to redirect to after import
+    :return: Flask redirect
+    """
     # save file object to variable
     sched = doc_request.files['upload_schedule']
 
@@ -46,6 +54,12 @@ def handle_import(doc_request, view):
 
 
 def handle_export(extension):
+    """
+    Allows for view to receive a download for exports
+
+    :param extension: file extension (csv, ical, ics)
+    :return:
+    """
     filename = 'export.' + extension
     export_cal(extension)
 
@@ -73,6 +87,7 @@ def month():
             date = request.form.get('compare-date')
             free_time_block = compare(compare_list, date, timezone('US/Eastern'))
 
+        # handle changing months
         if request.form.get('move') == "prev":
             month_move("prev")
         elif request.form.get('move') == "next":
@@ -92,6 +107,7 @@ def month():
         reset_month()
         clear_path()
 
+    # information handling
     cal, header, year, month = create_month()
     events = user_events()
     friends_list = get_friends(session['user_id'])  # get user friends(some may not be mutual)
@@ -117,6 +133,8 @@ def month():
 def week():
     free_time_block = []
     if request.method == 'POST':
+
+        # add friends
         if request.form.get('friend-add') == 'friend':
             friend = find_user(request.form['friend-name'])
             if friend is not None:
@@ -243,6 +261,11 @@ def day():
 
 
 def event_operation(form):
+    """
+    Edit or save a given event on form request
+
+    :param form: Form from request to get information from events
+    """
     # parse form
     event_id = form['event-title']
     event_desc = form['event-desc']

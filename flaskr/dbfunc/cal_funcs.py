@@ -198,7 +198,6 @@ def export_calendar( username, format, tz):
                 #csv_handler.seek(0)
                 #print(csv_handler.read().strip()) #NOTE THIS WILL NOT WORK IF RETURN IS INCLUDED W/O ANOTHER SEEK
     except Exception as e:
-        print(e)
         good_input = False
 
     return good_input
@@ -425,7 +424,6 @@ def import_calendar( username, cal_str, format, tz ):
 
                     events.append({"event_id": subj,"start_time": start_string,"end_time": end_string,"description": desc, "location": loc, "recurrence": 0 })
         except Exception as e:
-            print(e)
             good_input = False
 
     calendar_db.update_event_list(username,events)

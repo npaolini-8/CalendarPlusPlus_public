@@ -10,7 +10,7 @@ from werkzeug.utils import secure_filename
 from ..python_helpers.cal_helpers import get_todays_date, save_event, user_events, import_cal, export_cal, clear_path, \
     edit_event
 from ..python_helpers.day_functions import day_move, get_current_day, resetDate
-from ..python_helpers.week_functions import set_current_date, get_formatted_week, on_next, on_previous, reset_date
+from ..python_helpers.week_functions import set_current_date, get_formatted_week, week_move, reset_date
 from ..python_helpers.month_functions import create_month, month_move, reset_month
 
 from . import authenticate
@@ -131,9 +131,9 @@ def week():
             free_time_block = compare(compare_list, date, timezone('US/Eastern'))
 
         if request.form.get('move') == 'prev':
-            on_previous()
+            week_move("prev")
         elif request.form.get('move') == 'next':
-            on_next()
+            week_move("next")
 
         if request.form.get('event-button'):
             event_operation(request.form)
@@ -153,7 +153,6 @@ def week():
 
     day, month, year = set_current_date()
     week = get_formatted_week()
-    print(day, month, year, week)
     events = user_events()
 
     friends_list = get_friends(session['user_id'])  # get user friends(some may not be mutual)

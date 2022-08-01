@@ -1,0 +1,73 @@
+<div class="modal fade" id="event-modal" data-bs-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="event-modal-label"
+                         aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-center" id="event-modal-label">Event</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"></span>
+                </button>
+            </div>
+            <form name="event-form" method="POST">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label" for="event-name">Title</label>
+                        <input name="event-title" class="form-control" id="event-name"
+                               placeholder="Name" required autofocus>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="event-description">Description</label>
+                        <textarea type="text" name="event-desc" class="form-control" id="event-description" rows="3">
+                        </textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="event-location">Location</label>
+                        <input type="text" name="event-location" class="form-control" id="event-location" >
+                    <div class="form-group">
+                        <label class="form-label" for="event-start-date">Start Date</label>
+                        <input type="date" name="start-date" class="form-control" id="event-start-date" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="event-start-time">Start Time</label>
+                        <input type="time" name="start-time" class="form-control" id="event-start-time" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="event-end-date">End Date</label>
+                        <input type="date" name="end-date" class="form-control" id="event-end-date" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="event-end-time">End Time</label>
+                        <input type="time" name="end-time" class="form-control" id="event-end-time" required>
+                    </div>
+                    <div class="form-group">
+                        <label  id = "event-recurrence-label" class="form-label" for="event-recurrence">Recurrence Frequency</label>
+                        <select class="form-select" name="recurrence" id="event-recurrence" aria-label="Recurrence" onchange="showRecurrenceCount()">
+                          <option selected value="None">None</option>
+                          <option value="Daily">Daily</option>
+                          <option value="Weekly">Weekly</option>
+                          <option value="Monthly">Monthly</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label hidden class="form-label" for="event-recurrence-count" id="event-recurrence-count-label">Number of Recurrences</label>
+                        <input hidden type = "number" min = 1 max = 120 name="recurrence-count" class="form-control" id="event-recurrence-count">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" name="event-button" value="save" class="btn btn-primary"
+                            id="event-save">Save</button>
+                    <button type="submit" name="event-button" value="delete" class="btn btn-primary hidden"
+                            id="event-delete">Delete</button>
+                    <button type="submit" name="event-button" value="update" class="btn btn-primary hidden"
+                            id="event-update">Update</button>
+                    <input class="hidden" name="old-title" id="old-title">
+                    <input type=time class="hidden" name="old-start-time" id="old-start-time">
+                    <input type=time class="hidden" name="old-end-time" id="old-end-time">
+                    <input type=date class="hidden" name="old-start-date" id="old-start-date">
+                    <input type=date class="hidden" name="old-end-date" id="old-end-date">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script src = "{{url_for('static', filename = 'javascript/calendar/recurrence.js')}}"></script>

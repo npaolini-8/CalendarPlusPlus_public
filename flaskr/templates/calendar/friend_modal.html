@@ -1,0 +1,26 @@
+<div class="modal fade" id="friend-modal" data-bs-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="friend-modal-label"
+                         aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-center" id="friend-modal-label">Add Friend</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"></span>
+                </button>
+            </div>
+            <form name="friend-form" method="POST">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label" for="friend-name">Friend Name</label>
+                        <input name="friend-name" class="form-control" id="friend-name"
+                               placeholder="Name" required autofocus>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" name="friend-add" value="friend" class="btn btn-primary"
+                            id="friend-submit">Add Friend</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

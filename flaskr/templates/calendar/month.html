@@ -1,0 +1,84 @@
+{% extends 'base_cal.html' %}
+
+
+{% block head %}
+    {{ super() }}
+    <title>
+        {%block title%}
+             Month View
+        {%endblock title%}
+    </title>
+{% endblock head %}
+{% block view %}
+    <h2 class="text-center mb-4">
+        Month View
+    </h2>
+    {% block tinymonth %}
+        {{ super() }}
+    {% endblock tinymonth %}
+{% endblock %}
+{% block side_content %}
+    {{super()}}
+{%  endblock side_content %}
+{% block calendar %}
+    {% block messages %}
+        {{ super() }}
+    {% endblock %}
+    {% block arrowhead %}
+        {{ super() }}
+    {% endblock %}
+    <div class="container-md my-2">
+      <div class="calendar-header">
+            <div class="row header-title">
+                <div class="header-text my-3">
+                    <h1 id="date" class="text-center"> {{ cal.month_name[month] }} {{ year }}</h1>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <table id="calendar-table" class="table table-bordered table-hover">
+                <thead class="table-primary">
+                    <tr>
+                        {% for day in header %}
+                            <td class="text-center" style="padding: 1em"> {{ day }}</td>
+                        {% endfor %}
+                    </tr>
+                </thead>
+            <tbody>
+            {% for row in mdays %}
+                <tr>
+                    {% for cell in row %}
+                        {% if cell != 0 %}
+                            <td class="cells text-center" data-target="#event-dialog-modal" data-toggle="modal"
+                                style="padding: 3em">
+                                {{ cell }}
+                                {% set event_counter = namespace(value=0) %}
+                                {% for event in events %}
+                                    {% if (event[2] == month or event[7] == month) and (event[1] == year or event[6] == year) %}
+                                        {% if event[3] == cell %}
+                                            {% set event_counter.value = event_counter.value + 1 %}
+                                        {% endif %}
+                                    {% endif %}
+                                {% endfor %}
+                                {% if event_counter.value > 0 %}
+                                <div class=" small text-wrap bg-info bg-opacity-50 rounded-pill"
+                                     id="event-{{ cell }}-{{ month }}">
+                                    {{ event_counter.value }} event(s)
+                                </div>
+                                {% endif %}
+                            </td>
+                        {% else %}
+                            <td class="cells text-center" style="padding: 3em" id="event-{{ cell }}-{{ month }}"></td>
+                        {% endif %}
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+            </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock calendar %}
+{% block scripts %}
+    {{ super() }}
+    <script>makeActive("month")</script>
+{% endblock scripts %}

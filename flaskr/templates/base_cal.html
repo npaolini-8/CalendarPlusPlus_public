@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block head %}
+    {{ super() }}
+{% endblock head %}
+
+{% block content %}
+    <div class="row" style="margin: auto; height: 100%">
+        {% block sidebar %}
+            <div class="col col-lg-2 bg-dark text-primary min-vh-100" style="min-width: 20em;">
+                <div id="sidebar">
+                    <div class="sidebar-header">
+                        {% block view %}
+                            <h3>Base Calendar</h3>
+                            {% block tinymonth %}
+                                {% include 'calendar/tiny_month.html' %}
+                            {% endblock tinymonth %}
+                        {% endblock %}
+                        {% block side_content %}
+                            <h5 class="text-center text-light">
+                                Options
+                            </h5>
+                            <hr class = "text-light" style = "height: 0.25em;">
+                            <div class = "friend_button text-center">
+                                <button class = "form-control btn btn-info m-1" type = 'button' id = "friend_button" data-bs-target="#friend-modal" data-bs-toggle="modal">Add Friend</button>
+                            </div>
+                            <hr class = "text-light" style = "height: 0.25em;">
+                            {% include 'calendar/compare.html' %}
+                            <hr class = "text-light" style = "height: 0.25em;">
+                            {% include 'calendar/upload.html' %}
+                            <hr class = "text-light" style = "height: 0.25em;">
+                            {% include 'calendar/export.html' %}
+                        {% endblock side_content %}
+                    </div>
+                </div>
+            </div>
+        {% endblock sidebar %}
+        <div class="col col-lg min-vh-100">
+            {% block calendar %}
+
+                {% block messages %}
+                {% with m = get_flashed_messages() %}
+                    {% if m %}
+                        {% for i in m %}
+                            <h4 class="text-center text-danger">{{ i }}</h4>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+                {% endblock messages %}
+                {% block arrowhead %}
+                    {% include 'calendar/arrows.html' %}
+                {% endblock arrowhead %}
+                {% block datehead %}
+                    <div class="calendar-header">
+                        <div class="row header-title">
+                            <div class="header-text my-3">
+                                {% block date %}
+                                {% endblock date %}
+                            </div>
+                        </div>
+                    </div>
+                {% endblock datehead %}
+                {% block modals %}
+                    {% include 'calendar/friend_modal.html' %}
+                    {% include 'calendar/event_dialog_modal.html' %}
+                    {% include 'calendar/event_modal.html' %}
+                {% endblock modals %}
+            {% endblock calendar %}
+        </div>
+    </div>
+{% endblock content %}
+
+{% block scripts %}
+    {{ super() }}
+    <script src="{{ url_for('static', filename = 'javascript/calendar/cells.js')}}"></script>
+    <script src="{{ url_for('static', filename = 'javascript/navbar/highlight.js')}}"></script>
+{% endblock scripts %}

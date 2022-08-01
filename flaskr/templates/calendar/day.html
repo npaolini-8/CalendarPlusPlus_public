@@ -1,0 +1,89 @@
+{% extends 'base_cal.html' %}
+{% block head %}
+    {{ super() }}
+    <title>
+        {%block title%}
+             Day View
+        {%endblock title%}
+    </title>
+{%endblock head %}
+{% block view %}
+    <h2 class="text-center mb-4">
+        Day View
+    </h2>
+    {% block tinymonth %}
+        {{ super() }}
+    {% endblock tinymonth %}
+{% endblock %}
+{% block side_content %}
+    {{super()}}
+{%  endblock side_content %}
+{% block calendar %}
+<div class="container-fluid my-2">
+    {% block messages %}
+        {{ super() }}
+    {% endblock %}
+    {% block arrowhead %}
+        {{ super() }}
+    {% endblock arrowhead %}
+    {% block date %}
+        {% if day == 1 or day == 21 or day == 31%}
+            <h1 id="date" class = text-center>{{ cal.month_name[month] }} {{ day }}st, {{ year }}</h1>
+        {% elif day == 2 or day == 22%}
+            <h1 id="date" class = text-center>{{ cal.month_name[month] }} {{ day }}nd, {{ year }}</h1>
+        {% elif day == 3 or day == 23%}
+            <h1 id="date" class = text-center>{{ cal.month_name[month] }} {{ day }}rd, {{ year }}</h1>
+        {% else %}
+            <h1 id="date" class = text-center>{{ cal.month_name[month] }} {{ day }}th, {{ year }}</h1>
+        {% endif %}
+    {% endblock date %}
+    <div class="calendar-content mt-3">
+        <table id="calendar-table" class="table table-bordered table-hover">
+            <thead class="table-primary text-center">
+                <tr>
+                    <th><h3>Time</h3></th>
+                    <th><h3>Events</h3></th>
+                </tr>
+            </thead>
+            <tbody class = "text-center" id = "table-body">
+                {% for hour in range(24) %}
+                    <tr class = cells-row id = {{hour}}>
+                        {% if hour < 10%}
+                            <td style = "width: 0.25em;" id = {{hour}}TimeCol> 0{{hour}}:00</td>
+                        {% else %}
+                            <td style = "width: 0.25em;" id = {{hour}}TimeCol> {{hour}}:00</td>
+                        {% endif %}
+                        <td class = "cells" id = "cell-{{ day }}-{{ month }}-{{ year }}-{{ hour }}"
+                            data-target="#event-dialog-modal" data-toggle="modal">
+                            {% for event in events %}
+                                {% if event[4] == hour and event[3] == day and
+                                    event[2] == month and event[1] == year%}
+                                    <div>
+                                        <div class="events small text-wrap bg-info bg-opacity-50 rounded-pill"
+                                            id="{{ event[0] }},{{ event[1] }},{{ event[2] }},{{ event[3] }},{{ event[4] }},{{ event[5] }},{{ event[6] }},{{ event[7] }},{{ event[8] }},{{ event[9] }},{{ event[10] }},{{ event[11] }},{{ event[12] }}">
+                                        START: {{event[0]}}</div>
+                                    </div>
+                                {% elif event[9] == hour and event[8] == day and
+                                    event[7] == month and event[6] == year %}
+                                    <div>
+                                        <div class="events small text-wrap bg-info bg-opacity-50 rounded-pill"
+                                            id="{{ event[0] }},{{ event[1] }},{{ event[2] }},{{ event[3] }},{{ event[4] }},{{ event[5] }},{{ event[6] }},{{ event[7] }},{{ event[8] }},{{ event[9] }},{{ event[10] }},{{ event[11] }},{{ event[12] }}">
+                                        END: {{event[0]}}</div>
+                                    </div>
+                                {%endif%}
+                            {% endfor %}
+                        </td>
+                    </tr>
+                {% endfor %}
+             </tbody>
+        </table>
+    </div>
+</div>
+{% block modals %}
+    {{ super() }}
+{% endblock modals %}
+{% endblock calendar %}
+{% block scripts %}
+{{ super() }}
+<script>makeActive("day")</script>
+{% endblock scripts %}

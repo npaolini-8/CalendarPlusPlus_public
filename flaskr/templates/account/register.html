@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block head %}
+    {{ super() }}
+    <title>
+        {% block title %}
+            REGISTER
+        {% endblock %}
+    </title>
+{% endblock head %}
+{% block content %}
+    <main class="container d-flex justify-content-center align-items-center"
+          style="min-height: 100vh">
+        <form method="post" class="border shadow p-3 rounded"
+              style="width: 25vw;">
+            <h1 class="text-center p-3">REGISTER</h1>
+            <div class="form-floating mb-3">
+                <input name="first_name" class="form-control" id="first_name" placeholder="First" required autofocus>
+                <label for="first_name">First Name</label>
+            </div>
+            <div class="form-floating mb-3">
+                <input name="last_name" class="form-control" id="last_name" placeholder="Last" required>
+                <label for="last_name">Last Name</label>
+            </div>
+            <div class="form-floating mb-3">
+                <input name="username" class="form-control" id="username" placeholder="name@example.com" required>
+                <label for="username">Username</label>
+            </div>
+            <div class="form-floating mb-3">
+                <input type="password" class="form-control" name="password" id="password" placeholder="********" required>
+                <label for="password" class="form-label">Password</label>
+            </div>
+            <input type="submit" class="btn btn-primary " value="REGISTER"/>
+            <div class="d-flex justify-content-center align-items-center mt-2" style="font-size: small">
+                    <p>Already have an account?
+                    <a class="link" href="{{ url_for('auth.login') }}"> Login </a>
+                    </p>
+                </div>
+        </form>
+    </main>
+{% endblock %}

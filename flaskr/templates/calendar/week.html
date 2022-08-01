@@ -1,0 +1,87 @@
+{% extends 'base_cal.html' %}
+
+{% block head %}
+    {{ super() }}
+    <title>
+        {%block title%}
+             Week View
+        {%endblock title%}
+    </title>
+{% endblock head%}
+{% block view %}
+    <h2 class="text-center mb-4">
+        Week View
+    </h2>
+    {% block tinymonth %}
+        {{ super() }}
+    {% endblock tinymonth %}
+{% endblock view %}
+{% block side_content %}
+    {{super()}}
+{% endblock side_content %}
+{% block calendar %}
+    <div class="container-fluid my-2">
+        {% block messages %}
+            {{ super() }}
+        {% endblock %}
+        {% block arrowhead %}
+            {{ super() }}
+        {% endblock arrowhead %}
+        {% block date %}
+            <h1 id="date" class="text-center"> {{ cal.month_name[month] }}  {{ year }}</h1>
+        {% endblock date %}
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover" id="calendar-table">
+                <thead class="table-primary text-center" id="table-header">
+                    <th>
+                    {% for date, day in week %}
+                        <th>{{ cal.day_name[day] }}
+                            <div class="text-muted small" id="weekday:{{ day }}-{{ date }}">{{ date }}</div>
+                        </th>
+                    {% endfor %}
+                </thead>
+                <tbody class="text-center" id="table-body">
+                    {% for hour in range(24) %}
+                        <tr>
+                            {% if hour < 10 %}
+                                <td style="padding: 0.5em"> 0{{ hour }}:00</td>
+                            {% else %}
+                                <td style="padding: 0.5em"> {{ hour }}:00</td>
+                            {% endif %}
+
+                            {% for date, day in week %}
+                                <td class="cells" id ="cell-{{ date }}-{{ month }}-{{ year }}-{{ hour }}"
+                                    data-target="#event-dialog-modal" data-toggle="modal">
+                                    {% for event in events %}
+                                        {% if event[4] == hour and event[3] == date and
+                                        event[2] == month and event[1] == year%}
+                                            <div>
+                                                <div class="events small text-wrap bg-info bg-opacity-50 rounded-pill"
+                                                    id="{{ event[0] }},{{ event[1] }},{{ event[2] }},{{ event[3] }},{{ event[4] }},{{ event[5] }},{{ event[6] }},{{ event[7] }},{{ event[8] }},{{ event[9] }},{{ event[10] }},{{ event[11] }},{{ event[12] }}">
+                                                START: {{event[0]}}</div>
+                                            </div>
+                                        {% elif event[9] == hour and event[8] == date and
+                                            event[7] == month and event[6] == year %}
+                                            <div>
+                                                <div class="events small text-wrap bg-info bg-opacity-50 rounded-pill"
+                                                    id="{{ event[0] }},{{ event[1] }},{{ event[2] }},{{ event[3] }},{{ event[4] }},{{ event[5] }},{{ event[6] }},{{ event[7] }},{{ event[8] }},{{ event[9] }},{{ event[10] }},{{ event[11] }},{{ event[12] }}">
+                                                END: {{event[0]}}</div>
+                                            </div>
+                                        {%endif%}
+                                    {% endfor %}
+                                </td>
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% block modals %}
+    {{ super() }}
+{% endblock modals %}
+{% endblock calendar %}
+{% block scripts %}
+    {{ super() }}
+    <script>makeActive("week")</script>
+{% endblock scripts %}

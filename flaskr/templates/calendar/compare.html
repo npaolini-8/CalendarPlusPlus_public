@@ -1,0 +1,30 @@
+<form class = sm-form name = friend-comparison method="POST" style="margin-top: 1em;">
+    <label class = "text-light m-1"> Compare Friends</label>
+    {% for friend in friends%}
+        <div>
+            <input class = m-1 type = checkbox id = "friend-check" name = "friend-check"  value = "{{ friend['username'] }}">
+            <label for = friend-check>{{ friend['username'] }}</label>
+        </div>
+    {% endfor %}
+    <div>
+        <label for = compare-date class = "text-light m-1">Comparison Date</label>
+        <input type = date name="compare-date" class="form-control m-1" id="compare-date"
+                               placeholder="" required>
+    </div>
+    <div class = text-center>
+        <button class = "form-control btn btn-info m-1" type = submit name = compare-friends value = compare
+                 id="compare-time" >Compare</button>
+    </div>
+    {% if free_time_block %}
+        <div class="text-center m-1">
+            <h5 id="times">Available Times </h5>
+        </div>
+    {% endif %}
+    <div class="text-center text-light">
+        {% for time in free_time_block %}
+            <div>
+                From {{ time[0] }} to {{ time[1] }}
+            </div>
+        {% endfor %}
+    </div>
+</form>
